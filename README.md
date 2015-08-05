@@ -1,4 +1,4 @@
-# Weak-Lensing
+# Weak-Lensing Package
 
 Synopsis
 ====================
@@ -27,7 +27,13 @@ The FIAT File format 1.0 is defined [here](http://dls.physics.ucdavis.edu/fiat/f
 #### Step 5: Read the new FIAT catalog
 Read the FIAT files using the function genfromtxt in numpy library.
 
-#### Step 6
+#### Step 6: Plot the size of the celestial objects as a function of their magnitude
+Through this graph it is possible to stablish a classification of those celestial objects as galaxies or stars
+
+#### Step 7: Obtain a catalog without blank spaces
+When the x and y positions of the celestial objects extracted by Source Extractor are represented, it is possible to observe that there are some missing pixels in the image due to saturation of the camera. We avoid taking those bad pixels bonding the image. The result is a GOOD catalog with no blank spaces on it.
+
+#### Step 8: 
 
 
 > This is a blockquote.
