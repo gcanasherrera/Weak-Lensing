@@ -152,12 +152,17 @@ def main():
     for i in range (0, len(x_position_int)):
         matrix_data[x_position_int[i], y_position_int[i]]=1
 
-    # (3): Count the number of 1 and 0 and make percentages thanks to cont_1 and cont_2
-    for j in range (0, x_data_image):
-        for k in range (0, y_data_image):
+    # (3): Count the number of 1 and 0 and make percentages thanks to cont_1 and cont_2 and Go from matrix_data to matrix_pixel
+    matrix_pixel = np.zeros(shape=(x_data_image, y_data_image))
+    picture_data = hdulist_data_image[0].data
+    for j in range (0, x_data_image-2):
+        for k in range (0, y_data_image-2):
             if matrix_data[j,k]==1:
                 cont_1=cont_1+1.0
             else:
+                print j
+                print k
+                picture_data[j,k]=matrix_pixel[j,k]
                 cont_0=cont_0+1.0
 
     np.savetxt('test.txt', matrix_data, delimiter=',')
@@ -170,7 +175,8 @@ def main():
     
     # (4): Obtain the value of object we need to add in order to obtain a porcentage of 1 around 50%. We need to create an array with len = number_to_fifty
     
-    number_to_fifty = 0.08 * cont_1 /percentage_1
+    number_to_fifty_double = 0.08 * cont_1 /percentage_1
+    number_to_fifty = int(number_to_fifty_double)
     
     # (5): Create arrays with random numbers for magnitude, ellipticity. Make relationship between the value of intensity in the pixel and the value of the magnitude obtained from source extractor --> this is done using (0.2)
     
@@ -179,14 +185,8 @@ def main():
     random_mag_intensity = np.zeros(number_to_fifty)
     for i in range (0, number_to_fifty):
         random_mag_intensity[i]=fit_exp_flux_vs_mag(random_mag[i])
-
     
-    # (6): Go from matrix_data to matrix_pixel
-    matrix_pixel = np.zeros(shape=(x_data_image, y_data_image))
-    picture_data = hdulist_data_image[0].data
-    matrix_pixel[matrix_data == 1] = picture_data
-    
-    # (7): Loop for adding objects
+    # (6): Loop for adding objects
     cont_fifty = 0 #contador to know how many object we have added
     e_mean=fcat['ellipticity'].mean()
     ec=np.sqrt(1-(1-e_mean)*(1-e_mean))
@@ -206,7 +206,7 @@ def main():
         else:
             continue
 
-    # (8): Obtain the new pic
+    # (7): Obtain the new pic
     fits.writeto('{}_Simulation.fits'.format('w2_53_stack.fits'), matrix_pixel)
 
 if __name__ == "__main__":
