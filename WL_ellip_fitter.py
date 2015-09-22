@@ -31,7 +31,7 @@ from mpl_toolkits.mplot3d import Axes3D #Plotting in 3D
 # 3D Plot function of fitting + experimental data
 def ellip_fitting_plt(cont, ellipticity_1, ellipticity_2, fitting_1, fitting_2, x_fit_1, y_fit_1, x_fit_2, y_fit_2):
     fig = plt.figure(cont)
-    ax_1 = fig.add_subplot(211, projection='3d')
+    fig.add_subplot(211, projection='3d')
     ax_1.scatter(x_fit_1, y_fit_1, ellipticity_1)
     ax_1.set_xlabel('X ')
     ax_1.set_ylabel('Y')
