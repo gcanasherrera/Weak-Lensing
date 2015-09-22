@@ -90,9 +90,6 @@ def main():
     # (0.2); Fits flux_iso againts the  mag_iso
     fit_exp_flux_vs_mag = plot_fitting_exp(fcat['mag_iso'], fcat['flux_iso'])
     
-    
-    
-    
     plt.figure()
     sns.set_style("white")
     sns.set_style("ticks")
@@ -109,28 +106,28 @@ def main():
     P.hist(fcat['flux_max'], 50, normed=1, histtype='stepfilled')
     P.show(block=False)
     
-    # (0.2): Plots histograms
+    # (0.3): Plots histograms
     sns.set(style="white", palette="muted", color_codes=True)
     rs = np.random.RandomState(10)
 
     # Set up the matplotlib figure
-    f, axes = plt.subplots(2, 2, figsize=(7, 7), sharex=False)
-    #sns.despine(left=True)
-
+    #f, axes = plt.subplots(2, 2, figsize=(7, 7), sharex=False)
+    plt.figure()
     # Plot a simple histogram with binsize determined automatically
-    sns.distplot(fcat['mag_iso'], kde=False, color="b", ax=axes[0, 0], axlabel = 'mag_iso')
+    sns.distplot(fcat['mag_iso'], axlabel = 'mag_iso', hist=True)
+    plt.axvline(fcat['mag_iso'].mean(), color='k', linestyle='dashed', linewidth=2)
+    plt.show()
 
-    # Plot a kernel density estimate and rug plot
-    sns.distplot(fcat['ellipticity'], kde=False, color="r", ax=axes[0, 1], axlabel = 'ellipticity')
+    sns.distplot(fcat['ellipticity'], color="r", axlabel = 'ellipticity', hist=True)
+    plt.axvline(fcat['ellipticity'].mean(), color='k', linestyle='dashed', linewidth=2)
+    plt.show()
+    sns.distplot(fcat['A'], color="y", axlabel = 'a', hist=True)
+    plt.axvline(fcat['A'].mean(), color='k', linestyle='dashed', linewidth=2)
+    plt.show()
+    sns.distplot(fcat['B'], color="m", axlabel = 'b',  hist=True)
+    plt.axvline(fcat['B'].mean(), color='k', linestyle='dashed', linewidth=2)
+    plt.show()
 
-    # Plot a filled kernel density estimate
-    sns.distplot(fcat['A'], kde=False, color="g", ax=axes[1, 0], axlabel = 'a')
-
-    # Plot a historgram and kernel density estimate
-    sns.distplot(fcat['B'], kde=False, color="m", ax=axes[1, 1], axlabel = 'b')
-
-    plt.setp(axes, yticks=[])
-    plt.tight_layout()
     
     # (1): Determine position of the celestial object according to the catalog
     x_position = fcat['x']
@@ -173,19 +170,16 @@ def main():
     
     # (4): Obtain the value of object we need to add in order to obtain a porcentage of 1 around 50%. We need to create an array with len = number_to_fifty
     
-    number_to_fifty = 50 * cont_1 /percentage_1
+    number_to_fifty = 0.08 * cont_1 /percentage_1
     
-    # (5): Make relationship between the value of intensity in the pixel and the value of the magnitude obtained from source extractor --> PROBLEMA: estableces esto en funcion de lo que te ha dado source extractor anteriormente... no tiene poco sentido?
+    # (5): Create arrays with random numbers for magnitude, ellipticity. Make relationship between the value of intensity in the pixel and the value of the magnitude obtained from source extractor --> this is done using (0.2)
     
-    sci_data_image = hdulist_data_image[0].data #intensity data of the image
-    intensity_relation = sci_data_image[x,y]
-    mag_relation = 30.0
-    mag_1_relation = intensity_relation/mag_relation
-    
-    # (5): Create arrays with random numbers for magnitude, ellipticity.
-    random_mag = 30.0 * np.random.rand(number_to_fifty)
-    random_mag_intensity = random_mag * mag_1_relation
     random_ellip = np.random.rand(number_to_fifty)
+    random_mag = 30.0 * np.random.rand(number_to_fifty)
+    random_mag_intensity = np.zeros(number_to_fifty)
+    for i in range (0, number_to_fifty):
+        random_mag_intensity[i]=fit_exp_flux_vs_mag(random_mag[i])
+
     
     # (6): Go from matrix_data to matrix_pixel
     matrix_pixel = np.zeros(shape=(x_data_image, y_data_image))
@@ -194,7 +188,11 @@ def main():
     
     # (7): Loop for adding objects
     cont_fifty = 0 #contador to know how many object we have added
-    a = b/math.sqrt(1-e*e)
+    e_mean=fcat['ellipticity'].mean()
+    ec=np.sqrt(1-(1-e_mean)*(1-e_mean))
+    b_mean=fcat['B'].mean()
+    a_mean = b_mean/math.sqrt(1-ec*ec)
+    n= 5
     while cont_fifty != number_to_fifty:
         x = x_data_image * np.random.rand(0)
         y = y_data_image * np.random.rand(0)
@@ -202,25 +200,14 @@ def main():
             matrix_pixel[x,y] = random_mag_intensity[cont_fifty]
             cont_fifty = cont_fifty + 1
             
-            for i in range (x-5*a_mean, x+5*a_mean):
-                for k in range (y-5*b_mean, x+5*b_mean):
-                    matrix_pixel[i,k]=gaussian2D(i, k, x, y, a_mean, b_mean, M)
-        
+            for i in range (x-n*a_mean, x+n*a_mean):
+                for k in range (y-n*b_mean, x+n*b_mean):
+                    matrix_pixel[i,k]=gaussian2D(i, k, x, y, a_mean, b_mean, random_mag_intensity[cont_fifty])
         else:
             continue
 
-# COMO HACES QUE EL PIXEL NO SEA CUADRADO? PROPOSICIoN
-
-
-
-
-
-
-
-
-
-
-
+    # (8): Obtain the new pic
+    fits.writeto('{}_Simulation.fits'.format('w2_53_stack.fits'), matrix_pixel)
 
 if __name__ == "__main__":
     main()
