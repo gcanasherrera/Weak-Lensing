@@ -89,6 +89,10 @@ def main():
     p3_mag_vs_flux = plot_fitting_pol(fcat['flux_iso'], fcat['mag_iso'], 'flux_iso', 'mag_iso', 22)
     # (0.2); Fits flux_iso againts the  mag_iso
     fit_exp_flux_vs_mag = plot_fitting_exp(fcat['mag_iso'], fcat['flux_iso'])
+    mag_mean = fcat['mag_iso'].mean()
+    int_mean = fit_exp_flux_vs_mag(mag_mean)
+    
+    print 'The mean intensity is : {}'.format(int_mean)
     
     plt.figure()
     sns.set_style("white")
@@ -143,37 +147,28 @@ def main():
     x_data_image=hdulist_data_image[0].header['NAXIS1']
     y_data_image=hdulist_data_image[0].header['NAXIS2']
     print 'The picture has a size of ({}x{})'.format(x_data_image, y_data_image)
-
-    cont_1=0.0
-    cont_0=0.0
     
-    matrix_data=np.zeros(shape=(x_data_image, y_data_image))
+    matrix_data=np.zeros(shape=(y_data_image, x_data_image))
     
     for i in range (0, len(x_position_int)):
-        matrix_data[x_position_int[i], y_position_int[i]]=1
+        matrix_data[y_position_int[i], x_position_int[i]]=1
 
-    # (3): Count the number of 1 and 0 and make percentages thanks to cont_1 and cont_2 and Go from matrix_data to matrix_pixel
-    matrix_pixel = np.zeros(shape=(x_data_image, y_data_image))
-    picture_data = hdulist_data_image[0].data
-    for j in range (0, x_data_image-2):
-        for k in range (0, y_data_image-2):
-            if matrix_data[j,k]==1:
-                cont_1=cont_1+1.0
-            else:
-                print j
-                print k
-                picture_data[j,k]=matrix_pixel[j,k]
-                cont_0=cont_0+1.0
-
-    np.savetxt('test.txt', matrix_data, delimiter=',')
-
+    # (3): Count the number of 1 and 0 and make percentages thanks to cont_1 and cont_2. Transform from matrix_data to matrix_pixel through picture data
+    cont_1=np.sum(matrix_data)
     total= x_data_image * y_data_image
-    print total
+    cont_0= total - cont_1
+
+#   matrix_pixel = np.zeros(shape=(y_data_image, x_data_image)) #first go rows (y-axis) and then columns (x-axis)
+    picture_data = hdulist_data_image[0].data
+#   matrix__pixel = picture_data * matrix_data
+#   fits.writeto('matrix_pixel.fits'.format('w2_53_stack.fits'), matrix_pixel)
+
+    print 'The total amount of pixels is :{}'.format(total)
     percentage_1=(cont_1/total)*100.0
     percentage_0=(cont_0/total)*100.0
-    print 'The count of 1 is: {} \n The count of 0 is: {} \nThe percentage of 1 is: {} \nThe percentage of 0 is: {}'.format(cont_1, cont_0, percentage_1, percentage_0)
+    print 'The count of 1 is: {} \nThe count of 0 is: {} \nThe percentage of 1 is: {} \nThe percentage of 0 is: {}'.format(cont_1, cont_0, percentage_1, percentage_0)
     
-    # (4): Obtain the value of object we need to add in order to obtain a porcentage of 1 around 50%. We need to create an array with len = number_to_fifty
+    # (4): Obtain the value of object we need to add in order to obtain a porcentage of 1 around 0.08% (double of celestial objects). We need to create an array with len = number_to_fifty
     
     number_to_fifty_double = 0.08 * cont_1 /percentage_1
     number_to_fifty = int(number_to_fifty_double)
@@ -183,6 +178,7 @@ def main():
     random_ellip = np.random.rand(number_to_fifty)
     random_mag = 30.0 * np.random.rand(number_to_fifty)
     random_mag_intensity = np.zeros(number_to_fifty)
+
     for i in range (0, number_to_fifty):
         random_mag_intensity[i]=fit_exp_flux_vs_mag(random_mag[i])
     
@@ -192,22 +188,31 @@ def main():
     ec=np.sqrt(1-(1-e_mean)*(1-e_mean))
     b_mean=fcat['B'].mean()
     a_mean = b_mean/math.sqrt(1-ec*ec)
+    
+    print 'b_mean is {}\na_mean is {}'.format(b_mean, a_mean)
+    
     n= 5
     while cont_fifty != number_to_fifty:
-        x = x_data_image * np.random.rand(0)
-        y = y_data_image * np.random.rand(0)
-        if matrix_pixel[x,y] == 0:
-            matrix_pixel[x,y] = random_mag_intensity[cont_fifty]
+        x = int(x_data_image * random.random())
+        y = int(y_data_image * random.random())
+        if matrix_pixel[y,x] == 0:
+            matrix_pixel[y,x] = int_mean
             cont_fifty = cont_fifty + 1
-            
-            for i in range (x-n*a_mean, x+n*a_mean):
-                for k in range (y-n*b_mean, x+n*b_mean):
-                    matrix_pixel[i,k]=gaussian2D(i, k, x, y, a_mean, b_mean, random_mag_intensity[cont_fifty])
-        else:
-            continue
+            for k in range (y-n*b_mean.astype(int), y+n*b_mean.astype(int)):
+            print k
+            for i in range (x-n*a_mean.astype(int), x+n*a_mean.astype(int)):
+                print i
+                matrix_pixel[k,i]= int_mean * math.exp(-0.5*((i-x)*(i-x)/(a_mean*a_mean) + (k-y)*(k-y)/(b_mean*b_mean)))
+
+
+    for g in range (y_data_image):
+        for f in range (x_data_image):
+            if matrix_pixel[g,f]==0:
+                matrix_pixel[g,f]=picture_data[g,f]
 
     # (7): Obtain the new pic
-    fits.writeto('{}_Simulation.fits'.format('w2_53_stack.fits'), matrix_pixel)
+    
+    fits.writeto('{}_Simulation_2.fits'.format('w2_53_stack.fits'), matrix_pixel)
 
 if __name__ == "__main__":
     main()
