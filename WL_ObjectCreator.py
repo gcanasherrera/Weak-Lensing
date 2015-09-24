@@ -29,6 +29,7 @@ import matplotlib.pylab as P #For histograms
 import matplotlib
 import seaborn as sns
 from scipy.optimize import curve_fit
+from WL_Utils import sex_caller
 
 #Define elliptical-gaussial2D
 
@@ -94,21 +95,6 @@ def main():
     
     print 'The mean intensity is : {}'.format(int_mean)
     
-    plt.figure()
-    sns.set_style("white")
-    sns.set_style("ticks")
-    plt.title('Histogram a')
-    plt.xlabel('a')
-    plt.ylabel('Frequency')
-    P.hist(fcat['A'], 50, normed=1, histtype='stepfilled')
-    P.show(block=False)
-    
-    plt.figure()
-    plt.title('Histogram Flux_Max')
-    plt.xlabel('Flux_max')
-    plt.ylabel('Frequency')
-    P.hist(fcat['flux_max'], 50, normed=1, histtype='stepfilled')
-    P.show(block=False)
     
     # (0.3): Plots histograms
     sns.set(style="white", palette="muted", color_codes=True)
@@ -117,6 +103,11 @@ def main():
     # Set up the matplotlib figure
     #f, axes = plt.subplots(2, 2, figsize=(7, 7), sharex=False)
     plt.figure()
+    
+    sns.distplot(fcat['flux_iso'], color="b", axlabel = 'flux_iso', hist=True)
+    plt.axvline(fcat['flux_iso'].mean(), color='k', linestyle='dashed', linewidth=2)
+    plt.show()
+    
     # Plot a simple histogram with binsize determined automatically
     sns.distplot(fcat['mag_iso'], axlabel = 'mag_iso', hist=True)
     plt.axvline(fcat['mag_iso'].mean(), color='k', linestyle='dashed', linewidth=2)
@@ -128,7 +119,7 @@ def main():
     sns.distplot(fcat['A'], color="y", axlabel = 'a', hist=True)
     plt.axvline(fcat['A'].mean(), color='k', linestyle='dashed', linewidth=2)
     plt.show()
-    sns.distplot(fcat['B'], color="m", axlabel = 'b',  hist=True)
+    sns.distplot(fcat['B'], color="m", axlabel = 'b', hist=True)
     plt.axvline(fcat['B'].mean(), color='k', linestyle='dashed', linewidth=2)
     plt.show()
 
@@ -190,29 +181,64 @@ def main():
     a_mean = b_mean/math.sqrt(1-ec*ec)
     
     print 'b_mean is {}\na_mean is {}'.format(b_mean, a_mean)
-    
     n= 5
+    y_pixel = int(round(n*b_mean))
+    x_pixel = int(round(n*a_mean))
+    x_position_simulation = np.zeros(number_to_fifty)
+    y_position_simulation = np.zeros(number_to_fifty)
+
     while cont_fifty != number_to_fifty:
+        
         x = int(x_data_image * random.random())
         y = int(y_data_image * random.random())
-        if matrix_pixel[y,x] == 0:
-            matrix_pixel[y,x] = int_mean
+        
+        while x+x_pixel>x_data_image or x-x_pixel<0:
+            x = int(x_data_image * random.random())
+
+        while y+y_pixel>y_data_image or y-y_pixel<0:
+            y = int(y_data_image * random.random())
+        
+        if matrix_data[y,x] == 0:
+            
+            print 'value y {}'.format(y)
+            print 'value x {}'.format(x)
+            
+            x_position_simulation[cont_fifty] = x
+            y_position_simulation[cont_fifty] = y
+            
+            for k in range (y-y_pixel, y+y_pixel):
+                for i in range (x-x_pixel, x+x_pixel):
+                    if matrix_data[k,i]==0:
+                        matrix_data[k,i]= gaussian2D(i, k, x, y, a_mean, b_mean, int_mean)
+
             cont_fifty = cont_fifty + 1
-            for k in range (y-n*b_mean.astype(int), y+n*b_mean.astype(int)):
-            print k
-            for i in range (x-n*a_mean.astype(int), x+n*a_mean.astype(int)):
-                print i
-                matrix_pixel[k,i]= int_mean * math.exp(-0.5*((i-x)*(i-x)/(a_mean*a_mean) + (k-y)*(k-y)/(b_mean*b_mean)))
 
 
     for g in range (y_data_image):
         for f in range (x_data_image):
-            if matrix_pixel[g,f]==0:
-                matrix_pixel[g,f]=picture_data[g,f]
+            if matrix_data[g,f]<=0.1:
+                matrix_data[g,f]=picture_data[g,f]
 
     # (7): Obtain the new pic
     
-    fits.writeto('{}_Simulation_2.fits'.format('w2_53_stack.fits'), matrix_pixel)
+    fits.writeto('{}_Simulation.fits'.format('w2_53_stack'), matrix_data)
+    sex_caller('w2_53_stack_Simulation.fits', 'w2_53_stack_simulation')
+    transform_into_fiat='perl sex2fiat.pl {}>{}'.format('w2_53_stack_simulation.cat', 'w2_53_stack_simulation.fcat')
+    subprocess.call(transform_into_fiat, shell=True)
+
+    #We need to read the new catalog and try to place the object we added to the pic
+    fcat_simulation = np.genfromtxt('w2_53_stack_simulation.fcat', names=names)
+
+    mag_simulation_sex = np.zeros(len(fcat_simulation['x']))
+    for position in fcat_simulation['x']:
+        if int(fcat_simulation['x'][position]) == x_position_simulation[position] and int(fcat_simulation['y'][position]) == y_position_simulation[position]:
+            continue
+        else:
+            mag_simulation_sex[position] = fcat_simulation['mag_iso'][position]
+
+    print mag_simulation_sex
+
+
 
 if __name__ == "__main__":
     main()
