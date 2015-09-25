@@ -40,6 +40,7 @@ class ObjectCreator(object):
     def __init__(self, fcat):
         
         self.fcat = fcat
+        self.simulation_picture = ''
     
         self.mean_mag = np.mean(fcat['mag_iso'])
         self.mean_intensity = 0.0
@@ -48,7 +49,12 @@ class ObjectCreator(object):
         self.mean_ec = np.sqrt(1-(1-self.mean_ellip)*(1-self.mean_ellip))
         self.mean_a = self.mean_b/math.sqrt(1-self.mean_ec*self.mean_ec)
 
-        
+
+        self.out_mag = []
+
+
+
+
         self.random_mag = []
         self.random_intensity = []
         self.random_ellip = []
@@ -183,7 +189,8 @@ class ObjectCreator(object):
     
     
     def get_simulation_picture(self, ID_number):
-        fits.writeto('{}_Simulation_{}.fits'.format('w2_53_stack', ID_number), self.matrix_data)
+        self.simulation_picture = '{}_Simulation_{}.fits'.format('w2_53_stack', ID_number)
+        fits.writeto(self.simulation_picture, self.matrix_data)
     
     
     def objectcreator_mean(self, mag_value = 0.0, n = 5):
@@ -193,10 +200,14 @@ class ObjectCreator(object):
         
         intensity_value = fitting_intensity_mag(mag_value)
         
-        print 'b_mean is {}\na_mean is {}'.format(self.mean_b, self.mean_a)
+        print 'mean_b is {}\mean_a is {}'.format(self.mean_b, self.mean_a)
         
         y_pixel = int(round(n*self.mean_b))
         x_pixel = int(round(n*self.mean_a))
+        
+        #print y_pixel
+        #print x_pixel
+        
         self.x_position_simulation = np.zeros(self.number_to_packing)
         self.y_position_simulation = np.zeros(self.number_to_packing)
         
@@ -215,8 +226,8 @@ class ObjectCreator(object):
             
             if self.matrix_data[y,x] == 0:
                 
-                print 'value y {}'.format(y)
-                print 'value x {}'.format(x)
+                #print 'value y {}'.format(y)
+                #print 'value x {}'.format(x)
                 
                 self.x_position_simulation[cont_percentage] = x
                 self.y_position_simulation[cont_percentage] = y
@@ -224,7 +235,7 @@ class ObjectCreator(object):
                 for k in range (y-y_pixel, y+y_pixel):
                     for i in range (x-x_pixel, x+x_pixel):
                         if self.matrix_data[k,i]==0:
-                            self.matrix_data[k,i]= self.gaussian2D(i, k, x, y, self.mean_a, self.mean_a, intensity_value)
+                            self.matrix_data[k,i]= self.gaussian2D(i, k, x, y, self.mean_a, self.mean_b, intensity_value)
         
             cont_percentage = cont_percentage + 1
 
@@ -238,6 +249,16 @@ class ObjectCreator(object):
         self.get_simulation_picture(mag_value)
 
 
+
+
+    def searcher(self, fcat, fcat_simulation):
+        
+        x_position_fcat_simulation = fcat_simulation['x'].astype(int)
+        
+        for i in range (0, len(x_position_fcat_simulation)):
+            if self.x_position_simulation[i] == x_position_fcat_simulation[i]:
+                self.out_mag[i] = fcat_simulation['mag_iso'][i]
+                print self.out_mag
 
 
 
