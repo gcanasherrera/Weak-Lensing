@@ -27,10 +27,11 @@ class CatalogReader(object):
     def __init__(self):
         
         self.fcat =[]
+        self.catalog_fiat=''
         
     def transform(self, catalog):
-        catalog_fiat = 'fiat_{}'.format(catalog)
-        transform_into_fiat='perl sex2fiat.pl {}>{}'.format(catalog, catalog_fiat)
+        self.catalog_fiat = 'fiat_{}'.format(catalog)
+        transform_into_fiat='perl sex2fiat.pl {}>{}'.format(catalog, self.catalog_fiat)
         subprocess.call(transform_into_fiat, shell=True)
     
     def read(self, catalog):
@@ -40,8 +41,8 @@ class CatalogReader(object):
         names = ["number", "flux_iso", "fluxerr_iso", "mag_iso", "magger_iso", "mag_aper_1", "magerr_aper_1", "mag", "magger", "flux_max", "isoarea", "x", "y", "ra", "dec", "ixx", "iyy", "ixy", "ixxWIN", "iyyWIN", "ixyWIN", "A", "B", "theta", "enlogation", "ellipticity", "FWHM", "flags", "class_star"]
         
         if catalog.endswith(suffix) == False:
-            transform(catalog)
-            self.fcat = np.genfromtxt(catalog_fiat, names=names)
+            self.transform(catalog)
+            self.fcat = np.genfromtxt(self.catalog_fiat, names=names)
 
         else:
             self.fcat = np.genfromtxt(catalog, names=names)
