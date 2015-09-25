@@ -96,6 +96,7 @@ class ObjectCreator(object):
         return p3
 
     def plot_fitting_exp(self, x, y):
+        sns.set(style="white", palette="muted", color_codes=True)
         t_init = models.ExponentialCutoffPowerLaw1D(amplitude=10., x_0=10., alpha=100., x_cutoff=10)
         fit_t = fitting.LevMarLSQFitter()
         t = fit_t(t_init, x, y)
@@ -168,7 +169,6 @@ class ObjectCreator(object):
         self.total = self.x_data_image * self.y_data_image
         self.cont_1 = np.sum(self.matrix_data)
         self.cont_0 = self.total - self.cont_1
-        self.cont_percentage = 0 #contador to know how many object we have added
 
         self.percentage_1=(self.cont_1/self.total)*100.0
         self.percentage_0=(self.cont_0/self.total)*100.0
@@ -200,7 +200,9 @@ class ObjectCreator(object):
         self.x_position_simulation = np.zeros(self.number_to_packing)
         self.y_position_simulation = np.zeros(self.number_to_packing)
         
-        while cont_percentage <= self.number_to_packing:
+        cont_percentage = 0
+        
+        while cont_percentage != self.number_to_packing:
             
             x = int(self.x_data_image * random.random())
             y = int(self.y_data_image * random.random())
@@ -216,13 +218,13 @@ class ObjectCreator(object):
                 print 'value y {}'.format(y)
                 print 'value x {}'.format(x)
                 
-                self.x_position_simulation[cont_fifty] = x
-                self.y_position_simulation[cont_fifty] = y
+                self.x_position_simulation[cont_percentage] = x
+                self.y_position_simulation[cont_percentage] = y
                 
                 for k in range (y-y_pixel, y+y_pixel):
                     for i in range (x-x_pixel, x+x_pixel):
                         if self.matrix_data[k,i]==0:
-                            self.matrix_data[k,i]= gaussian2D(i, k, x, y, self.mean_a, self.mean_a, intensity_value)
+                            self.matrix_data[k,i]= self.gaussian2D(i, k, x, y, self.mean_a, self.mean_a, intensity_value)
         
             cont_percentage = cont_percentage + 1
 
