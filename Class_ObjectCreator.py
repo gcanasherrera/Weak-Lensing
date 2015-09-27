@@ -1,12 +1,12 @@
-# Name: ObjectCreator.py
+# Name: Class_ObjectCreator.py
 #
 # Bachelor Disertation Program VI
 #
-# Type: Class
+# Type: python class
 #
-# Description:
+# Content: 1 Class, 1 constructor,
 #
-# Returns: FITS image including the objects we created
+# Description: General Class destinated to produce a simulation over a .fits picture in order to determinate whether Source Extractor
 #
 
 
@@ -25,19 +25,24 @@ import math #mathematical functions
 import subprocess #calling to the terminal
 from astropy.modeling import models, fitting #Package for fitting functions with a astronomical character
 import warnings #Advices
-from astropy.io import fits #Open and Reading Files
+from astropy.io import fits #Open and Reading FITS Files usign astropy
 import random #pseudo-random generator
 import seaborn as sns #Improvements for statistical-plots
 
+
+
+"""
+General Class that contents several simulation methods destinated to introduce new celestial objects in a .fits picture with an ellipticial shape. There are different posibilities of simulations.
+    
+"""
 class ObjectCreator(object):
+    
+    """
+        Constructor that defines attribute of future class-objects
 
     """
-    Creates c
     
-    """
-    #define attributes of future class-objects
-    
-    def __init__(self, fcat):
+    def __init__(self, fcat):  #define attributes of future class-objects
         
         self.fcat = fcat
         self.simulation_picture = ''
@@ -81,7 +86,11 @@ class ObjectCreator(object):
         self.packing = 0.0
         self.number_to_packing = 0
     
-
+    
+    """
+        Method that fits the magnitude as a function of the flux in logaritmic scale through a third-order polynomical model
+        
+    """
 
     def plot_fitting_pol(self, mag_1, mag_2, val_1, val_2, lin):
         plt.figure()
@@ -100,6 +109,11 @@ class ObjectCreator(object):
         plt.legend()
         plt.show(block=False)
         return p3
+    
+    """
+        Method that fits the magnitude as a function of the flux in normal scale through an exponential model defined at http://astropy.readthedocs.org/en/latest/api/astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.html#astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.param_names
+        
+    """
 
     def plot_fitting_exp(self, x, y):
         sns.set(style="white", palette="muted", color_codes=True)
@@ -107,7 +121,9 @@ class ObjectCreator(object):
         fit_t = fitting.LevMarLSQFitter()
         t = fit_t(t_init, x, y)
         plt.figure()
-        plt.plot(x, y, 'ko', label='Source Extractor')
+        
+        plt.errorbar(x, y, self.fcat['fluxerr_iso'], self.fcat['magger_iso'], fmt='k.', label='Source Extractor')
+        #plt.plot(x, y, 'ko', label='Source Extractor')
         xp= np.linspace(8.2, 25, len(x))
         plt.plot(xp, t(xp), 'r--', label='Exponential Fitting')
         plt.xlabel('Mag_iso')
@@ -121,6 +137,11 @@ class ObjectCreator(object):
         print 'The mean intensity is : {}\nThe mean isophotal magnitude is : {} '.format(self.mean_intensity, self.mean_mag)
         
         return t
+    
+    """
+        Method that plots the histograms corresponding to the magnitudes: flux_iso, mag_iso, ellipticity, A (major axis of the ellipse), B(minor axis of the ellipse). Also plots the value of the mean.
+        
+    """
 
 
     def general_histograms(self, fcat):
@@ -148,9 +169,19 @@ class ObjectCreator(object):
         plt.show()
 
 
+    """
+        Define the elliptical-2DGaussian model to plot new celestial objects.
+    
+    """
+
     def gaussian2D(self, x, y, x_0, y_0, a, b, M):
         return M * math.exp(-0.5*((x-x_0)*(x-x_0)/(a*a) + (y-y_0)*(y-y_0)/(b*b)))
     
+    
+    """
+        Transform the float-value of the x_position and y_position for celestial objects determined by Source Extractor into a integer value due to the fact that we requires to obtain a masking matrix which is discrete.
+        
+    """
 
     def transform_to_int(self, fcat):
         x_position = fcat['x']
@@ -158,6 +189,11 @@ class ObjectCreator(object):
         self.x_position_int= x_position.astype(int)   #transform double into int
         self.y_position_int= y_position.astype(int)
     
+    """
+        Method that opens and reads a .fits picture using Astropy library whose classes and methods are defined at http://astropy.readthedocs.org/en/latest/io/fits/index.html?highlight=fits#module-astropy.io.fits . Gets the value of the x_axis and y_axis as well as the intensity value at each pixel.
+        
+    """
+
 
     def open_read_picture(self, picture):
         hdulist_data_image=fits.open(picture, memmap=False)
@@ -165,6 +201,11 @@ class ObjectCreator(object):
         self.y_data_image=hdulist_data_image[0].header['NAXIS2']
         print 'The picture has a size of ({}x{})\n'.format(self.x_data_image, self.y_data_image)
         self.picture_data = hdulist_data_image[0].data
+    
+    """
+        Method that creates a masked matrix only with 0 and 1. Attach the value 0 at those pixel where no celestial object was found by Source Extractor, and attach the value 1 where celestial objects where placed by Source Extractor.
+        
+    """
 
     def masking_matrix(self, picture):
         self.transform_to_int(self.fcat)
@@ -172,6 +213,13 @@ class ObjectCreator(object):
         self.matrix_data = np.zeros(shape=(self.y_data_image, self.x_data_image))
         for i in range (0, len(self.x_position_int)):
             self.matrix_data[self.y_position_int[i], self.x_position_int[i]]=1
+
+
+    """
+        Method that determined the percentage of 1 and 0 given at the masked matrix
+    
+    """
+
 
     def counts_percentages(self):
         self.total = self.x_data_image * self.y_data_image
@@ -183,6 +231,11 @@ class ObjectCreator(object):
         print 'The total amount of pixels is :{}\n'.format(self.total)
         print 'The count of 1 is: {} \nThe count of 0 is: {} \nThe percentage of 1 is: {} \nThe percentage of 0 is: {}\n'.format(self.cont_1, self.cont_0, self.percentage_1, self.percentage_0)
 
+
+    """
+        Method that gets the number of new objects that we need to add to the picture if we want to get a percentage of 1 equals to a packing fraction called eta.
+    
+    """
     def packing_percentage(self, eta = 0.08):
         self.counts_percentages()
         number_to_packing_double = eta * self.cont_1 /self.percentage_1
@@ -190,12 +243,21 @@ class ObjectCreator(object):
         self.packing = eta
     
     
+    """
+        Method that writes and generates the new .fits picture that contains the new celestials objects using Astropy library at http://astropy.readthedocs.org/en/latest/io/fits/index.html?highlight=fits#module-astropy.io.fits
+        
+    """
     def get_simulation_picture(self, ID_number):
         self.simulation_picture = '{}_Simulation_{}.fits'.format('w2_53_stack', ID_number)
         fits.writeto(self.simulation_picture, self.matrix_data)
     
     
-    def objectcreator_mean(self, mag_value = 0.0, n = 5):
+    """
+        Method that plots the elliptical celestial objects where no previous object was found (at those 0 matrix_data elements) randomly for a mag_iso value passed as attribute. Pick the value of A, B and ellipticity at the mean obtained from histograms. The relation between the intensity of the new picture pixels and the magnitude is made thanks to the exponential fitting.
+        
+    """
+    
+    def objectcreator_magnitude(self, mag_value = 0.0, n = 5):
         print 'Show the relation between the intensity and the manitude \n'
         
         fitting_intensity_mag = self.plot_fitting_exp(self.fcat['mag_iso'], self.fcat['flux_iso'])
@@ -250,8 +312,12 @@ class ObjectCreator(object):
         #write in a new picture the matrix_data
         self.get_simulation_picture(mag_value)
 
-
-
+    """
+        Method that looks for the celestial objects already created by the previous method in the new catalog obtained after running Source Extractor.
+        
+        PROBLEM: super inefficient
+    
+    """
 
     def searcher(self, fcat, fcat_simulation):
         
