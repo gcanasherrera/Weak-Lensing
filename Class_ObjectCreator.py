@@ -94,7 +94,7 @@ class ObjectCreator(object):
         fit = np.polyfit(np.log(mag_1), np.log(mag_2), 3)
         p3 = np.poly1d(fit)
         print 'The fit of {} Vs. {} is: {}\n'.format(val_1, val_2, p3)
-        plt.plot(np.log(mag_1), np.log(mag_2), 'ro', label='Source Extractor')
+        plt.plot(np.log(mag_1), np.log(mag_2), 'r--', label='Source Extractor')
         #plt.errorbar(np.log(fcat['flux_iso']), np.log(fcat['mag_iso']), xerr = xerr_norm, yerr = yerr_norm, fmt='r.')
         plt.plot(xp, p3(xp), 'k-', label='fitting')
         plt.legend()
@@ -108,16 +108,18 @@ class ObjectCreator(object):
         t = fit_t(t_init, x, y)
         plt.figure()
         plt.plot(x, y, 'ko', label='Source Extractor')
-        xp= np.linspace(10, 25, len(x))
-        plt.plot(x, t(x), 'r.', label='fitting')
+        xp= np.linspace(8.2, 25, len(x))
+        plt.plot(xp, t(xp), 'r--', label='Exponential Fitting')
         plt.xlabel('Mag_iso')
         plt.ylabel('Flux_iso')
         plt.legend()
         plt.title('Mag_iso Vs. Flux_iso')
         plt.show()
         print 'The fit of Flux_iso Vs. mag_iso is: {}\n'.format(t)
+        print t.alpha
         self.mean_intensity = t(self.mean_mag)
         print 'The mean intensity is : {}\nThe mean isophotal magnitude is : {} '.format(self.mean_intensity, self.mean_mag)
+        
         return t
 
 
@@ -200,7 +202,7 @@ class ObjectCreator(object):
         
         intensity_value = fitting_intensity_mag(mag_value)
         
-        print 'mean_b is {}\mean_a is {}'.format(self.mean_b, self.mean_a)
+        print 'mean_b is {}\nmean_a is {}'.format(self.mean_b, self.mean_a)
         
         y_pixel = int(round(n*self.mean_b))
         x_pixel = int(round(n*self.mean_a))
@@ -254,11 +256,21 @@ class ObjectCreator(object):
     def searcher(self, fcat, fcat_simulation):
         
         x_position_fcat_simulation = fcat_simulation['x'].astype(int)
+        y_position_fcat_simulation = fcat_simulation['y'].astype(int)
         
-        for i in range (0, len(x_position_fcat_simulation)):
-            if self.x_position_simulation[i] == x_position_fcat_simulation[i]:
-                self.out_mag[i] = fcat_simulation['mag_iso'][i]
-                print self.out_mag
+        self.out_mag = np.zeros(self.number_to_packing) #define out_mag
+        
+        #print len(self.x_position_simulation)
+        #print len(x_position_fcat_simulation)
+        
+        length_fcat_simulation = len(x_position_fcat_simulation)
+        length_x_position_simulation = len(self.x_position_simulation)
+        
+        for i in range (0, length_fcat_simulation):
+            for k in range (0, length_x_position_simulation):
+                if (x_position_fcat_simulation[i] == self.x_position_simulation[k] and y_position_fcat_simulation[i] == self.y_position_simulation[k]):
+                    self.out_mag[k] = fcat_simulation['mag_iso'][i]
+                    print self.out_mag[k]
 
 
 
