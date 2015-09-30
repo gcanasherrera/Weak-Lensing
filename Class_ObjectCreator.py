@@ -55,9 +55,8 @@ class ObjectCreator(object):
         self.mean_a = self.mean_b/math.sqrt(1-self.mean_ec*self.mean_ec)
 
 
+        self.out_mag_all = []
         self.out_mag = []
-
-
 
 
         self.random_mag = []
@@ -122,17 +121,19 @@ class ObjectCreator(object):
         t = fit_t(t_init, x, y)
         plt.figure()
         
-        plt.errorbar(x, y, self.fcat['fluxerr_iso'], self.fcat['magger_iso'], fmt='k.', label='Source Extractor')
+        plt.loglog(x, y, 'ko', label='Source Extractor')
+        
+        #plt.errorbar(x, y, self.fcat['fluxerr_iso'], self.fcat['magger_iso'], fmt='ko', label='Source Extractor')
         #plt.plot(x, y, 'ko', label='Source Extractor')
         xp= np.linspace(8.2, 25, len(x))
-        plt.plot(xp, t(xp), 'r--', label='Exponential Fitting')
+        plt.loglog(xp, t(xp), 'r--', label='Exponential Fitting')
         plt.xlabel('Mag_iso')
         plt.ylabel('Flux_iso')
         plt.legend()
         plt.title('Mag_iso Vs. Flux_iso')
         plt.show()
         print 'The fit of Flux_iso Vs. mag_iso is: {}\n'.format(t)
-        print t.alpha
+        #print t.alpha
         self.mean_intensity = t(self.mean_mag)
         print 'The mean intensity is : {}\nThe mean isophotal magnitude is : {} '.format(self.mean_intensity, self.mean_mag)
         
@@ -315,7 +316,7 @@ class ObjectCreator(object):
     """
         Method that looks for the celestial objects already created by the previous method in the new catalog obtained after running Source Extractor.
         
-        PROBLEM: super inefficient
+        PROBLEM: super inefficient due to the fact of using Python for-loops
     
     """
 
@@ -337,7 +338,117 @@ class ObjectCreator(object):
                 if (x_position_fcat_simulation[i] == self.x_position_simulation[k] and y_position_fcat_simulation[i] == self.y_position_simulation[k]):
                     self.out_mag[k] = fcat_simulation['mag_iso'][i]
                     print self.out_mag[k]
+                    break
+        print self.out.mag
 
+
+
+
+    """
+        Method that looks for the celestial objects already created by the previous method in the new catalog obtained after running Source Extractor.
+        
+        TRY: diccionaries with a double key-tag
+        
+        OPTIONS in FUTURE: may it be implementated in C++ using mapping
+    
+    """
+    
+    def searcher_dic(self, fcat, fcat_simulation):
+        
+        print '\nTry dic\n'
+        
+        #Define super dic empty
+        d={}
+        #Get values of x and y from new catag
+        x_position_fcat_simulation = fcat_simulation['x'].astype(int)
+        y_position_fcat_simulation = fcat_simulation['y'].astype(int)
+        
+        #self.out_mag_all = np.zeros(self.number_to_packing) #define out_mag
+        
+        #print len(self.x_position_simulation)
+        #print len(x_position_fcat_simulation)
+        
+        length_fcat_simulation = len(x_position_fcat_simulation)
+        length_x_position_simulation = len(self.x_position_simulation)
+        
+        for i in range (0, length_fcat_simulation):
+            #print type(x_position_fcat_simulation[i])
+            d[(int(x_position_fcat_simulation[i]), int(y_position_fcat_simulation[i]))] = fcat_simulation['mag_iso'][i]
+        
+        #print d
+        
+        for k in range (0, length_x_position_simulation):
+            mag = d.get((int(self.x_position_simulation[k]), int(self.y_position_simulation[k])), -1)
+            if mag is not -1:
+                self.out_mag.append(mag)
+            
+#print self.out_mag
+
+
+
+    """
+    Method that plots the elliptical celestial objects where no previous object was found (at those 0 matrix_data elements) randomly for a ellipticity value passed as attribute. Pick the value of A, B and ellipticity at the mean obtained from histograms. The relation between the intensity of the new picture pixels and the magnitude is made thanks to the exponential fitting.
+    
+    """
+        
+    def objectcreator_ellipticity(self, ellip_value = 0.0, n = 5):
+        print 'Show the relation between the intensity and the manitude \n'
+        
+        fitting_intensity_mag = self.plot_fitting_exp(self.fcat['mag_iso'], self.fcat['flux_iso'])
+        
+        intensity_value = fitting_intensity_mag(self.mean_mag)
+        
+        print 'mean_b is {}\nmean_a is {}'.format(self.mean_b, self.mean_a)
+        
+        y_pixel = int(round(n*self.mean_b))
+        x_pixel = int(round(n*self.mean_a))
+        
+        #print y_pixel
+        #print x_pixel
+        
+        self.x_position_simulation = np.zeros(self.number_to_packing)
+        self.y_position_simulation = np.zeros(self.number_to_packing)
+        
+        cont_percentage = 0
+        
+        
+        self.mean_ec = np.sqrt(1-(1-self.ellip_value)*(1-self.ellip_value))
+        self.mean_a = self.mean_b/math.sqrt(1-self.mean_ec*self.mean_ec)
+        
+        while cont_percentage != self.number_to_packing:
+            
+            x = int(self.x_data_image * random.random())
+            y = int(self.y_data_image * random.random())
+            
+            while x+x_pixel>self.x_data_image or x-x_pixel<0:
+                x = int(self.x_data_image * random.random())
+            
+            while y+y_pixel>self.y_data_image or y-y_pixel<0:
+                y = int(self.y_data_image * random.random())
+            
+            if self.matrix_data[y,x] == 0:
+                
+                #print 'value y {}'.format(y)
+                #print 'value x {}'.format(x)
+                
+                self.x_position_simulation[cont_percentage] = x
+                self.y_position_simulation[cont_percentage] = y
+                
+                for k in range (y-y_pixel, y+y_pixel):
+                    for i in range (x-x_pixel, x+x_pixel):
+                        if self.matrix_data[k,i]==0:
+                            self.matrix_data[k,i]= self.gaussian2D(i, k, x, y, self.mean_a, self.mean_b, intensity_value)
+
+        cont_percentage = cont_percentage + 1
+
+        #Attach intensity value to the rest of the picture pixels.
+        for g in range (self.y_data_image):
+            for f in range (self.x_data_image):
+                if self.matrix_data[g,f]<=0.1:
+                    self.matrix_data[g,f]=self.picture_data[g,f]
+                
+        #write in a new picture the matrix_data
+        self.get_simulation_picture(mag_value)
 
 
 

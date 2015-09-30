@@ -24,13 +24,16 @@ import sys #Strings inputs
 
 class CatalogReader(object):
     
-    def __init__(self):
+    def __init__(self, catalog):
+        
+        self.BEFORE_NAME = catalog.find('.')
+        self.FILE_NAME = catalog[:self.BEFORE_NAME]
         
         self.fcat =[]
         self.catalog_fiat=''
         
     def transform(self, catalog):
-        self.catalog_fiat = 'fiat_{}'.format(catalog)
+        self.catalog_fiat = 'fiat_{}.fcat'.format(self.FILE_NAME)
         transform_into_fiat='perl sex2fiat.pl {}>{}'.format(catalog, self.catalog_fiat)
         subprocess.call(transform_into_fiat, shell=True)
     
