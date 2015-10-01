@@ -28,7 +28,12 @@ import warnings #Advices
 from astropy.io import fits #Open and Reading FITS Files usign astropy
 import random #pseudo-random generator
 import seaborn as sns #Improvements for statistical-plots
+from pymodelfit import FunctionModel1DAuto #Create own model of fitting
 
+
+class magnitude_exponential(FunctionModel1DAuto):
+    def f(self,m,a=1,b=5):
+        return a*10**(-m/2.5 +b)
 
 
 """
@@ -136,8 +141,35 @@ class ObjectCreator(object):
         #print t.alpha
         self.mean_intensity = t(self.mean_mag)
         print 'The mean intensity is : {}\nThe mean isophotal magnitude is : {} '.format(self.mean_intensity, self.mean_mag)
+    
+    
+    
+    """
+        Method that fits the magnitude as a function of the flux in normal scale through an exponential model defined myself using
         
-        return t
+        """
+    
+    def plot_fitting_exp_owndefined(self, x, y):
+        sns.set(style="white", palette="muted", color_codes=True)
+        model = magnitude_exponential()
+        af,bf = model.fitData(x,y)
+        model.plot( logplot='xy')
+        plt.text(0,11,'My Model:',fontsize=16)
+        for i,k in enumerate(model.pardict):
+            plt.text(0,10-i,'%s = %f'%(k,model.pardict[k]),fontsize=16)
+        plt.xlabel('Mag_iso')
+        plt.ylabel('Flux_iso')
+        
+        plt.show()
+        self.mean_intensity = model.f(m = self.mean_mag, a = af, b = bf)
+        print 'The mean intensity is : {}\nThe mean isophotal magnitude is : {} '.format(self.mean_intensity, self.mean_mag)
+        
+        
+        return model, af, bf
+    
+    
+    
+    
     
     """
         Method that plots the histograms corresponding to the magnitudes: flux_iso, mag_iso, ellipticity, A (major axis of the ellipse), B(minor axis of the ellipse). Also plots the value of the mean.
@@ -261,9 +293,20 @@ class ObjectCreator(object):
     def objectcreator_magnitude(self, mag_value = 0.0, n = 5):
         print 'Show the relation between the intensity and the manitude \n'
         
-        fitting_intensity_mag = self.plot_fitting_exp(self.fcat['mag_iso'], self.fcat['flux_iso'])
+        self.plot_fitting_exp(self.fcat['mag_iso'], self.fcat['flux_iso'])
         
-        intensity_value = fitting_intensity_mag(mag_value)
+        model, af, bf = self.plot_fitting_exp_owndefined(self.fcat['mag_iso'], self.fcat['flux_iso'])
+        
+        #intensity_value = fitting_intensity_mag(mag_value)
+        
+        intensity_value = model.f(m = mag_value, b = bf, a = af)
+        intensity_value_mag = model.f(m = self.mean_mag, b = bf, a = af)
+        
+        print af
+        print bf
+        
+        print 'Value intensity is {}'.format(intensity_value)
+        print 'mean value intensity is {}'.format(intensity_value_mag)
         
         print 'mean_b is {}\nmean_a is {}'.format(self.mean_b, self.mean_a)
         
@@ -312,6 +355,13 @@ class ObjectCreator(object):
 
         #write in a new picture the matrix_data
         self.get_simulation_picture(mag_value)
+
+
+
+
+
+
+
 
     """
         Method that looks for the celestial objects already created by the previous method in the new catalog obtained after running Source Extractor.
@@ -449,9 +499,5 @@ class ObjectCreator(object):
                 
         #write in a new picture the matrix_data
         self.get_simulation_picture(mag_value)
-
-
-
-
 
 
