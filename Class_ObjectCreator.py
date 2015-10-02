@@ -293,7 +293,7 @@ class ObjectCreator(object):
     def objectcreator_magnitude(self, mag_value = 0.0, n = 5):
         print 'Show the relation between the intensity and the manitude \n'
         
-        self.plot_fitting_exp(self.fcat['mag_iso'], self.fcat['flux_iso'])
+        #self.plot_fitting_exp(self.fcat['mag_iso'], self.fcat['flux_iso'])
         
         model, af, bf = self.plot_fitting_exp_owndefined(self.fcat['mag_iso'], self.fcat['flux_iso'])
         
@@ -302,8 +302,8 @@ class ObjectCreator(object):
         intensity_value = model.f(m = mag_value, b = bf, a = af)
         intensity_value_mag = model.f(m = self.mean_mag, b = bf, a = af)
         
-        print af
-        print bf
+        print 'Value af is {}'.format(af)
+        print 'Value bf is {}'.format(bf)
         
         print 'Value intensity is {}'.format(intensity_value)
         print 'mean value intensity is {}'.format(intensity_value_mag)
@@ -339,6 +339,8 @@ class ObjectCreator(object):
                 
                 self.x_position_simulation[cont_percentage] = x
                 self.y_position_simulation[cont_percentage] = y
+                
+                self.matrix_data[y,x] = intensity_value
                 
                 for k in range (y-y_pixel, y+y_pixel):
                     for i in range (x-x_pixel, x+x_pixel):
