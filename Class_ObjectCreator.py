@@ -29,6 +29,7 @@ from astropy.io import fits #Open and Reading FITS Files usign astropy
 import random #pseudo-random generator
 import seaborn as sns #Improvements for statistical-plots
 from pymodelfit import FunctionModel1DAuto #Create own model of fitting
+from scipy import spatial
 
 
 class magnitude_exponential(FunctionModel1DAuto):
@@ -41,6 +42,8 @@ General Class that contents several simulation methods destinated to introduce n
     
 """
 class ObjectCreator(object):
+    
+    
     
     """
         Constructor that defines attribute of future class-objects
@@ -62,6 +65,9 @@ class ObjectCreator(object):
 
         self.out_mag_all = []
         self.out_mag = []
+        self.out_flux = []
+        self.out_flux_sextractor = []
+        self.out_mag_after_transf = []
 
 
         self.random_mag = []
@@ -211,6 +217,9 @@ class ObjectCreator(object):
         return M * math.exp(-0.5*((x-x_0)*(x-x_0)/(a*a) + (y-y_0)*(y-y_0)/(b*b)))
     
     
+    def f_way_back(self,f,a=112.188243402,b=9.95005045126):
+        return -2.5*(math.log10(f/a) - b)
+    
     """
         Transform the float-value of the x_position and y_position for celestial objects determined by Source Extractor into a integer value due to the fact that we requires to obtain a masking matrix which is discrete.
         
@@ -269,11 +278,12 @@ class ObjectCreator(object):
         Method that gets the number of new objects that we need to add to the picture if we want to get a percentage of 1 equals to a packing fraction called eta.
     
     """
-    def packing_percentage(self, eta = 0.08):
+    def packing_percentage(self, number_objects = 10):
         self.counts_percentages()
-        number_to_packing_double = eta * self.cont_1 /self.percentage_1
-        self.number_to_packing = int(number_to_packing_double)
-        self.packing = eta
+        #number_to_packing_double = eta * self.cont_1 /self.percentage_1
+        #self.number_to_packing = int(number_to_packing_double)
+        #self.packing = eta
+        self.number_to_packing = number_objects
     
     
     """
@@ -332,6 +342,7 @@ class ObjectCreator(object):
             while y+y_pixel>self.y_data_image or y-y_pixel<0:
                 y = int(self.y_data_image * random.random())
             
+            
             if self.matrix_data[y,x] == 0:
                 
                 #print 'value y {}'.format(y)
@@ -345,23 +356,20 @@ class ObjectCreator(object):
                 for k in range (y-y_pixel, y+y_pixel):
                     for i in range (x-x_pixel, x+x_pixel):
                         if self.matrix_data[k,i]==0:
-                            self.matrix_data[k,i]= self.gaussian2D(i, k, x, y, self.mean_a, self.mean_b, intensity_value)
+                            self.matrix_data[k,i]= self.picture_data[k,i]+ self.gaussian2D(i, k, x, y, self.mean_a, self.mean_b, intensity_value)
         
             cont_percentage = cont_percentage + 1
 
         #Attach intensity value to the rest of the picture pixels.
         for g in range (self.y_data_image):
             for f in range (self.x_data_image):
-                if self.matrix_data[g,f]<=0.1:
+                if self.matrix_data[g,f]<=0.2:
+                    self.matrix_data[g,f]=self.picture_data[g,f]
+                elif self.matrix_data[g,f] == 1:
                     self.matrix_data[g,f]=self.picture_data[g,f]
 
         #write in a new picture the matrix_data
         self.get_simulation_picture(mag_value)
-
-
-
-
-
 
 
 
@@ -405,6 +413,8 @@ class ObjectCreator(object):
     
     """
     
+    
+    
     def searcher_dic(self, fcat, fcat_simulation):
         
         print '\nTry dic\n'
@@ -425,81 +435,68 @@ class ObjectCreator(object):
         
         for i in range (0, length_fcat_simulation):
             #print type(x_position_fcat_simulation[i])
-            d[(int(x_position_fcat_simulation[i]), int(y_position_fcat_simulation[i]))] = fcat_simulation['mag_iso'][i]
+            d[(int(x_position_fcat_simulation[i]), int(y_position_fcat_simulation[i]))] = fcat_simulation['flux_iso'][i]
         
         #print d
         
         for k in range (0, length_x_position_simulation):
-            mag = d.get((int(self.x_position_simulation[k]), int(self.y_position_simulation[k])), -1)
-            if mag is not -1:
-                self.out_mag.append(mag)
-            
-#print self.out_mag
-
+            flux = d.get((int(self.x_position_simulation[k]), int(self.y_position_simulation[k])), -1)
+            if flux is not -1:
+                self.out_mag.append(self.f_way_back(flux,a=112.188243402,b=9.95005045126))
 
 
     """
-    Method that plots the elliptical celestial objects where no previous object was found (at those 0 matrix_data elements) randomly for a ellipticity value passed as attribute. Pick the value of A, B and ellipticity at the mean obtained from histograms. The relation between the intensity of the new picture pixels and the magnitude is made thanks to the exponential fitting.
+        Method that looks for the celestial objects already created by the previous method in the new catalog obtained after running Source Extractor.
+        
+        TRY: KDTree
     
     """
         
-    def objectcreator_ellipticity(self, ellip_value = 0.0, n = 5):
-        print 'Show the relation between the intensity and the manitude \n'
+    def searcher_kdtree(self, fcat, fcat_simulation, FILE_NAME):
         
-        fitting_intensity_mag = self.plot_fitting_exp(self.fcat['mag_iso'], self.fcat['flux_iso'])
+        print '\nTry KDTree'
+        x_position_fcat_simulation = fcat_simulation['x']
+        y_position_fcat_simulation = fcat_simulation['y']
+        mag_iso_fcat_simulation = fcat_simulation['mag_iso']
+        flux_iso_fcat_simulation = fcat_simulation['flux_iso']
+        position_all = zip(x_position_fcat_simulation.ravel(), y_position_fcat_simulation.ravel())
+        tree = spatial.KDTree(position_all)
+        position_obj_created = zip(self.x_position_simulation, self.y_position_simulation)
         
-        intensity_value = fitting_intensity_mag(self.mean_mag)
+        array_length = len(self.x_position_simulation)
         
-        print 'mean_b is {}\nmean_a is {}'.format(self.mean_b, self.mean_a)
+        #Save everything in a array
+        fitting_file_ellip= 'FOUND_OBJ_{}_.fcat'.format(FILE_NAME)
+        f_1=open(fitting_file_ellip, 'w')
+        f_1.write('# fiat 1.0\n')
+        f_1.write('# ttype1 = Position_simulation')
+        f_1.write('# ttype2 = Position_detection')
+        f_1.write('# ttype2 = How many detected')
+        f_1.write('# ttype3 = Mag_iso')
+        f_1.write('# ttype4 = Flux_iso')
         
-        y_pixel = int(round(n*self.mean_b))
-        x_pixel = int(round(n*self.mean_a))
-        
-        #print y_pixel
-        #print x_pixel
-        
-        self.x_position_simulation = np.zeros(self.number_to_packing)
-        self.y_position_simulation = np.zeros(self.number_to_packing)
-        
-        cont_percentage = 0
-        
-        
-        self.mean_ec = np.sqrt(1-(1-self.ellip_value)*(1-self.ellip_value))
-        self.mean_a = self.mean_b/math.sqrt(1-self.mean_ec*self.mean_ec)
-        
-        while cont_percentage != self.number_to_packing:
-            
-            x = int(self.x_data_image * random.random())
-            y = int(self.y_data_image * random.random())
-            
-            while x+x_pixel>self.x_data_image or x-x_pixel<0:
-                x = int(self.x_data_image * random.random())
-            
-            while y+y_pixel>self.y_data_image or y-y_pixel<0:
-                y = int(self.y_data_image * random.random())
-            
-            if self.matrix_data[y,x] == 0:
-                
-                #print 'value y {}'.format(y)
-                #print 'value x {}'.format(x)
-                
-                self.x_position_simulation[cont_percentage] = x
-                self.y_position_simulation[cont_percentage] = y
-                
-                for k in range (y-y_pixel, y+y_pixel):
-                    for i in range (x-x_pixel, x+x_pixel):
-                        if self.matrix_data[k,i]==0:
-                            self.matrix_data[k,i]= self.gaussian2D(i, k, x, y, self.mean_a, self.mean_b, intensity_value)
 
-        cont_percentage = cont_percentage + 1
+        #We ask the KDTree which are the closest neightbours
+        
+        cont_lost_obj = 0
+        
+        for i in range(0, array_length):
+            posible_obj_distances, posible_obj_index = tree.query(position_obj_created[i], distance_upper_bound = 3*self.mean_a)
+            
+            for k in (0, len(posible_obj_distances)):
+                if posible_obj_distances[k] is not inf:
+                    f_1.write('%-20s\t%-20s\t%-20s\t%-20s \n'% (position_obj_created[i], position_all[posible_obj_index[k]], k, mag_iso_fcat_simulation[posible_obj_index[k]], flux_iso_fcat_simulation[posible_obj_index[k]]))
+                    self.out_mag.append(mag_iso_fcat_simulation[posible_obj_index[k]])
+                    self.out_flux.append(flux_iso_fcat_simulation[posible_obj_index[k]])
+                    self.out_mag_after_transf.append(self.f_way_back(self.out_flux_sextractor[k],a=112.188243402,b=9.95005045126))
+                      
+                elif posible_obj_distances[k] is inf:
+                    cont_lost_obj = cont_lost_obj + 1
+                    f_1.write('%-20s\t%-20s\t%-20s\t%-20s \n'% (position_obj_created[i], 0, k, 0, 0))
+                      
+        
 
-        #Attach intensity value to the rest of the picture pixels.
-        for g in range (self.y_data_image):
-            for f in range (self.x_data_image):
-                if self.matrix_data[g,f]<=0.1:
-                    self.matrix_data[g,f]=self.picture_data[g,f]
-                
-        #write in a new picture the matrix_data
-        self.get_simulation_picture(mag_value)
+
+
 
 
