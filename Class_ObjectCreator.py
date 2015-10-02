@@ -68,6 +68,11 @@ class ObjectCreator(object):
         self.out_flux = []
         self.out_flux_sextractor = []
         self.out_mag_after_transf = []
+        
+        
+        
+        self.posible_obj_distances = []
+        self.posible_obj_index = []
 
 
         self.random_mag = []
@@ -469,34 +474,39 @@ class ObjectCreator(object):
         fitting_file_ellip= 'FOUND_OBJ_{}_.fcat'.format(FILE_NAME)
         f_1=open(fitting_file_ellip, 'w')
         f_1.write('# fiat 1.0\n')
-        f_1.write('# ttype1 = Position_simulation')
-        f_1.write('# ttype2 = Position_detection')
-        f_1.write('# ttype2 = How many detected')
-        f_1.write('# ttype3 = Mag_iso')
-        f_1.write('# ttype4 = Flux_iso')
+        f_1.write('# ttype1 = Position_simulation\n')
+        f_1.write('# ttype2 = Position_detection\n')
+        f_1.write('# ttype2 = How many detected\n')
+        f_1.write('# ttype3 = Mag_iso\n')
+        f_1.write('# ttype4 = Flux_iso\n')
         
 
         #We ask the KDTree which are the closest neightbours
         
         cont_lost_obj = 0
+        self.posible_obj_distances, self.posible_obj_index = tree.query(position_obj_created, distance_upper_bound = 3*self.mean_a)
+
+        for k in range (0, len(self.posible_obj_index)):
+            if self.posible_obj_distances[k] is not float("inf"):
+                self.out_mag.append(mag_iso_fcat_simulation[self.posible_obj_index[k]])
+                self.out_flux.append(flux_iso_fcat_simulation[self.posible_obj_index[k]])
+                self.out_mag_after_transf.append(self.f_way_back(self.out_flux_sextractor[k],a=112.188243402,b=9.95005045126))
+            elif self.posible_obj_distances[k] is float("inf"):
+                cont_lost_obj = cont_lost_obj + 1
+
+        print cont_lost_obj
+
         
-        for i in range(0, array_length):
-            posible_obj_distances, posible_obj_index = tree.query(position_obj_created[i], distance_upper_bound = 3*self.mean_a)
+        #    for i in range(0, array_length):
+        #   posible_obj_distances, posible_obj_index = tree.query(position_obj_created[i], distance_upper_bound = 3*self.mean_a)
             
-            for k in (0, len(posible_obj_distances)):
-                if posible_obj_distances[k] is not inf:
-                    f_1.write('%-20s\t%-20s\t%-20s\t%-20s \n'% (position_obj_created[i], position_all[posible_obj_index[k]], k, mag_iso_fcat_simulation[posible_obj_index[k]], flux_iso_fcat_simulation[posible_obj_index[k]]))
-                    self.out_mag.append(mag_iso_fcat_simulation[posible_obj_index[k]])
-                    self.out_flux.append(flux_iso_fcat_simulation[posible_obj_index[k]])
-                    self.out_mag_after_transf.append(self.f_way_back(self.out_flux_sextractor[k],a=112.188243402,b=9.95005045126))
+            #    for k in (0, np.size(posible_obj_distances,0)):
+            #   if posible_obj_distances[k] is not inf:
+            #       f_1.write('%-20s\t%-20s\t%-20s\t%-20s \n'% (position_obj_created[i], position_all[posible_obj_index[k]], k, mag_iso_fcat_simulation[posible_obj_index[k]], flux_iso_fcat_simulation[posible_obj_index[k]]))
+            #       self.out_mag.append(mag_iso_fcat_simulation[posible_obj_index[k]])
+            #       self.out_flux.append(flux_iso_fcat_simulation[posible_obj_index[k]])
+            #       self.out_mag_after_transf.append(self.f_way_back(self.out_flux_sextractor[k],a=112.188243402,b=9.95005045126))
                       
-                elif posible_obj_distances[k] is inf:
-                    cont_lost_obj = cont_lost_obj + 1
-                    f_1.write('%-20s\t%-20s\t%-20s\t%-20s \n'% (position_obj_created[i], 0, k, 0, 0))
-                      
-        
-
-
-
-
-
+                      #   elif posible_obj_distances[k] is inf:
+                      #cont_lost_obj = cont_lost_obj + 1
+#f_1.write('%-20s\t%-20s\t%-20s\t%-20s \n'% (position_obj_created[i], 0, k, 0, 0))
