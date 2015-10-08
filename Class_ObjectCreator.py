@@ -66,13 +66,14 @@ class ObjectCreator(object):
         self.out_mag_all = []
         self.out_mag = []
         self.out_flux = []
-        self.out_flux_sextractor = []
+        self.out_flux_max = []
         self.out_mag_after_transf = []
         
         
         
         self.posible_obj_distances = []
         self.posible_obj_index = []
+        self.cont_lost_obj_per = []
 
 
         self.random_mag = []
@@ -100,6 +101,7 @@ class ObjectCreator(object):
         self.percentage_0 = 0
         self.packing = 0.0
         self.number_to_packing = 0
+        self.lost_objects = []
     
     
     """
@@ -151,7 +153,7 @@ class ObjectCreator(object):
         print 'The fit of Flux_iso Vs. mag_iso is: {}\n'.format(t)
         #print t.alpha
         self.mean_intensity = t(self.mean_mag)
-        print 'The mean intensity is : {}\nThe mean isophotal magnitude is : {} '.format(self.mean_intensity, self.mean_mag)
+    #print 'The mean intensity is : {}\nThe mean isophotal magnitude is : {} '.format(self.mean_intensity, self.mean_mag)
     
     
     
@@ -321,7 +323,7 @@ class ObjectCreator(object):
         print 'Value bf is {}'.format(bf)
         
         print 'Value intensity is {}'.format(intensity_value)
-        print 'mean value intensity is {}'.format(intensity_value_mag)
+        #print 'Mean value intensity is {}'.format(intensity_value_mag)
         
         print 'mean_b is {}\nmean_a is {}'.format(self.mean_b, self.mean_a)
         
@@ -365,7 +367,7 @@ class ObjectCreator(object):
         
             cont_percentage = cont_percentage + 1
 
-        #Attach intensity value to the rest of the picture pixels.
+#Attach intensity value to the rest of the picture pixels.
         for g in range (self.y_data_image):
             for f in range (self.x_data_image):
                 if self.matrix_data[g,f]<=0.2:
@@ -458,55 +460,81 @@ class ObjectCreator(object):
     """
         
     def searcher_kdtree(self, fcat, fcat_simulation, FILE_NAME):
+        self.posible_obj_distances = []
+        self.posible_obj_index = []
+
         
         print '\nTry KDTree'
         x_position_fcat_simulation = fcat_simulation['x']
         y_position_fcat_simulation = fcat_simulation['y']
+        
         mag_iso_fcat_simulation = fcat_simulation['mag_iso']
         flux_iso_fcat_simulation = fcat_simulation['flux_iso']
+        
         position_all = zip(x_position_fcat_simulation.ravel(), y_position_fcat_simulation.ravel())
         tree = spatial.KDTree(position_all)
         position_obj_created = zip(self.x_position_simulation, self.y_position_simulation)
         
         array_length = len(self.x_position_simulation)
         
-        #Save everything in a array
-        fitting_file_ellip= 'FOUND_OBJ_{}_.fcat'.format(FILE_NAME)
-        f_1=open(fitting_file_ellip, 'w')
-        f_1.write('# fiat 1.0\n')
-        f_1.write('# ttype1 = Position_simulation\n')
-        f_1.write('# ttype2 = Position_detection\n')
-        f_1.write('# ttype2 = How many detected\n')
-        f_1.write('# ttype3 = Mag_iso\n')
-        f_1.write('# ttype4 = Flux_iso\n')
-        
 
         #We ask the KDTree which are the closest neightbours
         
         cont_lost_obj = 0
         self.posible_obj_distances, self.posible_obj_index = tree.query(position_obj_created, distance_upper_bound = 3*self.mean_a)
+        
+        
+        
 
-        for k in range (0, len(self.posible_obj_index)):
-            if self.posible_obj_distances[k] is not float("inf"):
-                self.out_mag.append(mag_iso_fcat_simulation[self.posible_obj_index[k]])
-                self.out_flux.append(flux_iso_fcat_simulation[self.posible_obj_index[k]])
-                self.out_mag_after_transf.append(self.f_way_back(self.out_flux_sextractor[k],a=112.188243402,b=9.95005045126))
-            elif self.posible_obj_distances[k] is float("inf"):
+        for i in [i for i,x in enumerate(self.posible_obj_index) if x < len(position_all)]:
+                self.out_mag.append(mag_iso_fcat_simulation[x])
+                self.out_flux.append(flux_iso_fcat_simulation[x])
+                self.out_mag_after_transf.append(self.f_way_back(flux_iso_fcat_simulation[x],a=112.188243402,b=9.95005045126))
+        
+        for i in [i for i,x in enumerate(self.posible_obj_index) if x == len(position_all)]:
                 cont_lost_obj = cont_lost_obj + 1
 
-        print cont_lost_obj
+        print 'The number of lost galaxies is {}\n'.format(cont_lost_obj)
 
+
+
+
+
+
+    """
+    Method that looks for the celestial objects already created by the previous method in the new catalog obtained after running Source Extractor.
+    
+    TRY: KDTree
+    
+    """
         
-        #    for i in range(0, array_length):
-        #   posible_obj_distances, posible_obj_index = tree.query(position_obj_created[i], distance_upper_bound = 3*self.mean_a)
-            
-            #    for k in (0, np.size(posible_obj_distances,0)):
-            #   if posible_obj_distances[k] is not inf:
-            #       f_1.write('%-20s\t%-20s\t%-20s\t%-20s \n'% (position_obj_created[i], position_all[posible_obj_index[k]], k, mag_iso_fcat_simulation[posible_obj_index[k]], flux_iso_fcat_simulation[posible_obj_index[k]]))
-            #       self.out_mag.append(mag_iso_fcat_simulation[posible_obj_index[k]])
-            #       self.out_flux.append(flux_iso_fcat_simulation[posible_obj_index[k]])
-            #       self.out_mag_after_transf.append(self.f_way_back(self.out_flux_sextractor[k],a=112.188243402,b=9.95005045126))
-                      
-                      #   elif posible_obj_distances[k] is inf:
-                      #cont_lost_obj = cont_lost_obj + 1
-#f_1.write('%-20s\t%-20s\t%-20s\t%-20s \n'% (position_obj_created[i], 0, k, 0, 0))
+    def searcher_kdtree_try(self, fcat, fcat_simulation, FILE_NAME):
+        
+        print '\nTry KDTree'
+        x_position_fcat_simulation = fcat_simulation['x']
+        y_position_fcat_simulation = fcat_simulation['y']
+        position_all = zip(x_position_fcat_simulation.ravel(), y_position_fcat_simulation.ravel())
+        tree = spatial.KDTree(position_all)
+        position_obj_created = zip(self.x_position_simulation, self.y_position_simulation)
+                        
+        self.posible_obj_distances, self.posible_obj_index = tree.query(position_obj_created, distance_upper_bound = 3*self.mean_a)
+
+        cont_lost_obj = 0
+
+        for index in self.posible_obj_index:
+            if index < len(position_all):
+                self.out_mag.append(fcat_simulation['mag_iso'][index])
+                self.out_flux.append(fcat_simulation['flux_iso'][index])
+                self.out_flux_max.append(fcat_simulation['flux_max'][index])
+                self.out_mag_after_transf.append(self.f_way_back(fcat_simulation['flux_iso'][index],a=112.188243402,b=9.95005045126))
+            if index == len(position_all):
+                cont_lost_obj = cont_lost_obj + 1
+    
+        self.lost_objects.append(cont_lost_obj)
+
+        print 'The number of lost galaxies is {}\n'.format(cont_lost_obj)
+
+
+
+
+
