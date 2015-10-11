@@ -17,20 +17,20 @@ __version__ = "2.0.0"
 __maintainer__ = "Guadalupe Canas Herrera"
 __email__ = "gch24@alumnos.unican.es"
 
-from Class_ObjectCreator import ObjectCreator
+from Class_ObjectCreator import ObjectCreator, MagnitudeExponential
 from Class_CatalogReader import CatalogReader
 from WL_Utils import sex_caller
 import numpy as np #Maths arrays and more
 import matplotlib.pyplot as plt #Plot Libraries
 import seaborn as sns #Improvements for statistical-plots
 from operator import truediv
-from Class_ObjectCreator import MagnitudeExponential
 import math
 
 
 
 #Define arrays for plotting
-mag_input = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]
+#mag_input = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]
+mag_input = [5]
 mag_output_sex = []
 mag_output_wayback = []
 mag_output_error_sex = []
