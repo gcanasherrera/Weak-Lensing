@@ -26,26 +26,27 @@ class CatalogReader(object):
     
     def __init__(self, catalog):
         
-        self.BEFORE_NAME = catalog.find('.')
-        self.FILE_NAME = catalog[:self.BEFORE_NAME]
+        self.catalog = catalog
+        self.BEFORE_NAME = self.catalog.find('.')
+        self.FILE_NAME = self.catalog[:self.BEFORE_NAME]
         
         self.fcat =[]
         self.catalog_fiat=''
         
-    def transform(self, catalog):
+    def transform(self):
         self.catalog_fiat = 'fiat_{}.fcat'.format(self.FILE_NAME)
-        transform_into_fiat='perl sex2fiat.pl {}>{}'.format(catalog, self.catalog_fiat)
+        transform_into_fiat='perl sex2fiat.pl {}>{}'.format(self.catalog, self.catalog_fiat)
         subprocess.call(transform_into_fiat, shell=True)
     
-    def read(self, catalog):
+    def read(self):
         
         suffix = '.fcat'
         
         names = ["number", "flux_iso", "fluxerr_iso", "mag_iso", "magger_iso", "mag_aper_1", "magerr_aper_1", "mag", "magger", "flux_max", "isoarea", "x", "y", "ra", "dec", "ixx", "iyy", "ixy", "ixxWIN", "iyyWIN", "ixyWIN", "A", "B", "theta", "enlogation", "ellipticity", "FWHM", "flags", "class_star"]
         
         if catalog.endswith(suffix) == False:
-            self.transform(catalog)
+            self.transform(self.catalog)
             self.fcat = np.genfromtxt(self.catalog_fiat, names=names)
 
         else:
-            self.fcat = np.genfromtxt(catalog, names=names)
+            self.fcat = np.genfromtxt(self.catalog, names=names)
