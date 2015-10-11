@@ -4,7 +4,7 @@
 #
 # Type: python class
 #
-# Content: 1 Class, 1 constructor,
+# Content: 2 Classes, 1 constructor,
 #
 # Description: General Class destinated to produce a simulation over a .fits picture in order to determinate whether Source Extractor
 #
@@ -13,7 +13,7 @@
 __author__ = "Guadalupe Canas Herrera"
 __copyright__ = "Copyright (C) 2015 G. Canas Herrera"
 __license__ = "Public Domain GNU"
-__version__ = "1.0.0"
+__version__ = "2.0.0"
 __maintainer__ = "Guadalupe Canas Herrera"
 __email__ = "gch24@alumnos.unican.es"
 
@@ -29,10 +29,14 @@ from astropy.io import fits #Open and Reading FITS Files usign astropy
 import random #pseudo-random generator
 import seaborn as sns #Improvements for statistical-plots
 from pymodelfit import FunctionModel1DAuto #Create own model of fitting
-from scipy import spatial
+from scipy import spatial #KDTREE altorithm
 
 
-class magnitude_exponential(FunctionModel1DAuto):
+
+"""
+     Class that defines the relation between F(m) according to the astrophysical definition
+"""
+class MagnitudeExponential(FunctionModel1DAuto):
     def f(self,m,a=1,b=5):
         return a*10**(-m/2.5 +b)
 
@@ -61,6 +65,9 @@ class ObjectCreator(object):
         self.mean_b = np.mean(fcat['B'])
         self.mean_ec = np.sqrt(1-(1-self.mean_ellip)*(1-self.mean_ellip))
         self.mean_a = self.mean_b/math.sqrt(1-self.mean_ec*self.mean_ec)
+        
+        self.parameter_a = 0.0
+        self.parameter_b = 0.0
 
 
         self.out_mag_all = []
@@ -70,17 +77,16 @@ class ObjectCreator(object):
         self.out_mag_after_transf = []
         
         
-        
         self.posible_obj_distances = []
         self.posible_obj_index = []
         self.cont_lost_obj_per = []
 
 
         self.random_mag = []
-        self.random_intensity = []
-        self.random_ellip = []
-        self.random_b = []
-        self.random_a = []
+        #self.random_intensity = []
+        #self.random_ellip = []
+        #self.random_b = []
+        #self.random_a = []
     
     
         self.x_position_int = []
@@ -160,11 +166,11 @@ class ObjectCreator(object):
     """
         Method that fits the magnitude as a function of the flux in normal scale through an exponential model defined myself using
         
-        """
+    """
     
     def plot_fitting_exp_owndefined(self, x, y):
         sns.set(style="white", palette="muted", color_codes=True)
-        model = magnitude_exponential()
+        model = MagnitudeExponential()
         af,bf = model.fitData(x,y)
         model.plot( logplot='xy')
         plt.text(0,11,'My Model:',fontsize=16)
@@ -179,8 +185,6 @@ class ObjectCreator(object):
         
         
         return model, af, bf
-    
-    
     
     
     
@@ -224,7 +228,12 @@ class ObjectCreator(object):
         return M * math.exp(-0.5*((x-x_0)*(x-x_0)/(a*a) + (y-y_0)*(y-y_0)/(b*b)))
     
     
-    def f_way_back(self,f,a=112.188243402,b=9.95005045126):
+    """
+        Define the relation between m(F) according to the astrophysical definition
+        
+    """
+    
+    def f_way_back(self,f,a=self.parameter_a, b=self.parameter_b):
         return -2.5*(math.log10(f/a) - b)
     
     """
@@ -312,19 +321,15 @@ class ObjectCreator(object):
         
         #self.plot_fitting_exp(self.fcat['mag_iso'], self.fcat['flux_iso'])
         
-        model, af, bf = self.plot_fitting_exp_owndefined(self.fcat['mag_iso'], self.fcat['flux_iso'])
+        model, self.parameter_a, self.parameter_b = self.plot_fitting_exp_owndefined(self.fcat['mag_iso'], self.fcat['flux_iso'])
         
-        #intensity_value = fitting_intensity_mag(mag_value)
         
-        intensity_value = model.f(m = mag_value, b = bf, a = af)
-        intensity_value_mag = model.f(m = self.mean_mag, b = bf, a = af)
+        intensity_value = model.f(m = mag_value, b = self.parameter_b, a = self.parameter_a)
+        intensity_value_mag = model.f(m = self.mean_mag, b = self.parameter_b, a = self.parameter_a)
         
-        print 'Value af is {}'.format(af)
-        print 'Value bf is {}'.format(bf)
-        
+        print 'Value parameter_a is {}'.format(self.parameter_a)
+        print 'Value parameter_b is {}'.format(self.parameter_b)
         print 'Value intensity is {}'.format(intensity_value)
-        #print 'Mean value intensity is {}'.format(intensity_value_mag)
-        
         print 'mean_b is {}\nmean_a is {}'.format(self.mean_b, self.mean_a)
         
         y_pixel = int(round(n*self.mean_b))
@@ -367,7 +372,7 @@ class ObjectCreator(object):
         
             cont_percentage = cont_percentage + 1
 
-#Attach intensity value to the rest of the picture pixels.
+        #Attach intensity value to the rest of the picture pixels. In case you want to obtain only a pic with the new celestial objects please comment these lines
         for g in range (self.y_data_image):
             for f in range (self.x_data_image):
                 if self.matrix_data[g,f]<=0.2:
@@ -388,6 +393,8 @@ class ObjectCreator(object):
     """
 
     def searcher(self, fcat, fcat_simulation):
+        
+        print '\nTry searcher\n'
         
         x_position_fcat_simulation = fcat_simulation['x'].astype(int)
         y_position_fcat_simulation = fcat_simulation['y'].astype(int)
@@ -415,6 +422,8 @@ class ObjectCreator(object):
         Method that looks for the celestial objects already created by the previous method in the new catalog obtained after running Source Extractor.
         
         TRY: diccionaries with a double key-tag
+        
+        PROBLEM: quite fast, only int-keys
         
         OPTIONS in FUTURE: may it be implementated in C++ using mapping
     
@@ -444,71 +453,22 @@ class ObjectCreator(object):
             #print type(x_position_fcat_simulation[i])
             d[(int(x_position_fcat_simulation[i]), int(y_position_fcat_simulation[i]))] = fcat_simulation['flux_iso'][i]
         
-        #print d
-        
         for k in range (0, length_x_position_simulation):
             flux = d.get((int(self.x_position_simulation[k]), int(self.y_position_simulation[k])), -1)
             if flux is not -1:
-                self.out_mag.append(self.f_way_back(flux,a=112.188243402,b=9.95005045126))
+                self.out_mag.append(self.f_way_back(flux,a=self.parameter_a,b=self.parameter_b))
 
 
     """
         Method that looks for the celestial objects already created by the previous method in the new catalog obtained after running Source Extractor.
         
-        TRY: KDTree
+        TRY: KDTree altorigthm
+        
+        ADVANTAGES: really fast
     
     """
         
     def searcher_kdtree(self, fcat, fcat_simulation, FILE_NAME):
-        self.posible_obj_distances = []
-        self.posible_obj_index = []
-
-        
-        print '\nTry KDTree'
-        x_position_fcat_simulation = fcat_simulation['x']
-        y_position_fcat_simulation = fcat_simulation['y']
-        
-        mag_iso_fcat_simulation = fcat_simulation['mag_iso']
-        flux_iso_fcat_simulation = fcat_simulation['flux_iso']
-        
-        position_all = zip(x_position_fcat_simulation.ravel(), y_position_fcat_simulation.ravel())
-        tree = spatial.KDTree(position_all)
-        position_obj_created = zip(self.x_position_simulation, self.y_position_simulation)
-        
-        array_length = len(self.x_position_simulation)
-        
-
-        #We ask the KDTree which are the closest neightbours
-        
-        cont_lost_obj = 0
-        self.posible_obj_distances, self.posible_obj_index = tree.query(position_obj_created, distance_upper_bound = 3*self.mean_a)
-        
-        
-        
-
-        for i in [i for i,x in enumerate(self.posible_obj_index) if x < len(position_all)]:
-                self.out_mag.append(mag_iso_fcat_simulation[x])
-                self.out_flux.append(flux_iso_fcat_simulation[x])
-                self.out_mag_after_transf.append(self.f_way_back(flux_iso_fcat_simulation[x],a=112.188243402,b=9.95005045126))
-        
-        for i in [i for i,x in enumerate(self.posible_obj_index) if x == len(position_all)]:
-                cont_lost_obj = cont_lost_obj + 1
-
-        print 'The number of lost galaxies is {}\n'.format(cont_lost_obj)
-
-
-
-
-
-
-    """
-    Method that looks for the celestial objects already created by the previous method in the new catalog obtained after running Source Extractor.
-    
-    TRY: KDTree
-    
-    """
-        
-    def searcher_kdtree_try(self, fcat, fcat_simulation, FILE_NAME):
         
         print '\nTry KDTree'
         x_position_fcat_simulation = fcat_simulation['x']
@@ -533,8 +493,4 @@ class ObjectCreator(object):
         self.lost_objects.append(cont_lost_obj)
 
         print 'The number of lost galaxies is {}\n'.format(cont_lost_obj)
-
-
-
-
 
