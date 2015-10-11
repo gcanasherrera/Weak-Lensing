@@ -233,7 +233,7 @@ class ObjectCreator(object):
         
     """
     
-    def f_way_back(self,f,a=self.parameter_a, b=self.parameter_b):
+    def f_way_back(self,f,a=0, b=0):
         return -2.5*(math.log10(f/a) - b)
     
     """
