@@ -74,7 +74,7 @@ for i in range (0, len(mag_input)):
     
     
     print '\nSearcher\n'
-    simulation.searcher_kdtree_try(catag.fcat, catag_simulation.fcat, 'w2_stack_53')
+    simulation.searcher_kdtree(catag.fcat, catag_simulation.fcat, 'w2_stack_53')
     
     print 'The mean value of the output sextractor magnitude is {}\nThe std deviation is {}\nThe mean value of the output wayback magnitude is {}\nThe std deviation (wayback magnitude) is {}\nThe mean value of the output flux is {}\nThe std deviation (flux) is {}\n'.format(np.mean(simulation.out_mag), np.std(simulation.out_mag), np.mean(simulation.out_mag_after_transf), np.std(simulation.out_mag_after_transf), np.mean(simulation.out_flux), np.std(simulation.out_flux))
     
