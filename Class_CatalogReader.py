@@ -47,7 +47,7 @@ class CatalogReader(object):
         
         names_cat = ["number", "flux_iso", "fluxerr_iso", "mag_iso", "magger_iso", "mag_aper_1", "magerr_aper_1", "mag", "magger", "flux_max", "isoarea", "x", "y", "ra", "dec", "ixx", "iyy", "ixy", "A", "B", "theta", "enlogation", "ellipticity", "FWHM", "flags", "class_star"]
         if self.catalog.endswith(suffix) == False:
-            self.transform(self.catalog)
+            self.transform()
             self.fcat = np.genfromtxt(self.catalog_fiat, names=names_cat)
 
         else:
