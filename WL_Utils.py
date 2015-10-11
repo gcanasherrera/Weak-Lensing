@@ -17,7 +17,7 @@ __email__ = "gch24@alumnos.unican.es"
 
 
 import matplotlib.pyplot as plt #Works for making python behave like matlab
-import sextutils as sex #Program used to read the original catalog
+#import sextutils as sex #Program used to read the original catalog
 import numpy as np #Maths arrays and more
 import numpy.ma as ma #Masking arrays
 import sys #Strings inputs
@@ -26,7 +26,7 @@ import subprocess #calling to the terminal
 from astropy.modeling import models, fitting #Package for fitting Legendre Polynomials
 import warnings #Advices
 from mpl_toolkits.mplot3d import Axes3D #Plotting in 3D
-import ellip_fitter as ellip_fit #Ellipticity fitting
+import WL_ellip_fitter as ellip_fit #Ellipticity fitting
 
 
 type_cat = ".cat"
