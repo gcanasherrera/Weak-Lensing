@@ -27,6 +27,8 @@ number_lost_objects = np.genfromtxt('w2_53_stack_simulation_number_lost_objects.
 param = ["mean_a", "mean_b"]
 par = np.genfromtxt('w2_53_stack_axis_param.txt', names=param)
 
+flux_input_iso = []
+mag_input_iso = []
 
 #PLOT 1: Number of lost Galaxies vs mag_input
 sns.set(style="white", palette="muted", color_codes=True)
@@ -57,7 +59,8 @@ plt.show()
 #PLOT 3: flux_out_iso vs flux_input_iso
 
 ratio_flux=map(truediv, flux_output, flux_input)
-flux_input_iso =  [x * ratio_flux for x in flux_input]
+for i in range (0, len(ratio_flux):
+    flux_input_iso.append(ratio_flux[i]*flux_input[i])
 
 sns.set(style="white", palette="muted", color_codes=True)
 plt.figure()
@@ -71,7 +74,9 @@ plt.show()
 #PLOT 4: mag_output_iso vs mag_input_iso
 
 ratio_mag=map(truediv, mag_output_sex, mag_input)
-mag_input_iso =  [x * ratio_mag for x in mag_input]
+
+for i in range (0, len(ratio_mag):
+    mag_input_iso.append(ratio_mag[i]*mag_input[i])
 
 sns.set(style="white", palette="muted", color_codes=True)
 plt.figure()
