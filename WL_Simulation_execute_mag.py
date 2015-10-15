@@ -117,5 +117,5 @@ np.savetxt('w2_53_stack_simulation_flux_output_max_error.txt', flux_output_max_e
 np.savetxt('w2_53_stack_simulation_number_lost_objects.txt', number_lost_objects)
 
 
-np.savetxt('w2_53_stack_axis_param.txt', (simulation.mean_a, simulation_mean_b))
+np.savetxt('w2_53_stack_axis_param.txt', (simulation.mean_a, simulation.mean_b))
 
