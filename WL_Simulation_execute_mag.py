@@ -29,8 +29,8 @@ import math
 
 
 #Define arrays for plotting
-mag_input = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]
-#mag_input = [5]
+#mag_input = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]
+mag_input = [10]
 mag_output_sex = []
 mag_output_wayback = []
 mag_output_error_sex = []
@@ -69,7 +69,7 @@ for i in range (0, len(mag_input)):
     simulation.objectcreator_magnitude(mag_value = mag_input[i], n = 5)
     
     print '\nSextractor\n'
-    sex_caller('w2_53_stack_Simulation_{}.fits'.format(mag_input[i]), 'w2_53_stack_simulation_{}'.format(mag_input[i]))
+    sex_caller('w2_53_stack_simulation_{}.fits'.format(mag_input[i]), 'w2_53_stack_simulation_{}'.format(mag_input[i]))
     catag_simulation = CatalogReader('w2_53_stack_simulation_{}.cat'.format(mag_input[i]))
     catag_simulation.read()
     
@@ -104,7 +104,18 @@ for mag in mag_input:
 
 #SAVE DATA in txt file
 
-np.savetxt('w2_53_stack_simulation_mag.txt', (mag_input, mag_ouput_sex, mag_ouput_sex_error, mag_ouput_wayback, mag_ouput_wayback_error, flux_output, flux_output_error, flux_output_max, flux_output_max_error, flux_input, number_lost_objects))
+np.savetxt('w2_53_stack_simulation_mag_input.txt', mag_input)
+np.savetxt('w2_53_stack_simulation_mag_output_sex.txt', mag_output_sex)
+np.savetxt('w2_53_stack_simulation_mag_output_wayback.txt', mag_output_wayback)
+np.savetxt('w2_53_stack_simulation_mag_output_error_sex.txt', mag_output_error_sex)
+np.savetxt('w2_53_stack_simulation_mag_output_error_wayback.txt', mag_output_error_wayback)
+np.savetxt('w2_53_stack_simulation_flux_input.txt', flux_input)
+np.savetxt('w2_53_stack_simulation_flux_output.txt', flux_output)
+np.savetxt('w2_53_stack_simulation_flux_output_error.txt', flux_output_error)
+np.savetxt('w2_53_stack_simulation_flux_output_max.txt', flux_output_max)
+np.savetxt('w2_53_stack_simulation_flux_output_max_error.txt', flux_output_max_error)
+np.savetxt('w2_53_stack_simulation_number_lost_objects.txt', number_lost_objects)
+
 
 np.savetxt('w2_53_stack_axis_param.txt', (simulation.mean_a, simulation_mean_b))
 

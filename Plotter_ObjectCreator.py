@@ -11,19 +11,28 @@ import math
 
 #Read txt file
 
-variables = ["mag_input", "mag_ouput_sex", "mag_ouput_sex_error", "mag_ouput_wayback", "mag_ouput_wayback_error", "flux_output", "flux_output_error", "flux_output_max", "flux_output_max_error", "flux_input", "number_lost_objects"]
+mag_input = np.genfromtxt('w2_53_stack_simulation_mag_input.txt')
+mag_output_sex = np.genfromtxt('w2_53_stack_simulation_mag_output_sex.txt')
+mag_output_wayback = np.genfromtx('w2_53_stack_simulation_mag_output_wayback.txt')
+mag_output_error_sex = np.genfromtx('w2_53_stack_simulation_mag_output_error_sex.txt')
+mag_output_error_wayback = np.genfromtx('w2_53_stack_simulation_mag_output_error_wayback.txt')
+flux_input = np.genfromtx('w2_53_stack_simulation_flux_input.txt')
+flux_output = np.genfromtx('w2_53_stack_simulation_flux_output.txt')
+flux_output_error = np.genfromtx('w2_53_stack_simulation_flux_output_error.txt')
+flux_output_max = np.genfromtx('w2_53_stack_simulation_flux_output_max.txt')
+flux_output_max_error = np.genfromtx('w2_53_stack_simulation_flux_output_max_error.txt')
+number_lost_objects = np.genfromtx('w2_53_stack_simulation_number_lost_objects.txt')
+
 
 param = ["mean_a, mean_b"]
-
-file = np.genfromtxt('w2_53_stack_simulation_mag.txt', names=variables)
-par = np.genfromtxt(''w2_53_stack_axis_param.txt', names=param)
+par = np.genfromtxt('w2_53_stack_axis_param.txt', names=param)
 
 
 #PLOT 1: Number of lost Galaxies vs mag_input
 sns.set(style="white", palette="muted", color_codes=True)
 plt.figure()
 plt.title('Number of lost Galaxies vs mag_input_max')
-plt.plot(file["mag_input"], file["number_lost_objects"], 'ko')
+plt.plot(mag_input, number_lost_objects, 'ko')
 plt.xlabel('Mag_input_max')
 plt.ylabel('Number Lost Objects')
 plt.show()
@@ -40,7 +49,7 @@ print '\nExperimental Normalization: {}'.format(normalization_exp)
 sns.set(style="white", palette="muted", color_codes=True)
 plt.figure()
 plt.title('flux_out_max vs flux_input (Linear Scale)')
-plt.errorbar(file["flux_input"], file["flux_output_max"], file["flux_output_max_error"], 0, fmt='ko')
+plt.errorbar(flux_input, flux_output_max, flux_output_max_error, 0, fmt='ko')
 plt.xlabel('flux_input_max')
 plt.ylabel('flux_output_max')
 plt.show()
@@ -53,7 +62,7 @@ flux_input_iso =  [x * ratio_flux for x in file["flux_input"]]
 sns.set(style="white", palette="muted", color_codes=True)
 plt.figure()
 plt.title('flux_out_iso vs flux_input_iso (Linear Scale)')
-plt.errorbar(file["flux_input_iso"], file["flux_output"], file["flux_output_error"], 0, fmt='ko')
+plt.errorbar(flux_input_iso, flux_output, flux_output_error, 0, fmt='ko')
 plt.xlabel('flux_input_iso')
 plt.ylabel('flux_output_iso')
 plt.show()
@@ -67,7 +76,7 @@ mag_input_iso =  [x * ratio_mag for x in mag_input]
 sns.set(style="white", palette="muted", color_codes=True)
 plt.figure()
 plt.title('mag_out_iso vs mag_input_iso (Linear Scale)')
-plt.errorbar(file["mag_input_iso"], file["mag_output_sex"], file["mag_output_error_sex"], 0, fmt='ko')
+plt.errorbar(mag_input_iso, mag_output_sex, mag_output_error_sex, 0, fmt='ko')
 plt.xlabel('mag_input_iso')
 plt.ylabel('mag_output_iso')
 plt.show()
