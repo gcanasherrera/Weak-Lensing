@@ -24,7 +24,7 @@ flux_output_max_error = np.genfromtxt('w2_53_stack_simulation_flux_output_max_er
 number_lost_objects = np.genfromtxt('w2_53_stack_simulation_number_lost_objects.txt')
 
 
-param = ["mean_a, mean_b"]
+param = ["mean_a", "mean_b"]
 par = np.genfromtxt('w2_53_stack_axis_param.txt', names=param)
 
 
