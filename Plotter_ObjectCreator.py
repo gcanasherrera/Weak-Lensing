@@ -59,7 +59,7 @@ plt.show()
 #PLOT 3: flux_out_iso vs flux_input_iso
 
 ratio_flux=map(truediv, flux_output, flux_input)
-for i in range (0, len(ratio_flux):
+for i in range (0, len(ratio_flux)):
     flux_input_iso.append(ratio_flux[i]*flux_input[i])
 
 sns.set(style="white", palette="muted", color_codes=True)
@@ -75,7 +75,7 @@ plt.show()
 
 ratio_mag=map(truediv, mag_output_sex, mag_input)
 
-for i in range (0, len(ratio_mag):
+for i in range (0, len(ratio_mag)):
     mag_input_iso.append(ratio_mag[i]*mag_input[i])
 
 sns.set(style="white", palette="muted", color_codes=True)
