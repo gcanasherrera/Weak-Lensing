@@ -41,7 +41,7 @@ plt.show()
 #PLOT 2: flux_out_max vs flux_input_max (Linear Scale)
 
 normalization_th = 2*math.pi*par["mean_a"]*par["mean_b"]
-normalization_exp = np.mean(map(truediv, file["flux_output], file[flux_input"]))
+normalization_exp = np.mean(map(truediv, flux_output, flux_input))
 
 print '\nTheoretical Normalization: {}'.format(normalization_th)
 print '\nExperimental Normalization: {}'.format(normalization_exp)
