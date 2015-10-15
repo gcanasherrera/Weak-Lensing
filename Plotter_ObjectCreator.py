@@ -56,8 +56,8 @@ plt.show()
 
 #PLOT 3: flux_out_iso vs flux_input_iso
 
-ratio_flux=map(truediv, file["flux_output"], file["flux_input"])
-flux_input_iso =  [x * ratio_flux for x in file["flux_input"]]
+ratio_flux=map(truediv, flux_output, flux_input)
+flux_input_iso =  [x * ratio_flux for x in flux_input]
 
 sns.set(style="white", palette="muted", color_codes=True)
 plt.figure()
