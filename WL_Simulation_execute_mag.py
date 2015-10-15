@@ -64,6 +64,7 @@ for i in range (0, len(mag_input)):
     simulation.out_flux = []
     simulation.out_mag_after_transf = []
     
+    
     print '\nSimulation\n'
     
     simulation.objectcreator_magnitude(mag_value = mag_input[i], n = 5)
@@ -90,7 +91,7 @@ for i in range (0, len(mag_input)):
     flux_output_max.append(np.mean(simulation.out_flux_max))
     flux_output_max_error.append(np.std(simulation.out_flux_max))
     np.savetxt('simulation_index_{}.txt'.format(i), simulation.posible_obj_index)
-    number_lost_objects.append(simulation.lost_objects)
+
 
 
 #Getting flux_max_input from mag_input
@@ -99,8 +100,6 @@ fitting_flux = MagnitudeExponential()
 
 for mag in mag_input:
     flux_input.append(fitting_flux.f(mag, a=simulation.parameter_a,b=simulation.parameter_b))
-
-
 
 #SAVE DATA in txt file
 
@@ -114,7 +113,7 @@ np.savetxt('w2_53_stack_simulation_flux_output.txt', flux_output)
 np.savetxt('w2_53_stack_simulation_flux_output_error.txt', flux_output_error)
 np.savetxt('w2_53_stack_simulation_flux_output_max.txt', flux_output_max)
 np.savetxt('w2_53_stack_simulation_flux_output_max_error.txt', flux_output_max_error)
-np.savetxt('w2_53_stack_simulation_number_lost_objects.txt', number_lost_objects)
+np.savetxt('w2_53_stack_simulation_number_lost_objects.txt', simulation.lost_objects)
 
 
 np.savetxt('w2_53_stack_axis_param.txt', (simulation.mean_a, simulation.mean_b))
