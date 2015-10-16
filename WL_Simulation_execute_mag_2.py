@@ -52,8 +52,8 @@ simulation = ObjectCreator(catag.fcat)
 
 
 #For-loop for 1 to 30 mag
-for i in range (0, len(mag_input)):
-    print '\nRound {}\n'.format(mag_input[i])
+for mag in mag_input:
+    print '\nRound {}\n'.format(mag)
     print '\nMasking \n'
     simulation.masking_matrix('w2_53_stack.fits')
     simulation.packing_percentage(number_objects = 4000)
@@ -67,11 +67,11 @@ for i in range (0, len(mag_input)):
     
     print '\nSimulation\n'
     
-    simulation.objectcreator_magnitude(mag_value = mag_input[i], n = 5)
+    simulation.objectcreator_magnitude(mag_value = mag, n = 5)
     
     print '\nSextractor\n'
-    sex_caller('w2_53_stack_simulation_{}.fits'.format(mag_input[i]), 'w2_53_stack_simulation_{}'.format(mag_input[i]))
-    catag_simulation = CatalogReader('w2_53_stack_simulation_{}.cat'.format(mag_input[i]))
+    sex_caller('w2_53_stack_simulation_{}.fits'.format(mag), 'w2_53_stack_simulation_{}'.format(mag))
+    catag_simulation = CatalogReader('w2_53_stack_simulation_{}.cat'.format(mag))
     catag_simulation.read()
     
     
@@ -90,7 +90,7 @@ for i in range (0, len(mag_input)):
     flux_output_error.append(np.std(simulation.out_flux))
     flux_output_max.append(np.mean(simulation.out_flux_max))
     flux_output_max_error.append(np.std(simulation.out_flux_max))
-    np.savetxt('simulation_index_{}.txt'.format(mag_input[i]), simulation.posible_obj_index)
+    np.savetxt('simulation_index_{}.txt'.format(mag), simulation.posible_obj_index)
 
 
 
