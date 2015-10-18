@@ -52,7 +52,7 @@ simulation = ObjectCreator(catag.fcat)
 
 
 #For-loop for 1 to 30 mag
-for i in range (0, len(mag_input)):
+for mag in mag_input:
     print '\nRound {}\n'.format(mag)
     print '\nMasking \n'
     simulation.masking_matrix('w2_53_stack.fits')
