@@ -57,7 +57,7 @@ for mag in mag_input:
     print '\nMasking \n'
     simulation.masking_matrix('w2_53_stack.fits')
     simulation.packing_percentage(number_objects = 4000)
-    
+    simulation.picture_data = []
     simulation.out_mag = []
     simulation.posible_obj_distances = []
     simulation.posible_obj_index = []
