@@ -29,8 +29,8 @@ import math
 
 
 #Define arrays for plotting
-#mag_input = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-mag_input = [7,8,9,10]
+mag_input = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+#mag_input = [7,8,9,10]
 mag_output_sex = []
 mag_output_wayback = []
 mag_output_error_sex = []
@@ -51,12 +51,13 @@ catag.read()
 simulation = ObjectCreator(catag.fcat)
 
 
+print '\nMasking \n'
+simulation.masking_matrix('w2_53_stack.fits')
+
+
 #For-loop for 1 to 30 mag
 for mag in mag_input:
     print '\nRound {}\n'.format(mag)
-    print '\nMasking \n'
-    simulation.matrix_data = []
-    simulation.masking_matrix('w2_53_stack.fits')
     simulation.packing_percentage(number_objects = 4000)
     simulation.out_mag = []
     simulation.posible_obj_distances = []
