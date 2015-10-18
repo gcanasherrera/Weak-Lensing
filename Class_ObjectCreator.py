@@ -254,7 +254,7 @@ class ObjectCreator(object):
 
 
     def open_read_picture(self, picture):
-        hdulist_data_image=fits.open(picture, memmap=False)
+        hdulist_data_image=fits.open(picture, memmap=True)
         self.x_data_image=hdulist_data_image[0].header['NAXIS1']
         self.y_data_image=hdulist_data_image[0].header['NAXIS2']
         print 'The picture has a size of ({}x{})\n'.format(self.x_data_image, self.y_data_image)
