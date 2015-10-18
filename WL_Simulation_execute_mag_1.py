@@ -29,8 +29,8 @@ import math
 
 
 #Define arrays for plotting
-mag_input = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-#mag_input = [10]
+#mag_input = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+mag_input = [7,8,9,10]
 mag_output_sex = []
 mag_output_wayback = []
 mag_output_error_sex = []
