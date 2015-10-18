@@ -54,7 +54,7 @@ print '\nMasking \n'
 simulation.masking_matrix('w2_53_stack.fits')
 
 #For-loop for 1 to 30 mag
-for mag in (1,5):
+for mag in range (1,5):
     print '\nRound {}\n'.format(mag)
     simulation.packing_percentage(number_objects = 4000)
     simulation.out_mag = []
@@ -97,7 +97,7 @@ for mag in (1,5):
 
 
 #For-loop for 1 to 30 mag
-for mag in (6,10):
+for mag in range (6,10):
     print '\nRound {}\n'.format(mag)
     simulation.packing_percentage(number_objects = 4000)
     simulation.out_mag = []
@@ -137,7 +137,7 @@ for mag in (6,10):
 
 
 #For-loop for 1 to 30 mag
-for mag in (11,15):
+for mag in range (11,15):
     print '\nRound {}\n'.format(mag)
     simulation.packing_percentage(number_objects = 4000)
     simulation.out_mag = []
@@ -177,7 +177,7 @@ for mag in (11,15):
 
 
 #For-loop for 1 to 30 mag
-for mag in (16,20):
+for mag in range (16,20):
     print '\nRound {}\n'.format(mag)
     simulation.packing_percentage(number_objects = 4000)
     simulation.out_mag = []
@@ -217,7 +217,7 @@ for mag in (16,20):
 
 
 #For-loop for 1 to 30 mag
-for mag in (21,25):
+for mag in range (21,25):
     print '\nRound {}\n'.format(mag)
     simulation.packing_percentage(number_objects = 4000)
     simulation.out_mag = []
@@ -258,7 +258,7 @@ for mag in (21,25):
 
 
 #For-loop for 1 to 30 mag
-for mag in (26,30):
+for mag in range (26,30):
     print '\nRound {}\n'.format(mag)
     simulation.packing_percentage(number_objects = 4000)
     simulation.out_mag = []
