@@ -55,9 +55,9 @@ simulation = ObjectCreator(catag.fcat)
 for mag in mag_input:
     print '\nRound {}\n'.format(mag)
     print '\nMasking \n'
+    simulation.matrix_data = []
     simulation.masking_matrix('w2_53_stack.fits')
     simulation.packing_percentage(number_objects = 4000)
-    simulation.picture_data = []
     simulation.out_mag = []
     simulation.posible_obj_distances = []
     simulation.posible_obj_index = []
@@ -91,7 +91,6 @@ for mag in mag_input:
     flux_output_max.append(np.mean(simulation.out_flux_max))
     flux_output_max_error.append(np.std(simulation.out_flux_max))
     np.savetxt('simulation_index_{}.txt'.format(mag), simulation.posible_obj_index)
-
 
 
 #Getting flux_max_input from mag_input
