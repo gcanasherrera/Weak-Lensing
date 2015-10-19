@@ -50,11 +50,10 @@ catag.read()
 #Create object for simulation
 simulation = ObjectCreator(catag.fcat)
 
-print '\nMasking \n'
-simulation.masking_matrix('w2_53_stack.fits')
 
 #For-loop for 1 to 30 mag
 for mag in range (1,5):
+    simulation.masking_matrix('w2_53_stack.fits')
     print '\nRound {}\n'.format(mag)
     simulation.packing_percentage(number_objects = 4000)
     simulation.out_mag = []
@@ -98,6 +97,7 @@ for mag in range (1,5):
 
 #For-loop for 1 to 30 mag
 for mag in range (5,10):
+    simulation.masking_matrix('w2_53_stack.fits')
     print '\nRound {}\n'.format(mag)
     simulation.packing_percentage(number_objects = 4000)
     simulation.out_mag = []
@@ -138,6 +138,7 @@ for mag in range (5,10):
 
 #For-loop for 1 to 30 mag
 for mag in range (10,15):
+    simulation.masking_matrix('w2_53_stack.fits')
     print '\nRound {}\n'.format(mag)
     simulation.packing_percentage(number_objects = 4000)
     simulation.out_mag = []
@@ -178,6 +179,7 @@ for mag in range (10,15):
 
 #For-loop for 1 to 30 mag
 for mag in range (15,20):
+    simulation.masking_matrix('w2_53_stack.fits')
     print '\nRound {}\n'.format(mag)
     simulation.packing_percentage(number_objects = 4000)
     simulation.out_mag = []
@@ -218,6 +220,7 @@ for mag in range (15,20):
 
 #For-loop for 1 to 30 mag
 for mag in range (20, 25):
+    simulation.masking_matrix('w2_53_stack.fits')
     print '\nRound {}\n'.format(mag)
     simulation.packing_percentage(number_objects = 4000)
     simulation.out_mag = []
@@ -259,6 +262,7 @@ for mag in range (20, 25):
 
 #For-loop for 1 to 30 mag
 for mag in range (25,30):
+    simulation.masking_matrix('w2_53_stack.fits')
     print '\nRound {}\n'.format(mag)
     simulation.packing_percentage(number_objects = 4000)
     simulation.out_mag = []
