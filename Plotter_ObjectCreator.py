@@ -44,10 +44,6 @@ plt.show()
 #PLOT 2: flux_out_max vs flux_input_max (Linear Scale)
 
 normalization_th = 2*math.pi*par["mean_a"]*par["mean_b"]
-normalization_exp = np.mean(map(truediv, flux_output, flux_input))
-
-print '\nTheoretical Normalization: {}'.format(normalization_th)
-print '\nExperimental Normalization: {}'.format(normalization_exp)
 
 sns.set(style="white", palette="muted", color_codes=True)
 plt.figure()
@@ -60,6 +56,12 @@ plt.show()
 #PLOT 3: flux_out_iso vs flux_input_iso
 
 ratio_flux=map(truediv, flux_output, flux_input)
+normalization_exp = np.mean(ratio_flux)
+
+print '\nTheoretical Normalization: {}'.format(normalization_th)
+print '\nExperimental Normalization: {}'.format(normalization_exp)
+
+
 for i in range (0, len(ratio_flux)):
     flux_input_iso.append(ratio_flux[i]*flux_input[i])
 
