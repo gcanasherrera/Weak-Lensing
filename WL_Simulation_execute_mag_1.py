@@ -256,7 +256,7 @@ for mag in range (20,25):
 
 
 
-for mag in range (25,30):
+for mag in range (25,31):
     simulation.masking_matrix('w2_53_stack.fits')
     print '\nRound {}\n'.format(mag)
     simulation.packing_percentage(number_objects = 4000)
