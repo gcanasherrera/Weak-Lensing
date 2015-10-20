@@ -12,60 +12,17 @@ import math
 #Read txt file ' w2_53_stack_simulation.txt'
 
 
-mag_input_1 = np.genfromtxt('w2_53_stack_simulation_mag_input_1.txt')
-mag_output_sex_1 = np.genfromtxt('w2_53_stack_simulation_mag_output_sex_1.txt')
-mag_output_wayback_1 = np.genfromtxt('w2_53_stack_simulation_mag_output_wayback_1.txt')
-mag_output_error_sex_1 = np.genfromtxt('w2_53_stack_simulation_mag_output_error_sex_1.txt')
-mag_output_error_wayback_1 = np.genfromtxt('w2_53_stack_simulation_mag_output_error_wayback_1.txt')
-flux_input_1 = np.genfromtxt('w2_53_stack_simulation_flux_input_1.txt')
-flux_output_1 = np.genfromtxt('w2_53_stack_simulation_flux_output_1.txt')
-flux_output_error_1 = np.genfromtxt('w2_53_stack_simulation_flux_output_error_1.txt')
-flux_output_max_1 = np.genfromtxt('w2_53_stack_simulation_flux_output_max_1.txt')
-flux_output_max_error_1 = np.genfromtxt('w2_53_stack_simulation_flux_output_max_error_1.txt')
-number_lost_objects_1 = np.genfromtxt('w2_53_stack_simulation_number_lost_objects_1.txt')
-
-
-
-mag_input_2 = np.genfromtxt('w2_53_stack_simulation_mag_input_2.txt')
-mag_output_sex_2 = np.genfromtxt('w2_53_stack_simulation_mag_output_sex_2.txt')
-mag_output_wayback_2 = np.genfromtxt('w2_53_stack_simulation_mag_output_wayback_2.txt')
-mag_output_error_sex_2 = np.genfromtxt('w2_53_stack_simulation_mag_output_error_sex_2.txt')
-mag_output_error_wayback_2 = np.genfromtxt('w2_53_stack_simulation_mag_output_error_wayback_2.txt')
-flux_input_2 = np.genfromtxt('w2_53_stack_simulation_flux_input_2.txt')
-flux_output_2 = np.genfromtxt('w2_53_stack_simulation_flux_output_2.txt')
-flux_output_error_2 = np.genfromtxt('w2_53_stack_simulation_flux_output_error_2.txt')
-flux_output_max_2 = np.genfromtxt('w2_53_stack_simulation_flux_output_max_2.txt')
-flux_output_max_error_2 = np.genfromtxt('w2_53_stack_simulation_flux_output_max_error_2.txt')
-number_lost_objects_2 = np.genfromtxt('w2_53_stack_simulation_number_lost_objects_2.txt')
-
-
-mag_input_3 = np.genfromtxt('w2_53_stack_simulation_mag_input_3.txt')
-mag_output_sex_3 = np.genfromtxt('w2_53_stack_simulation_mag_output_sex_3.txt')
-mag_output_wayback_3 = np.genfromtxt('w2_53_stack_simulation_mag_output_wayback_3.txt')
-mag_output_error_sex_3 = np.genfromtxt('w2_53_stack_simulation_mag_output_error_sex_3.txt')
-mag_output_error_wayback_3 = np.genfromtxt('w2_53_stack_simulation_mag_output_error_wayback_3.txt')
-flux_input_3 = np.genfromtxt('w2_53_stack_simulation_flux_input_3.txt')
-flux_output_3 = np.genfromtxt('w2_53_stack_simulation_flux_output_3.txt')
-flux_output_error_3 = np.genfromtxt('w2_53_stack_simulation_flux_output_error_3.txt')
-flux_output_max_3 = np.genfromtxt('w2_53_stack_simulation_flux_output_max_3.txt')
-flux_output_max_error_3 = np.genfromtxt('w2_53_stack_simulation_flux_output_max_error_3.txt')
-number_lost_objects_3 = np.genfromtxt('w2_53_stack_simulation_number_lost_objects_3.txt')
-
-
-
-mag_input = np.append(mag_input_1, mag_input_2, mag_input_3)
-mag_output_sex = np.append(mag_output_sex_1, mag_output_sex_2, mag_output_sex_3)
-mag_output_wayback = np.append(mag_output_wayback_1, mag_output_wayback_2, mag_output_wayback_3)
-mag_output_error_sex = np.append(mag_output_error_sex_1, mag_output_error_sex_2, mag_output_error_sex_3)
-mag_output_error_wayback = np.append(mag_output_error_wayback_1, mag_output_error_wayback_2, mag_output_error_wayback_3)
-flux_input = np.append(flux_input_1, flux_input_2, flux_input_3)
-flux_output = np.append(flux_output_1, flux_output_2, flux_output_3)
-flux_output_error = np.append(flux_output_error_1, flux_output_error_2, flux_output_error_3)
-flux_output_max = np.append(flux_output_max_1, flux_output_max_2, flux_output_max_3)
-flux_output_max_error = np.append(flux_output_max_error_1, flux_output_max_error_2, flux_output_max_error_3)
-number_lost_objects = np.append(number_lost_objects_1, number_lost_objects_2, number_lost_objects_3)
-
-
+mag_input = np.genfromtxt('w2_53_stack_simulation_mag_input_1.txt')
+mag_output_sex = np.genfromtxt('w2_53_stack_simulation_mag_output_sex_1.txt')
+mag_output_wayback = np.genfromtxt('w2_53_stack_simulation_mag_output_wayback_1.txt')
+mag_output_error_sex = np.genfromtxt('w2_53_stack_simulation_mag_output_error_sex_1.txt')
+mag_output_error_wayback = np.genfromtxt('w2_53_stack_simulation_mag_output_error_wayback_1.txt')
+flux_input = np.genfromtxt('w2_53_stack_simulation_flux_input_1.txt')
+flux_output = np.genfromtxt('w2_53_stack_simulation_flux_output_1.txt')
+flux_output_error = np.genfromtxt('w2_53_stack_simulation_flux_output_error_1.txt')
+flux_output_max = np.genfromtxt('w2_53_stack_simulation_flux_output_max_1.txt')
+flux_output_max_error = np.genfromtxt('w2_53_stack_simulation_flux_output_max_error_1.txt')
+number_lost_objects = np.genfromtxt('w2_53_stack_simulation_number_lost_objects_1.txt')
 
 
 param = ["mean_a", "mean_b"]
