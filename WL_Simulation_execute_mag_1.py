@@ -29,7 +29,8 @@ import math
 
 
 #Define arrays for plotting
-mag_input = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]
+#mag_input = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]
+mag_input = [14, 15, 16]
 mag_output_sex = []
 mag_output_wayback = []
 mag_output_error_sex = []
@@ -56,7 +57,7 @@ print '\nMasking . . . {}\n'
 simulation.masking_matrix('w2_53_stack.fits')
 
 #For-loop for 1 to 30 mag
-for mag in range (1,15):
+for mag in mag_input:
     
     print '\nRound {}\n'.format(mag)
     simulation.packing_percentage(number_objects = 4000)
@@ -95,52 +96,6 @@ for mag in range (1,15):
     flux_output_max.append(np.mean(simulation.out_flux_max))
     flux_output_max_error.append(np.std(simulation.out_flux_max))
     np.savetxt('simulation_index_{}.txt'.format(mag), simulation.posible_obj_index)
-
-
-
-#For-loop for 1 to 30 mag
-for mag in range (15,31):
-    
-    print '\nRound {}\n'.format(mag)
-    simulation.packing_percentage(number_objects = 4000)
-    simulation.out_mag = []
-    simulation.posible_obj_distances = []
-    simulation.posible_obj_index = []
-    simulation.out_flux = []
-    simulation.out_mag_after_transf = []
-    simulation.out_flux_max = []
-    
-    
-    
-    print '\nSimulation\n'
-    
-    simulation.objectcreator_magnitude(mag_value = mag, n = 5)
-    
-    print '\nSextractor\n'
-    sex_caller('w2_53_stack_simulation_{}.fits'.format(mag), 'w2_53_stack_simulation_{}'.format(mag))
-    catag_simulation = CatalogReader('w2_53_stack_simulation_{}.cat'.format(mag))
-    catag_simulation.read()
-    
-    
-    print '\nSearcher\n'
-    simulation.searcher_kdtree(catag.fcat, catag_simulation.fcat, 'w2_stack_53')
-    
-    print 'The mean value of the output sextractor magnitude is {}\nThe std deviation is {}\nThe mean value of the output wayback magnitude is {}\nThe std deviation (wayback magnitude) is {}\nThe mean value of the output flux is {}\nThe std deviation (flux) is {}\n'.format(np.mean(simulation.out_mag), np.std(simulation.out_mag), np.mean(simulation.out_mag_after_transf), np.std(simulation.out_mag_after_transf), np.mean(simulation.out_flux), np.std(simulation.out_flux))
-    
-    #Save values into arrays
-    
-    mag_output_sex.append(np.mean(simulation.out_mag))
-    mag_output_wayback.append(np.mean(simulation.out_mag_after_transf))
-    mag_output_error_sex.append(np.std(simulation.out_mag))
-    mag_output_error_wayback.append(np.std(simulation.out_mag_after_transf))
-    flux_output.append(np.mean(simulation.out_flux))
-    flux_output_error.append(np.std(simulation.out_flux))
-    flux_output_max.append(np.mean(simulation.out_flux_max))
-    flux_output_max_error.append(np.std(simulation.out_flux_max))
-    np.savetxt('simulation_index_{}.txt'.format(mag), simulation.posible_obj_index)
-
-
-
 
 
 #Getting flux_max_input from mag_input
