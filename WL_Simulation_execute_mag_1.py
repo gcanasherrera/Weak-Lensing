@@ -29,7 +29,7 @@ import math
 
 
 #Define arrays for plotting
-mag_input = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+mag_input = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]
 
 mag_output_sex = []
 mag_output_wayback = []
@@ -65,7 +65,7 @@ for mag in mag_input:
     simulation.posible_obj_distances = []
     simulation.posible_obj_index = []
     simulation.out_flux = []
-    simulation.out_mag_after_transf = []
+    #simulation.out_mag_after_transf = []
     simulation.out_flux_max = []
     
     
@@ -88,7 +88,7 @@ for mag in mag_input:
     #Save values into arrays
     
     mag_output_sex.append(np.mean(simulation.out_mag))
-    mag_output_wayback.append(np.mean(simulation.out_mag_after_transf))
+    #mag_output_wayback.append(np.mean(simulation.out_mag_after_transf))
     mag_output_error_sex.append(np.std(simulation.out_mag))
     mag_output_error_wayback.append(np.std(simulation.out_mag_after_transf))
     flux_output.append(np.mean(simulation.out_flux))

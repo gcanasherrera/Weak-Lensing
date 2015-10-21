@@ -486,7 +486,7 @@ class ObjectCreator(object):
                 self.out_mag.append(fcat_simulation['mag_iso'][index])
                 self.out_flux.append(fcat_simulation['flux_iso'][index])
                 self.out_flux_max.append(fcat_simulation['flux_max'][index])
-                self.out_mag_after_transf.append(self.f_way_back(fcat_simulation['flux_iso'][index],a=112.188243402,b=9.95005045126))
+            #self.out_mag_after_transf.append(self.f_way_back(fcat_simulation['flux_iso'][index],a=112.188243402,b=9.95005045126))
             if index == len(position_all):
                 cont_lost_obj = cont_lost_obj + 1
     
