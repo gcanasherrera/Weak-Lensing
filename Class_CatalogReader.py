@@ -51,4 +51,4 @@ class CatalogReader(object):
             self.fcat = np.genfromtxt(self.catalog_fiat, names=names_cat)
 
         else:
-            self.fcat = np.genfromtxt(self.catalog, names=names)
+            self.fcat = np.genfromtxt(self.catalog, names=names_cat)
