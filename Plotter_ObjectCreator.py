@@ -8,22 +8,22 @@ import seaborn as sns #Improvements for statistical-plots
 from operator import truediv
 import math
 
-FILTER
+FILTER = Gaussian
 
 #Read txt file ' w2_53_stack_simulation.txt'
 
 
 mag_input = np.genfromtxt(('w2_53_stack_simulation_mag_input_{}.txt').format(FILTER))
 mag_output_sex = np.genfromtxt(('w2_53_stack_simulation_mag_output_sex_{}.txt').format(FILTER))
-mag_output_wayback = np.genfromtxt('w2_53_stack_simulation_mag_output_wayback_{}.txt').format(FILTER))
-mag_output_error_sex = np.genfromtxt('w2_53_stack_simulation_mag_output_error_sex_{}.txt').format(FILTER))
-mag_output_error_wayback = np.genfromtxt('w2_53_stack_simulation_mag_output_error_wayback_{}.txt').format(FILTER))
-flux_input = np.genfromtxt('w2_53_stack_simulation_flux_input_{}.txt').format(FILTER))
-flux_output = np.genfromtxt('w2_53_stack_simulation_flux_output_{}.txt').format(FILTER))
-flux_output_error = np.genfromtxt('w2_53_stack_simulation_flux_output_error_{}.txt').format(FILTER))
-flux_output_max = np.genfromtxt('w2_53_stack_simulation_flux_output_max_{}.txt').format(FILTER))
-flux_output_max_error = np.genfromtxt('w2_53_stack_simulation_flux_output_max_error_{}.txt').format(FILTER))
-number_lost_objects = np.genfromtxt('w2_53_stack_simulation_number_lost_objects_{}.txt').format(FILTER))
+mag_output_wayback = np.genfromtxt(('w2_53_stack_simulation_mag_output_wayback_{}.txt').format(FILTER))
+mag_output_error_sex = np.genfromtxt(('w2_53_stack_simulation_mag_output_error_sex_{}.txt').format(FILTER))
+mag_output_error_wayback = np.genfromtxt(('w2_53_stack_simulation_mag_output_error_wayback_{}.txt').format(FILTER))
+flux_input = np.genfromtxt(('w2_53_stack_simulation_flux_input_{}.txt').format(FILTER))
+flux_output = np.genfromtxt(('w2_53_stack_simulation_flux_output_{}.txt').format(FILTER))
+flux_output_error = np.genfromtxt(('w2_53_stack_simulation_flux_output_error_{}.txt').format(FILTER))
+flux_output_max = np.genfromtxt(('w2_53_stack_simulation_flux_output_max_{}.txt').format(FILTER))
+flux_output_max_error = np.genfromtxt(('w2_53_stack_simulation_flux_output_max_error_{}.txt').format(FILTER))
+number_lost_objects = np.genfromtxt(('w2_53_stack_simulation_number_lost_objects_{}.txt').format(FILTER))
 
 
 param = ["mean_a", "mean_b"]
