@@ -477,7 +477,7 @@ class ObjectCreator(object):
         tree = spatial.KDTree(position_all)
         position_obj_created = zip(self.x_position_simulation, self.y_position_simulation)
                         
-        self.posible_obj_distances, self.posible_obj_index = tree.query(position_obj_created, distance_upper_bound = 5*self.mean_a)
+        self.posible_obj_distances, self.posible_obj_index = tree.query(position_obj_created, distance_upper_bound = 3*self.mean_a)
 
         cont_lost_obj = 0
 

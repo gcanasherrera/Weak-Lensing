@@ -54,11 +54,12 @@ simulation = ObjectCreator(catag.fcat)
 
 print '\nMasking . . . {}\n'
 
-simulation.masking_matrix('w2_53_stack.fits')
+
 
 #For-loop for 1 to 30 mag
 for mag in mag_input:
-    
+    simulation.matrix_data = []
+    simulation.masking_matrix('w2_53_stack.fits')
     print '\nRound {}\n'.format(mag)
     simulation.packing_percentage(number_objects = 4000)
     simulation.out_mag = []
