@@ -46,7 +46,7 @@ FILTER = 'Mexican_hat'
 
 
 #Read catalog
-catag = CatalogReader('w2_53_stack.fcat')
+catag = CatalogReader('w2_53_stack_MH.fcat')
 catag.read()
 
 #Create object for simulation

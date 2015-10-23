@@ -44,11 +44,13 @@ class CatalogReader(object):
         
         names = ["number", "flux_iso", "fluxerr_iso", "mag_iso", "magger_iso", "mag_aper_1", "magerr_aper_1", "mag", "magger", "flux_max", "isoarea", "x", "y", "ra", "dec", "ixx", "iyy", "ixy", "ixxWIN", "iyyWIN", "ixyWIN", "A", "B", "theta", "enlogation", "ellipticity", "FWHM", "flags", "class_star"]
         
+        #For older version of Source Extractor
         
         names_cat = ["number", "flux_iso", "fluxerr_iso", "mag_iso", "magger_iso", "mag_aper_1", "magerr_aper_1", "mag", "magger", "flux_max", "isoarea", "x", "y", "ra", "dec", "ixx", "iyy", "ixy", "A", "B", "theta", "enlogation", "ellipticity", "FWHM", "flags", "class_star"]
+        
         if self.catalog.endswith(suffix) == False:
             self.transform()
-            self.fcat = np.genfromtxt(self.catalog_fiat, names=names_cat)
+            self.fcat = np.genfromtxt(self.catalog_fiat, names=names)
 
         else:
-            self.fcat = np.genfromtxt(self.catalog, names=names_cat)
+            self.fcat = np.genfromtxt(self.catalog, names=names)
