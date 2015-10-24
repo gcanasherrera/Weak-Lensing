@@ -37,7 +37,7 @@ sns.set(style="white", palette="muted", color_codes=True)
 plt.figure()
 plt.title('Number of lost Galaxies vs mag_input_max')
 plt.plot(mag_input, number_lost_objects, 'k-')
-plt.xlabel('Mag_input_max')
+plt.xlabel('Input Max Magnitude')
 plt.ylabel('Number Lost Objects')
 plt.show()
 
