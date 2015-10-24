@@ -60,7 +60,7 @@ ratio_flux=map(truediv, flux_output, flux_input)
 normalization_exp = np.mean(ratio_flux)
 
 print '\nTheoretical Normalization: {}'.format(normalization_th)
-print '\nExperimental Normalization: {}'.format(normalization_exp)
+print '\nExperimental Normalization: {}'.format(ratio_flux)
 
 
 for i in range (0, len(ratio_flux)):
