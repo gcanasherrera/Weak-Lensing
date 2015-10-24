@@ -27,7 +27,7 @@ number_lost_objects = np.genfromtxt(('w2_53_stack_simulation_number_lost_objects
 
 
 param = ["mean_a", "mean_b"]
-par = np.genfromtxt('w2_53_stack_axis_param_1.txt', names=param)
+par = np.genfromtxt(('w2_53_stack_axis_param_{}.txt').format(FILTER), names=param)
 
 flux_input_iso = []
 mag_input_iso = []
