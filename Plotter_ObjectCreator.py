@@ -8,7 +8,7 @@ import seaborn as sns #Improvements for statistical-plots
 from operator import truediv
 import math
 
-FILTER = Gaussian
+FILTER = 'Mexican_hat'
 
 #Read txt file ' w2_53_stack_simulation.txt'
 
