@@ -30,8 +30,8 @@ from Class_CrossMatching import CrossMatching
 
 
 #Get first catalogs
-sex_caller('lhn1n1_2010apr_r_stack_fc_fix.fits'.format(mag), 'lhn1n1_2010apr_r_stack_fc_fix')
-sex_caller('lhn1n1_2010dec_z_stack_fc_fix.fits'.format(mag), 'lhn1n1_2010dec_z_stack_fc_fix')
+sex_caller('lhn1n1_2010apr_r_stack_fc_fix.fits', 'lhn1n1_2010apr_r_stack_fc_fix')
+sex_caller('lhn1n1_2010dec_z_stack_fc_fix.fits', 'lhn1n1_2010dec_z_stack_fc_fix')
 
 #Read catalogs
 catag_r = CatalogReader('lhn1n1_2010apr_r_stack_fc_fix.fcat')
