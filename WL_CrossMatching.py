@@ -44,7 +44,7 @@ catag_z.read()
 
 crossmatching = CrossMatching(catag_r.fcat, catag_z.fcat)
 crossmatching.kdtree(n=2)
-crossmatching.catalog_writter('lhn1n1_crossmatching_1to2.fcat', compare = '1to2'):
+crossmatching.catalog_writter('lhn1n1_crossmatching_1to2.fcat', compare = '1to2')
 
 
 
