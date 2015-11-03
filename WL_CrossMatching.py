@@ -27,6 +27,7 @@ import random #pseudo-random generator
 import seaborn as sns #Improvements for statistical-plots
 from WL_Utils import sex_caller
 from Class_CrossMatching import CrossMatching
+from Class_CatalogReader import CatalogReader
 
 
 #Get first catalogs
