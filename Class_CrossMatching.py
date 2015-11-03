@@ -34,7 +34,7 @@ from scipy import spatial #KDTREE altorithm
     General Class that contents several simulation methods destinated to get a cross-matching between two catalogs
     
 """
-class ObjectCreator(object):
+class CrossMatching(object):
     
     
     """
