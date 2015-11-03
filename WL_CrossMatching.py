@@ -35,10 +35,10 @@ sex_caller('lhn1n1_2010apr_r_stack_fc_fix.fits', 'lhn1n1_2010apr_r_stack_fc_fix'
 sex_caller('lhn1n1_2010dec_z_stack_fc_fix.fits', 'lhn1n1_2010dec_z_stack_fc_fix')
 
 #Read catalogs
-catag_r = CatalogReader('lhn1n1_2010apr_r_stack_fc_fix.fcat')
+catag_r = CatalogReader('lhn1n1_2010apr_r_stack_fc_fix.cat')
 catag_r.read()
 
-catag_z = CatalogReader('lhn1n1_2010dec_z_stack_fc_fix.fcat')
+catag_z = CatalogReader('lhn1n1_2010dec_z_stack_fc_fix.cat')
 catag_z.read()
 
 #Create object for cross-matching
