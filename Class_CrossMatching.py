@@ -76,9 +76,9 @@ class CrossMatching(object):
 
 
     def spheric_coordinates(self, re, de):
-        x = math.sin(math.radians(de)) * math.cos(math.radians(re))
-        y = math.sin(math.radians(de)) * math.sin(math.radians(re))
-        z = math.cos(math.radians(de))
+        x = np.sin(np.radians(de)) * np.cos(np.radians(re))
+        y = np.sin(np.radians(de)) * np.sin(np.radians(re))
+        z = np.cos(np.radians(de))
         return x, y, z
 
     def trivector_creator(self):
