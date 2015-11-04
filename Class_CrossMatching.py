@@ -121,7 +121,7 @@ class CrossMatching(object):
                 
                     cont = cont + 1
 
-                elif index == len(position_all):
+                elif index == len(self.positions_cat_1):
                     number_of_lost_1 = number_of_lost + 1
     
         print 'The number of lost objects from matching of 1 with respect of 2 is {}\n'.format(number_of_lost_1)
@@ -138,7 +138,7 @@ class CrossMatching(object):
                         
                     cont = cont + 1
                             
-                elif index == len(position_all):
+                elif index == len(self.positions_cat_2):
                     number_of_lost_2 = number_of_lost_2 + 1
 
         print 'The number of lost objects from matching of 2 with respect of 1 is {}\n'.format(number_of_lost_2)
