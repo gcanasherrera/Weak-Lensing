@@ -124,24 +124,24 @@ class CrossMatching(object):
                 elif index == len(self.positions_cat_1):
                     number_of_lost_1 = number_of_lost_1 + 1
     
-        print 'The number of lost objects from matching of 1 with respect of 2 is {}\n'.format(number_of_lost_1)
-        print 'Length of the Picture 1 original catalog {}\n'.format(len(self.catalog_1[names[0]]))
-        print 'Length of the Cross-Matching Catalog {}\n'.format(cont)
+            print 'The number of lost objects from matching of 1 with respect of 2 is {}\n'.format(number_of_lost_1)
+            print 'Length of the Picture 1 original catalog {}\n'.format(len(self.catalog_1[names[0]]))
+            print 'Length of the Cross-Matching Catalog {}\n'.format(cont)
 
 
-        if compare == '2to1':
-
-            for index in self.posible_obj_index_2:
-                if index < len(self.positions_cat_2):
+#if compare == '2to1':
+#
+#            for index in self.posible_obj_index_2:
+#                if index < len(self.positions_cat_2):
                     
-                    f_1.write('%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s \n'% (cont, self.catalog_2[names[1]], self.catalog_2[names[2]], self.catalog_2[names[3]], self.catalog_2[names[4]], self.catalog_2[names[5]], self.catalog_2[names[6]], self.catalog_2[names[7]], self.catalog_2[names[8]], self.catalog_2[names[9]], self.catalog_2[names[10]], self.catalog_2[names[11]], self.catalog_2[names[12]], self.catalog_2[names[13]], self.catalog_2[names[14]], self.catalog_2[names[15]], self.catalog_2[names[16]], self.catalog_2[names[17]], self.catalog_2[names[18]], self.catalog_2[names[19]], self.catalog_2[names[20]], self.catalog_2[names[21]], self.catalog_2[names[22]], self.catalog_2[names[23]], self.catalog_2[names[24]], self.catalog_2[names[25]], self.catalog_2[names[26]], self.catalog_2[names[27]], self.catalog_2[names[28]]))
+                    #                    f_1.write('%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s \n'% (cont, self.catalog_2[names[1]], self.catalog_2[names[2]], self.catalog_2[names[3]], self.catalog_2[names[4]], self.catalog_2[names[5]], self.catalog_2[names[6]], self.catalog_2[names[7]], self.catalog_2[names[8]], self.catalog_2[names[9]], self.catalog_2[names[10]], self.catalog_2[names[11]], self.catalog_2[names[12]], self.catalog_2[names[13]], self.catalog_2[names[14]], self.catalog_2[names[15]], self.catalog_2[names[16]], self.catalog_2[names[17]], self.catalog_2[names[18]], self.catalog_2[names[19]], self.catalog_2[names[20]], self.catalog_2[names[21]], self.catalog_2[names[22]], self.catalog_2[names[23]], self.catalog_2[names[24]], self.catalog_2[names[25]], self.catalog_2[names[26]], self.catalog_2[names[27]], self.catalog_2[names[28]]))
                         
-                    cont = cont + 1
+            #  cont = cont + 1
                             
-                elif index == len(self.positions_cat_2):
-                    number_of_lost_2 = number_of_lost_2 + 1
+                            #    elif index == len(self.positions_cat_2):
+                            #number_of_lost_2 = number_of_lost_2 + 1
 
-        print 'The number of lost objects from matching of 2 with respect of 1 is {}\n'.format(number_of_lost_2)
-        print 'Length of the Picture 2 original catalog {}\n'.format(len(self.catalog_2[names[0]]))
-        print 'Length of the Cross-Matching Catalog {}\n'.format(cont)
+# print 'The number of lost objects from matching of 2 with respect of 1 is {}\n'.format(number_of_lost_2)
+#    print 'Length of the Picture 2 original catalog {}\n'.format(len(self.catalog_2[names[0]]))
+#      print 'Length of the Cross-Matching Catalog {}\n'.format(cont)
 
