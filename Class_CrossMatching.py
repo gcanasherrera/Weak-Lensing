@@ -49,12 +49,43 @@ class CrossMatching(object):
         self.x_2 = catalog_2['x']
         self.y_1 = catalog_1['y']
         self.y_2 = catalog_2['y']
+        
+        
+        self.xt_1 = []
+        self.yt_1 = []
+        self.zt_1 = []
+        
+        self.xt_2 = []
+        self.yt_2 = []
+        self.zt_2 = []
+        
+        self.ra_1 = catalog_1['ra']
+        self.ra_2 = catalog_2['ra']
+        self.de_1 = catalog_1['dec']
+        self.de_2 = catalog_2['dec']
+        
         self.positions_cat_1 = []
         self.positions_cat_2 = []
         self.posible_obj_distances_1 = []
         self.posible_obj_index_1 = []
         self.posible_obj_distances_2 = []
         self.posible_obj_index_2 = []
+    
+        self.trivector_1 = []
+        self.trivector_2 = []
+
+
+    def spheric_coordinates(self, re, de):
+        x = math.sin(math.radians(de)) * math.cos(math.radians(re))
+        y = math.sin(math.radians(de)) * math.sin(math.radians(re))
+        z = math.cos(math.radians(de))
+        return x, y, z
+
+    def trivector_creator(self):
+        self.xt_1, self.yt_1, self.zt_1 = self.spheric_coordinates(self.catalog_1['ra'], self.catalog_1['dec'])
+        self.xt_2, self.yt_2, self.zt_2 = self.spheric_coordinates(self.catalog_2['ra'], self.catalog_2['dec'])
+        self.positions_cat_1 = zip(self.xt_1.ravel(), self.yt_1.ravel(), self.zt_2.ravel())
+        self.positions_cat_2 = zip(self.xt_2.ravel(), self.yt_2.ravel(), self.zt_2.ravel())
 
 
     def positions_array_creator(self):
@@ -62,7 +93,7 @@ class CrossMatching(object):
         self.positions_cat_2 = zip(self.x_2.ravel(), self.y_2.ravel())
 
     def kdtree(self, n=1):
-        self.positions_array_creator()
+        self.trivector_creator()
         tree_1 = spatial.KDTree(self.positions_cat_1)
         self.posible_obj_distances_1, self.posible_obj_index_1 = tree_1.query(self.positions_cat_2, distance_upper_bound = n)
 
@@ -124,7 +155,7 @@ class CrossMatching(object):
                 elif index == len(self.positions_cat_1):
                     number_of_lost_1 = number_of_lost_1 + 1
     
-            print 'The number of lost objects from matching of 1 with respect of 2 is {}\n'.format(number_of_lost_1)
+            print '\nThe number of lost objects from matching of 1 with respect of 2 is {}\n'.format(number_of_lost_1)
             print 'Length of the Picture 1 original catalog {}\n'.format(len(self.catalog_1[names[0]]))
             print 'Length of the Cross-Matching Catalog {}\n'.format(cont)
 
