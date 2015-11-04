@@ -70,7 +70,7 @@ class CrossMatching(object):
         self.posible_obj_distances_2, self.posible_obj_index_2 = tree_2.query(self.positions_cat_1, distance_upper_bound = n)
 
     def catalog_writter(self, FILE_NAME, compare = ''):
-        catalog_def= '{}_fit_pol.fcat'.format(FILE_NAME)
+        catalog_def= '{}.fcat'.format(FILE_NAME)
         f_1=open(catalog_def, 'w')
         f_1.write('# fiat 1.0\n')
         f_1.write('# written by Class_CrossMatching.py\n')
