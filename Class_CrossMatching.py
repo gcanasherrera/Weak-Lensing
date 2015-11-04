@@ -122,14 +122,14 @@ class CrossMatching(object):
                     cont = cont + 1
 
                 elif index == len(self.positions_cat_1):
-                    number_of_lost_1 = number_of_lost + 1
+                    number_of_lost_1 = number_of_lost_1 + 1
     
         print 'The number of lost objects from matching of 1 with respect of 2 is {}\n'.format(number_of_lost_1)
         print 'Length of the Picture 1 original catalog {}\n'.format(len(self.catalog_1[names[0]]))
         print 'Length of the Cross-Matching Catalog {}\n'.format(cont)
 
 
-        if compare == '1to2':
+        if compare == '2to1':
 
             for index in self.posible_obj_index_2:
                 if index < len(self.positions_cat_2):
