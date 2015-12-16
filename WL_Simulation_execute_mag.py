@@ -26,6 +26,9 @@ import seaborn as sns #Improvements for statistical-plots
 from operator import truediv
 import math
 
+#Define filter
+FILTER = 'Mexican_hat'
+
 
 
 #Define arrays for plotting
@@ -41,8 +44,6 @@ flux_output_error = []
 flux_output_max = []
 flux_output_max_error = []
 number_lost_objects = []
-
-FILTER = 'Mexican_hat'
 
 
 #Read catalog
