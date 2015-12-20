@@ -15,9 +15,9 @@ FILTER = 'Mexican_hat'
 
 mag_input = np.genfromtxt(('w2_53_stack_simulation_mag_input_{}.txt').format(FILTER))
 mag_output_sex = np.genfromtxt(('w2_53_stack_simulation_mag_output_sex_{}.txt').format(FILTER))
-mag_output_wayback = np.genfromtxt(('w2_53_stack_simulation_mag_output_wayback_{}.txt').format(FILTER))
+#mag_output_wayback = np.genfromtxt(('w2_53_stack_simulation_mag_output_wayback_{}.txt').format(FILTER))
 mag_output_error_sex = np.genfromtxt(('w2_53_stack_simulation_mag_output_error_sex_{}.txt').format(FILTER))
-mag_output_error_wayback = np.genfromtxt(('w2_53_stack_simulation_mag_output_error_wayback_{}.txt').format(FILTER))
+#mag_output_error_wayback = np.genfromtxt(('w2_53_stack_simulation_mag_output_error_wayback_{}.txt').format(FILTER))
 flux_input = np.genfromtxt(('w2_53_stack_simulation_flux_input_{}.txt').format(FILTER))
 flux_output = np.genfromtxt(('w2_53_stack_simulation_flux_output_{}.txt').format(FILTER))
 flux_output_error = np.genfromtxt(('w2_53_stack_simulation_flux_output_error_{}.txt').format(FILTER))
