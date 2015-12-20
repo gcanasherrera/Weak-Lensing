@@ -80,7 +80,7 @@ for mag in mag_input:
     simulation.objectcreator_magnitude(mag_value = mag, n = 5)
     
     print '\nSextractor\n'
-    sex_caller('w2_53_stack_simulation_{}.fits'.format(mag), '{}_simulation_{}'.format(PICTURE, mag))
+    sex_caller('{}_simulation_{}.fits'.format(PICTURE, mag), '{}_simulation_{}'.format(PICTURE, mag))
     catag_simulation = CatalogReader('{}_simulation_{}.cat'.format(PICTURE, mag))
     catag_simulation.read()
     
