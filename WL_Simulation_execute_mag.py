@@ -25,10 +25,13 @@ import matplotlib.pyplot as plt #Plot Libraries
 import seaborn as sns #Improvements for statistical-plots
 from operator import truediv
 import math
+import sys #pass arguments in command lines
+
+#Define picture
+PICTURE = str(sys.argv[1])
 
 #Define filter
-FILTER = 'Mexican_hat'
-
+FILTER = str(sys.argv[2])
 
 
 #Define arrays for plotting
@@ -47,7 +50,7 @@ number_lost_objects = []
 
 
 #Read catalog
-catag = CatalogReader('w2_53_stack_MH.fcat')
+catag = CatalogReader('{}_{}.fcat'.format(PICTURE, FILTER))
 catag.read()
 
 #Create object for simulation
@@ -60,7 +63,7 @@ print '\nMasking . . . {}\n'
 #For-loop for 1 to 30 mag
 for mag in mag_input:
     simulation.matrix_data = []
-    simulation.masking_matrix('w2_53_stack.fits')
+    simulation.masking_matrix('{}.fits'.format(PICTURE))
     print '\nRound {}\n'.format(mag)
     simulation.packing_percentage(number_objects = 4000)
     simulation.out_mag = []
@@ -77,13 +80,13 @@ for mag in mag_input:
     simulation.objectcreator_magnitude(mag_value = mag, n = 5)
     
     print '\nSextractor\n'
-    sex_caller('w2_53_stack_simulation_{}.fits'.format(mag), 'w2_53_stack_simulation_{}'.format(mag))
-    catag_simulation = CatalogReader('w2_53_stack_simulation_{}.cat'.format(mag))
+    sex_caller('w2_53_stack_simulation_{}.fits'.format(mag), '{}_simulation_{}'.format(PICTURE, mag))
+    catag_simulation = CatalogReader('{}_simulation_{}.cat'.format(PICTURE, mag))
     catag_simulation.read()
     
     
     print '\nSearcher\n'
-    simulation.searcher_kdtree(catag.fcat, catag_simulation.fcat, 'w2_stack_53')
+    simulation.searcher_kdtree(catag.fcat, catag_simulation.fcat, PICTURE)
     
     print 'The mean value of the output sextractor magnitude is {}\nThe std deviation is {}\nThe mean value of the output wayback magnitude is {}\nThe std deviation (wayback magnitude) is {}\nThe mean value of the output flux is {}\nThe std deviation (flux) is {}\n'.format(np.mean(simulation.out_mag), np.std(simulation.out_mag), np.mean(simulation.out_mag_after_transf), np.std(simulation.out_mag_after_transf), np.mean(simulation.out_flux), np.std(simulation.out_flux))
     
@@ -105,22 +108,19 @@ for mag in mag_input:
 fitting_flux = MagnitudeExponential()
 
 for mag in mag_input:
-    flux_input.append(fitting_flux.f(mag, a=simulation.parameter_a,b=simulation.parameter_b))
+    flux_input.append(fitting_flux.f(mag, a=simulation.parameter_a, b=simulation.parameter_b))
 
 #SAVE DATA in txt file
 
-np.savetxt('w2_53_stack_simulation_mag_input_{}.txt'.format(FILTER), mag_input)
-np.savetxt('w2_53_stack_simulation_mag_output_sex_{}.txt'.format(FILTER), mag_output_sex)
-np.savetxt('w2_53_stack_simulation_mag_output_wayback_{}.txt'.format(FILTER), mag_output_wayback)
-np.savetxt('w2_53_stack_simulation_mag_output_error_sex_{}.txt'.format(FILTER), mag_output_error_sex)
-np.savetxt('w2_53_stack_simulation_mag_output_error_wayback_{}.txt'.format(FILTER), mag_output_error_wayback)
-np.savetxt('w2_53_stack_simulation_flux_input_{}.txt'.format(FILTER), flux_input)
-np.savetxt('w2_53_stack_simulation_flux_output_{}.txt'.format(FILTER), flux_output)
-np.savetxt('w2_53_stack_simulation_flux_output_error_{}.txt'.format(FILTER), flux_output_error)
-np.savetxt('w2_53_stack_simulation_flux_output_max_{}.txt'.format(FILTER), flux_output_max)
-np.savetxt('w2_53_stack_simulation_flux_output_max_error_{}.txt'.format(FILTER), flux_output_max_error)
-np.savetxt('w2_53_stack_simulation_number_lost_objects_{}.txt'.format(FILTER), simulation.lost_objects)
-
-
-np.savetxt('w2_53_stack_axis_param_{}.txt'.format(FILTER), (simulation.mean_a, simulation.mean_b))
+np.savetxt('{}_simulation_mag_input_{}.txt'.format(PICTURE, FILTER), mag_input)
+np.savetxt('{}_simulation_mag_output_sex_{}.txt'.format(PICTURE, FILTER), mag_output_sex)
+np.savetxt('{}_simulation_mag_output_wayback_{}.txt'.format(PICTURE, FILTER), mag_output_wayback)
+np.savetxt('{}_simulation_mag_output_error_sex_{}.txt'.format(PICTURE, FILTER), mag_output_error_sex)
+np.savetxt('{}_simulation_mag_output_error_wayback_{}.txt'.format(PICTURE, FILTER), mag_output_error_wayback)
+np.savetxt('{}_simulation_flux_input_{}.txt'.format(PICTURE, FILTER), flux_input)
+np.savetxt('{}_simulation_flux_output_{}.txt'.format(PICTURE, FILTER), flux_output)
+np.savetxt('{}_simulation_flux_output_error_{}.txt'.format(PICTURE, FILTER), flux_output_error)
+np.savetxt('{}_simulation_flux_output_max_{}.txt'.format(PICTURE, FILTER), flux_output_max)
+np.savetxt('{}_simulation_number_lost_objects_{}.txt'.format(PICTURE, FILTER), simulation.lost_objects)
+np.savetxt('{}_axis_param_{}.txt'.format(PICTURE, FILTER), (simulation.mean_a, simulation.mean_b))
 
