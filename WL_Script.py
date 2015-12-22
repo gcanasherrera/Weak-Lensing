@@ -99,7 +99,7 @@ def main():
     
     #(5): Read the FIAT Catalog
     FWHM_max_stars=0
-    names = ["number", "flux_iso", "fluxerr_iso", "mag_iso", "mag_aper_1", "mag", "magerr_aper_1", "mag", "magger", "flux_max", "isoarea", "x", "y", "ra", "dec", "ixx", "iyy", "ixy", "ixxWIN", "iyyWIN", "ixyWIN", "theta", "enlogation", "ellipticity", "FWHM", "flags", "class_star"]
+    names = ["number", "flux_iso", "fluxerr_iso", "mag_iso", "magger_iso", "mag_aper_1", "magerr_aper_1", "mag", "magger", "flux_max", "isoarea", "x", "y", "ra", "dec", "ixx", "iyy", "ixy", "ixxWIN", "iyyWIN", "ixyWIN", "A", "B", "theta", "enlogation", "ellipticity", "FWHM", "flags", "class_star"]
     fcat = np.genfromtxt(catalog_name_fiat, names=names)
     
     #Let's fix the ellipcity + and - for all celestial objects
@@ -166,6 +166,7 @@ def main():
     subprocess.call('./fiatreview {} {}'.format(fits, catalog_name_stars), shell=True)
 
     #(8.2.): Checking STARS CATALOG
+    sns.set(style="white", palette="muted", color_codes=True)
     sns.distplot(catalog_name_stars['class_star'], color="b", axlabel = 'flux_iso', hist=True)
     plt.axvline(catalog_name_stars['class_star'].mean(), color='k', linestyle='dashed', linewidth=2)
     plt.show()

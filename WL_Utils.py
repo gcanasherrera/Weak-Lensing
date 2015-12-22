@@ -188,7 +188,7 @@ def galaxies_maker(catalog, file_name, FWHM_max_stars):
     #Creamos un string para que lo ponga en la terminal
     terminal_fit= 'perl fiatfilter.pl -v "MAG_ISO>{} && MAG_ISO<{}" {}>{}'.format(mag_iso_min_galaxies, mag_iso_max_galaxies, catalog, catalog_name_fit)
     subprocess.call(terminal_fit, shell=True)
-    names = ["number", "flux_iso", "fluxerr_iso", "mag_iso", "mag_aper_1", "mag", "magerr_aper_1", "mag", "magger", "flux_max", "isoarea", "x", "y", "ra", "dec", "ixx", "iyy", "ixy", "ixxWIN", "iyyWIN", "ixyWIN", "theta", "enlogation", "ellipticity", "FWHM", "flags", "class_star"]
+    names = ["number", "flux_iso", "fluxerr_iso", "mag_iso", "magger_iso", "mag_aper_1", "magerr_aper_1", "mag", "magger", "flux_max", "isoarea", "x", "y", "ra", "dec", "ixx", "iyy", "ixy", "ixxWIN", "iyyWIN", "ixyWIN", "A", "B", "theta", "enlogation", "ellipticity", "FWHM", "flags", "class_star"]
     fcat_fit = np.genfromtxt(catalog_name_fit, names=names)
     fit=np.polyfit(fcat_fit['mag_iso'], fcat_fit['FWHM'], 1)
     #Save in variables the values of the fitting
