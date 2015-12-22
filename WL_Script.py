@@ -1,6 +1,6 @@
 # Name: WL_Script.py
 #
-# Bachelor Disertation Program I
+# Weak-Lensing Program I
 #
 # Description: Central script that develops the whole process of reading images, filtering into galaxies and stars, correcting sizes and shapes, correcting PSF annisotropies, performing magnitude cuts in the final galaxies catalogs, statistic study in function of sigma.
 #
@@ -21,7 +21,7 @@ __email__ = "gch24@alumnos.unican.es"
 # Improvements: more automatic ---> only needs the name of the picture you want to analize
 # Old CatalogPlotter3.py has been splitted in two: WL_Script.py and WL_Utils.py
 # Also call: WL_utils.py, filter_mag_gal.py - ellip_fitter.py - std.py (written by Guadalupe Canas Herrera)
-# Also call 2: Source Extractor (by Emmanuel Bertin V2.19.5), sex2fiat (by DAVID WITTMAN v1.2), fiatfilter (by DAVID WITTMAN v1.2), ellipto (by DAVID WITTMAN v1.2), dlscombine (by DAVID WITTMAN v1.2 and modified by GUADALUPE CANAS)
+# Also call 2: Source Extractor (by Emmanuel Bertin V2.3.2), sex2fiat (by DAVID WITTMAN v1.2), fiatfilter (by DAVID WITTMAN v1.2), ellipto (by DAVID WITTMAN v1.2), dlscombine (by DAVID WITTMAN v1.2 and modified by GUADALUPE CANAS)
 
 #
 # DLSCOMBINE CORRECTS PSF: it has a dependence in fiat.c, fiat.h, dlscombine_utils.c, dlscombine.c, dlscombine.h
@@ -39,11 +39,11 @@ import subprocess #calling to the terminal
 from astropy.modeling import models, fitting #Package for fitting Legendre Polynomials
 import warnings #Advices
 from mpl_toolkits.mplot3d import Axes3D #Plotting in 3D
-import ellip_fitter as ellip_fit #Ellipticity fitting
+import WL_ellip_fitter as ellip_fit #Ellipticity fitting
 from WL_Utils import sex_caller, sex_caller_corrected, ellipto_caller, dlscombine_pol_caller, dlscombine_leg_caller, ds9_caller, plotter, ellipticity, specfile, stars_maker, galaxies_maker
-from filter_mag_gal import filter_mag #Filtering final catalog of galaxies a function of magnitudes and call fiatmap
+from WL_filter_mag_gal import filter_mag #Filtering final catalog of galaxies a function of magnitudes and call fiatmap
 #from std import sigma_maker #statistical study
-
+import seaborn as sns
 
 
 ###############################  BEGIN SCRIPT   ###############################
@@ -66,7 +66,9 @@ def main():
     # (2): We need to read the image. We ask in screen the image of the region of the sky.
     print("Welcome to the Weak-Lensing Script, here to help you analizing Subaru images")
     print("")
-    fits= raw_input("Please, introduce the name of the fits image you want to read: ")
+    
+    
+    fits= raw_input("Please, introduce the name of the fits image you want to read or directly the catalogue: ")
     
     #Save the name of the .fits and .cat in a string:
     
@@ -92,6 +94,8 @@ def main():
     catalog_name_fiat= '{}.fcat'.format(FILE_NAME)
     transform_into_fiat='perl sex2fiat.pl {}>{}'.format(catalog_name, catalog_name_fiat)
     subprocess.call(transform_into_fiat, shell=True)
+    
+
     
     #(5): Read the FIAT Catalog
     FWHM_max_stars=0
@@ -145,7 +149,7 @@ def main():
     plotter(fcat_good, 'x', 'y', 5)
     plt.show(block=False)
 
-    #(8): Creating STARS CATALOG
+    #(8.1.): Creating STARS CATALOG
     print("Let's obtain only a FIAT catalog that contains stars. We need to bound. Have a look to the FWHM vs Mag_ISO plot")
     mag_iso_min_stars=float(raw_input("Enter the minimum value for mag_iso: "))
     mag_iso_max_stars=float(raw_input("Enter the maximum value for mag_iso: "))
@@ -160,6 +164,11 @@ def main():
     plt.show(block=False)
     # Comment: it is necessary to plot this catalog on the .fits image to verify that only stars are selected
     subprocess.call('./fiatreview {} {}'.format(fits, catalog_name_stars), shell=True)
+
+    #(8.2.): Checking STARS CATALOG
+    sns.distplot(catalog_name_stars['class_star'], color="b", axlabel = 'flux_iso', hist=True)
+    plt.axvline(catalog_name_stars['class_star'].mean(), color='k', linestyle='dashed', linewidth=2)
+    plt.show()
 
     
     #(9): Creating GALAXIES CATALOG
