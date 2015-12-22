@@ -121,6 +121,7 @@ np.savetxt('{}_simulation_flux_input_{}.txt'.format(PICTURE, FILTER), flux_input
 np.savetxt('{}_simulation_flux_output_{}.txt'.format(PICTURE, FILTER), flux_output)
 np.savetxt('{}_simulation_flux_output_error_{}.txt'.format(PICTURE, FILTER), flux_output_error)
 np.savetxt('{}_simulation_flux_output_max_{}.txt'.format(PICTURE, FILTER), flux_output_max)
+np.savetxt('{}_simulation_flux_output_max_error_{}.txt'.format(PICTURE, FILTER), flux_output_max_error)
 np.savetxt('{}_simulation_number_lost_objects_{}.txt'.format(PICTURE, FILTER), simulation.lost_objects)
 np.savetxt('{}_axis_param_{}.txt'.format(PICTURE, FILTER), (simulation.mean_a, simulation.mean_b))
 
