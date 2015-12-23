@@ -44,7 +44,7 @@ from WL_Utils import sex_caller, sex_caller_corrected, ellipto_caller, dlscombin
 from WL_filter_mag_gal import filter_mag #Filtering final catalog of galaxies a function of magnitudes and call fiatmap
 #from std import sigma_maker #statistical study
 import seaborn as sns
-import matplotlib.pylabs as P #histograms
+import matplotlib.pylab as P #histograms
 
 
 ###############################  BEGIN SCRIPT   ###############################
@@ -164,15 +164,15 @@ def main():
     ellipticity(fcat_stars, 6)
     plt.show(block=False)
     # Comment: it is necessary to plot this catalog on the .fits image to verify that only stars are selected
-    subprocess.call('./fiatreview {} {}'.format(fits, catalog_name_stars), shell=True)
+    #subprocess.call('./fiatreview {} {}'.format(fits, catalog_name_stars), shell=True)
 
     #(8.2.): Checking STARS CATALOG with Source Extractor Neural Network Output
     P.figure()
     P.hist(catalog_name_stars['class_star'], 50, normed=1, histtype='stepfilled')
-    P.show()
+    P.show(block=False)
 
     
-    #(9): Creating GALAXIES CATALOG
+    #(9.1.): Creating GALAXIES CATALOG
     print("Let's obtain only a FIAT catalog that contains galaxies. We need to bound. Have a look to the FWHM vs Mag_ISO plot")
     print("")
     print("First, I'm going to perform a linear fit. Tell me the values of mag_iso")
@@ -193,6 +193,11 @@ def main():
     terminal_galaxies= 'perl fiatfilter.pl -v "FWHM>{}*MAG_ISO+{} && FWHM>{}" {}>{}'.format(m, n, FWHM_max_stars, catalog_name_good, catalog_name_galaxies)
     subprocess.call(terminal_galaxies, shell=True)
     subprocess.call('./fiatreview {} {}'.format(fits, catalog_name_galaxies), shell=True)
+
+    #(9.2.): Checking GALAXIES CATALOG with Source Extractor Neural Network Output
+    P.figure()
+    P.hist(catalog_name_galaxies['class_star'], 50, normed=1, histtype='stepfilled')
+    P.show(block=False)
     
     #(10): Calling Ellipto to recalculate shapes and ellipticities: ELLIPTO CATALOG
     print("")
