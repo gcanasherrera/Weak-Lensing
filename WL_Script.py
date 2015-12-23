@@ -63,7 +63,11 @@ type_shapes_stars = "_shapes_stars.fcat"
 type_match = "_match.fcat"
 
 
+
 def main():
+    
+    sns.set(style="white", palette="muted", color_codes=True)
+    
     # (2): We need to read the image. We ask in screen the image of the region of the sky.
     print("Welcome to the Weak-Lensing Script, here to help you analizing Subaru images")
     print("")
@@ -168,7 +172,7 @@ def main():
 
     #(8.2.): Checking STARS CATALOG with Source Extractor Neural Network Output
     P.figure()
-    P.hist(catalog_name_stars['class_star'], 50, normed=1, histtype='stepfilled')
+    P.hist(fcat_stars['class_star'], 50, normed=1, histtype='stepfilled')
     P.show(block=False)
 
     
