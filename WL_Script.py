@@ -44,6 +44,7 @@ from WL_Utils import sex_caller, sex_caller_corrected, ellipto_caller, dlscombin
 from WL_filter_mag_gal import filter_mag #Filtering final catalog of galaxies a function of magnitudes and call fiatmap
 #from std import sigma_maker #statistical study
 import seaborn as sns
+import matplotlib.pylabs as P #histograms
 
 
 ###############################  BEGIN SCRIPT   ###############################
@@ -165,11 +166,10 @@ def main():
     # Comment: it is necessary to plot this catalog on the .fits image to verify that only stars are selected
     subprocess.call('./fiatreview {} {}'.format(fits, catalog_name_stars), shell=True)
 
-    #(8.2.): Checking STARS CATALOG
-    sns.set(style="white", palette="muted", color_codes=True)
-    sns.distplot(catalog_name_stars['class_star'], color="b", axlabel = 'flux_iso', hist=True)
-    plt.axvline(catalog_name_stars['class_star'].mean(), color='k', linestyle='dashed', linewidth=2)
-    plt.show()
+    #(8.2.): Checking STARS CATALOG with Source Extractor Neural Network Output
+    P.figure()
+    P.hist(catalog_name_stars['class_star'], 50, normed=1, histtype='stepfilled')
+    P.show()
 
     
     #(9): Creating GALAXIES CATALOG
@@ -305,30 +305,10 @@ def main():
     fiatfilter_errcode_galaxies_corrected='perl fiatfilter.pl -v "errcode<2" {}>{}'.format(catalog_name_ellipto_galaxies_corrected, catalog_name_shapes_galaxies_corrected)
     subprocess.call(fiatfilter_errcode_galaxies_corrected, shell=True)
 
-    #(21): Match the catalog of corrected_shapes with the corrected one in order to obtain errmag vs mag
-    catalog_name_match='{}{}'.format(FILE_NAME_CORRECTED, type_match)
-    terminal_match= './fiatmatch {} {} > {}'.format(catalog_name_shapes_galaxies_corrected, catalog_name_corrected_good, catalog_name_match)
-    subprocess.call(terminal_match, shell=True)
-    
-    #(22): Read the new catalog and pass the names
-    names_match = ["number", "flux_iso", "fluxerr_iso", "mag_iso", "mag_aper_1", "mag", "magerr_aper_1", "mag", "magger", "flux_max", "isoarea", "x", "y", "ra", "dec", "ixx_1", "iyy_1", "ixy_1", "ixxWIN", "iyyWIN", "ixyWIN", "theta_1", "enlogation", "ellipticity_1", "FWHM", "flags", "class_star", "x", "y", "mag_iso", "median", "ixx", "iyy", "ixy", "a_input", "b_input", "theta", "ellipticity", "errcode", "sigsky", "size", "flux", "mean_rho_4th", "sigma_e", "wander"]
-    fcat_match = np.genfromtxt(catalog_name_match, names=names_match)
-    plotter(fcat_match, 'mag', 'magger', 21)
-    plt.show(block=False)
-    
-    
-    #Intento para hacer el metodo de seleccion de un error del 10% automatico -----------
-    #fit_match=np.polyfit(fcat_match['mag'], fcat_fit['magger'], 3)
-    #Save in variables the values of the fitting
-    #p=[fit_match[0]-0.1, fit_match[1], fit_match[2], fit_match[3]]
-    #roots=np.roots(p)
-    #   print roots
-    #Intento para hacer el metodo de seleccion de un error del 10% automatico -----------
-
-    #(23): Once you gave your final corrected good shape galaxies catalog --> Now we filter and create radonmized images (10000 images per cut)
+    #(21): Once you gave your final corrected good shape galaxies catalog --> Now we filter and create radonmized images (10000 images per cut)
 #   filter_mag(catalog_name_shapes_galaxies_corrected, 10000)
 
-    #(24): Perform the statistical method --> call sigma maker
+    #(22): Perform the statistical method --> call sigma maker
 #   sigma_maker('g_min_{}_0.fits'.format(FILE_NAME), 10000, 'min')
 #   sigma_maker('g_max_{}_0.fits'.format(FILE_NAME), 10000, 'max')
 #   sigma_maker('g_0_{}_0.fits'.format(FILE_NAME), 10000, 0)
