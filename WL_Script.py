@@ -106,6 +106,9 @@ def main():
     FWHM_max_stars=0
     names = ["number", "flux_iso", "fluxerr_iso", "mag_iso", "magger_iso", "mag_aper_1", "magerr_aper_1", "mag", "magger", "flux_max", "isoarea", "x", "y", "ra", "dec", "ixx", "iyy", "ixy", "ixxWIN", "iyyWIN", "ixyWIN", "A", "B", "theta", "enlogation", "ellipticity", "FWHM", "flags", "class_star"]
     fcat = np.genfromtxt(catalog_name_fiat, names=names)
+    P.figure()
+    P.hist(fcat['class_star'], 50, normed=1, histtype='stepfilled')
+    P.show()
     
     #Let's fix the ellipcity + and - for all celestial objects
     ellipticity(fcat, 1)
@@ -196,12 +199,24 @@ def main():
     catalog_name_galaxies= '{}{}'.format(FILE_NAME, type_galaxies)
     terminal_galaxies= 'perl fiatfilter.pl -v "FWHM>{}*MAG_ISO+{} && FWHM>{}" {}>{}'.format(m, n, FWHM_max_stars, catalog_name_good, catalog_name_galaxies)
     subprocess.call(terminal_galaxies, shell=True)
-    subprocess.call('./fiatreview {} {}'.format(fits, catalog_name_galaxies), shell=True)
+    fcat_galaxies=np.genfromtxt(catalog_name_galaxies, names=names)
+    #subprocess.call('./fiatreview {} {}'.format(fits, catalog_name_galaxies), shell=True)
 
     #(9.2.): Checking GALAXIES CATALOG with Source Extractor Neural Network Output
     P.figure()
-    P.hist(catalog_name_galaxies['class_star'], 50, normed=1, histtype='stepfilled')
+    P.hist(fcat_galaxies['class_star'], 50, normed=1, histtype='stepfilled')
     P.show(block=False)
+
+
+
+    # (***) CHECKING FOR STARS // GALAXIES DIVISION
+    P.figure()
+    P.hist(fcat_stars['class_star'], 50, normed=1, histtype='stepfilled', label ='stars')
+    P.hist(fcat_galaxies['class_star'], 50, normed=1, histtype='stepfilled', label ='galaxies')
+    P.hist(fcat['class_star'], 50, normed=1, histtype='stepfilled', label ='all')
+    P.show()
+
+
     
     #(10): Calling Ellipto to recalculate shapes and ellipticities: ELLIPTO CATALOG
     print("")
@@ -278,7 +293,7 @@ def main():
     subprocess.call(transform_into_fiat_corrected, shell=True)
     print("")
     
-    #(17): Transform again the corrected catalog into a GOOD catalog
+    #(17): Transform again tshe corrected catalog into a GOOD catalog
     catalog_name_corrected_good= '{}{}'.format(FILE_NAME, type_good)
     terminal_corrected_good= 'perl fiatfilter.pl "x>{} && x<{} && y>{} && y<{}" {}>{}'.format(xmin_good, xmax_good, ymin_good, ymax_good, catalog_name_fiat_corrected, catalog_name_corrected_good)
     subprocess.call(terminal_corrected_good, shell=True)
