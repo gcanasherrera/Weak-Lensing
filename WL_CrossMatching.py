@@ -2,11 +2,11 @@
 #
 # Bachelor Disertation Program X
 #
-# Type: python class
+# Type: python script
 #
-# Content: 2 Classes, 1 constructor,
+# Content: two objects from the class CatalogReader, and 1 object from the class CrossMatching
 #
-# Description: General Class destinated to get a cross matching between two catalogs from different filtered pics
+# Description: Main Script to perform the Cross Matching algorithm
 
 
 __author__ = "Guadalupe Canas Herrera"
@@ -46,6 +46,19 @@ catag_z.read()
 crossmatching = CrossMatching(catag_r.fcat, catag_z.fcat)
 crossmatching.kdtree(n=7.2e-05)
 crossmatching.catalog_writter('lhn1n1_crossmatching_1to2', compare = '1to2')
+print '\n'
+crossmatching.catalog_writter('lhn1n1_crossmatching_2to1', compare = '2to1')
+
+if crossmatching.cont1to2<crossmatching.cont1to2:
+    crossmatching_final = CrossMatching('lhn1n1_crossmatching_1to2.fcat', 'lhn1n1_crossmatching_2to1.fcat')
+    crossmatching_final.kdtree(n=7.2e-05)
+    crossmatching.catalog_writter('lhn1n1_crossmatching_final', compare = '1to2')
+
+elif crossmatching.cont2to1<crossmatching.cont1to2:
+    crossmatching_final = CrossMatching('lhn1n1_crossmatching_1to2.fcat', 'lhn1n1_crossmatching_2to1.fcat')
+    crossmatching_final.kdtree(n=7.2e-05)
+    crossmatching.catalog_writter('lhn1n1_crossmatching_final', compare = '2to1')
+
 
 
 
