@@ -43,7 +43,7 @@ class CrossMatching(object):
     
     def __init__(self, catalog_1, catalog_2):  #define attributes of future class-objects
         # catalog_2 and catalog_2 are objects from Class_CatalogReader.py
-        self.catalog_2 = catalog_2
+        self.catalog_1 = catalog_1
         self.catalog_2 = catalog_2
         self.x_1 = catalog_2['x']
         self.x_2 = catalog_2['x']
