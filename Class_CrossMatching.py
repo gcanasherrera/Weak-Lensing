@@ -4,7 +4,7 @@
 #
 # Type: python class
 #
-# Content: 2 Classes, 1 constructor,
+# Content: 1 Class, 1 constructor,
 #
 # Description: General Class destinated to get a cross matching between two catalogs from different filtered pics
 
