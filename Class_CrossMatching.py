@@ -41,7 +41,7 @@ class CrossMatching(object):
         Constructor that defines attribute of future class-objects
     """
     
-    def __init__(self, catalog_2, catalog_2):  #define attributes of future class-objects
+    def __init__(self, catalog_1, catalog_2):  #define attributes of future class-objects
         # catalog_2 and catalog_2 are objects from Class_CatalogReader.py
         self.catalog_2 = catalog_2
         self.catalog_2 = catalog_2
