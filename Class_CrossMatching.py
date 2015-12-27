@@ -41,13 +41,13 @@ class CrossMatching(object):
         Constructor that defines attribute of future class-objects
     """
     
-    def __init__(self, catalog_1, catalog_2):  #define attributes of future class-objects
-        # catalog_1 and catalog_2 are objects from Class_CatalogReader.py
-        self.catalog_1 = catalog_1
+    def __init__(self, catalog_2, catalog_2):  #define attributes of future class-objects
+        # catalog_2 and catalog_2 are objects from Class_CatalogReader.py
         self.catalog_2 = catalog_2
-        self.x_1 = catalog_1['x']
+        self.catalog_2 = catalog_2
+        self.x_1 = catalog_2['x']
         self.x_2 = catalog_2['x']
-        self.y_1 = catalog_1['y']
+        self.y_1 = catalog_2['y']
         self.y_2 = catalog_2['y']
         
         
@@ -59,9 +59,9 @@ class CrossMatching(object):
         self.yt_2 = []
         self.zt_2 = []
         
-        self.ra_1 = catalog_1['ra']
+        self.ra_1 = catalog_2['ra']
         self.ra_2 = catalog_2['ra']
-        self.de_1 = catalog_1['dec']
+        self.de_1 = catalog_2['dec']
         self.de_2 = catalog_2['dec']
         
         self.positions_cat_1 = []
@@ -84,7 +84,7 @@ class CrossMatching(object):
         return x, y, z
 
     def trivector_creator(self):
-        self.xt_1, self.yt_1, self.zt_1 = self.spheric_coordinates(self.catalog_1['ra'], self.catalog_1['dec'])
+        self.xt_1, self.yt_1, self.zt_1 = self.spheric_coordinates(self.catalog_2['ra'], self.catalog_2['dec'])
         self.xt_2, self.yt_2, self.zt_2 = self.spheric_coordinates(self.catalog_2['ra'], self.catalog_2['dec'])
         self.positions_cat_1 = zip(self.xt_1.ravel(), self.yt_1.ravel(), self.zt_2.ravel())
         self.positions_cat_2 = zip(self.xt_2.ravel(), self.yt_2.ravel(), self.zt_2.ravel())
@@ -150,7 +150,7 @@ class CrossMatching(object):
             for index in self.posible_obj_index_1:
                 if index < len(self.positions_cat_1):
                 
-                    f_1.write('%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s \n'% (cont, self.catalog_1[names[1]][index], self.catalog_1[names[2]][index], self.catalog_1[names[3]][index], self.catalog_1[names[4]][index], self.catalog_1[names[5]][index], self.catalog_1[names[6]][index], self.catalog_1[names[7]][index], self.catalog_1[names[8]][index], self.catalog_1[names[9]][index], self.catalog_1[names[10]][index], self.catalog_1[names[11]][index], self.catalog_1[names[12]][index], self.catalog_1[names[13]][index], self.catalog_1[names[14]][index], self.catalog_1[names[15]][index], self.catalog_1[names[16]][index], self.catalog_1[names[17]][index], self.catalog_1[names[18]][index], self.catalog_1[names[19]][index], self.catalog_1[names[20]][index], self.catalog_1[names[21]][index], self.catalog_1[names[22]][index], self.catalog_1[names[23]][index], self.catalog_1[names[24]][index], self.catalog_1[names[25]][index], self.catalog_1[names[26]][index], self.catalog_1[names[27]][index], self.catalog_1[names[28]][index]))
+                    f_1.write('%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s \n'% (cont, self.catalog_2[names[1]][index], self.catalog_2[names[2]][index], self.catalog_2[names[3]][index], self.catalog_2[names[4]][index], self.catalog_2[names[5]][index], self.catalog_2[names[6]][index], self.catalog_2[names[7]][index], self.catalog_2[names[8]][index], self.catalog_2[names[9]][index], self.catalog_2[names[10]][index], self.catalog_2[names[11]][index], self.catalog_2[names[12]][index], self.catalog_2[names[13]][index], self.catalog_2[names[14]][index], self.catalog_2[names[15]][index], self.catalog_2[names[16]][index], self.catalog_2[names[17]][index], self.catalog_2[names[18]][index], self.catalog_2[names[19]][index], self.catalog_2[names[20]][index], self.catalog_2[names[21]][index], self.catalog_2[names[22]][index], self.catalog_2[names[23]][index], self.catalog_2[names[24]][index], self.catalog_2[names[25]][index], self.catalog_2[names[26]][index], self.catalog_2[names[27]][index], self.catalog_2[names[28]][index]))
                 
                     cont = cont + 1
                     self.cont1to2 = cont
@@ -159,7 +159,7 @@ class CrossMatching(object):
                     number_of_lost_1 = number_of_lost_1 + 1
     
             print '\nThe number of lost objects from matching of 1 with respect of 2 is {}\n'.format(number_of_lost_1)
-            print 'Length of the Picture 1 original catalog {}\n'.format(len(self.catalog_1[names[0]]))
+            print 'Length of the Picture 1 original catalog {}\n'.format(len(self.catalog_2[names[0]]))
             print 'Length of the Cross-Matching Catalog {}\n'.format(self.cont1to2)
 
 
@@ -168,7 +168,7 @@ class CrossMatching(object):
             for index in self.posible_obj_index_2:
                 if index < len(self.positions_cat_2):
                     
-                    f_1.write('%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s \n'% (cont, self.catalog_2[names[1]], self.catalog_2[names[2]], self.catalog_2[names[3]], self.catalog_2[names[4]], self.catalog_2[names[5]], self.catalog_2[names[6]], self.catalog_2[names[7]], self.catalog_2[names[8]], self.catalog_2[names[9]], self.catalog_2[names[10]], self.catalog_2[names[11]], self.catalog_2[names[12]], self.catalog_2[names[13]], self.catalog_2[names[14]], self.catalog_2[names[15]], self.catalog_2[names[16]], self.catalog_2[names[17]], self.catalog_2[names[18]], self.catalog_2[names[19]], self.catalog_2[names[20]], self.catalog_2[names[21]], self.catalog_2[names[22]], self.catalog_2[names[23]], self.catalog_2[names[24]], self.catalog_2[names[25]], self.catalog_2[names[26]], self.catalog_2[names[27]], self.catalog_2[names[28]]))
+                    f_1.write('%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s \n'% (cont, self.catalog_2[names[1]][index], self.catalog_2[names[2]][index], self.catalog_2[names[3]][index], self.catalog_2[names[4]][index], self.catalog_2[names[5]][index], self.catalog_2[names[6]][index], self.catalog_2[names[7]][index], self.catalog_2[names[8]][index], self.catalog_2[names[9]][index], self.catalog_2[names[10]][index], self.catalog_2[names[11]][index], self.catalog_2[names[12]][index], self.catalog_2[names[13]][index], self.catalog_2[names[14]][index], self.catalog_2[names[15]][index], self.catalog_2[names[16]][index], self.catalog_2[names[17]][index], self.catalog_2[names[18]][index], self.catalog_2[names[19]][index], self.catalog_2[names[20]][index], self.catalog_2[names[21]][index], self.catalog_2[names[22]][index], self.catalog_2[names[23]][index], self.catalog_2[names[24]][index], self.catalog_2[names[25]][index], self.catalog_2[names[26]][index], self.catalog_2[names[27]][index], self.catalog_2[names[28]][index]))
                         
                     cont = cont + 1
                     self.cont2to1 = cont
