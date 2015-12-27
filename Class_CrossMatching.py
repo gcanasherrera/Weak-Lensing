@@ -84,7 +84,7 @@ class CrossMatching(object):
         return x, y, z
 
     def trivector_creator(self):
-        self.xt_1, self.yt_1, self.zt_1 = self.spheric_coordinates(self.catalog_2['ra'], self.catalog_2['dec'])
+        self.xt_1, self.yt_1, self.zt_1 = self.spheric_coordinates(self.catalog_1['ra'], self.catalog_1['dec'])
         self.xt_2, self.yt_2, self.zt_2 = self.spheric_coordinates(self.catalog_2['ra'], self.catalog_2['dec'])
         self.positions_cat_1 = zip(self.xt_1.ravel(), self.yt_1.ravel(), self.zt_2.ravel())
         self.positions_cat_2 = zip(self.xt_2.ravel(), self.yt_2.ravel(), self.zt_2.ravel())
@@ -150,7 +150,7 @@ class CrossMatching(object):
             for index in self.posible_obj_index_1:
                 if index < len(self.positions_cat_1):
                 
-                    f_1.write('%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s \n'% (cont, self.catalog_2[names[1]][index], self.catalog_2[names[2]][index], self.catalog_2[names[3]][index], self.catalog_2[names[4]][index], self.catalog_2[names[5]][index], self.catalog_2[names[6]][index], self.catalog_2[names[7]][index], self.catalog_2[names[8]][index], self.catalog_2[names[9]][index], self.catalog_2[names[10]][index], self.catalog_2[names[11]][index], self.catalog_2[names[12]][index], self.catalog_2[names[13]][index], self.catalog_2[names[14]][index], self.catalog_2[names[15]][index], self.catalog_2[names[16]][index], self.catalog_2[names[17]][index], self.catalog_2[names[18]][index], self.catalog_2[names[19]][index], self.catalog_2[names[20]][index], self.catalog_2[names[21]][index], self.catalog_2[names[22]][index], self.catalog_2[names[23]][index], self.catalog_2[names[24]][index], self.catalog_2[names[25]][index], self.catalog_2[names[26]][index], self.catalog_2[names[27]][index], self.catalog_2[names[28]][index]))
+                    f_1.write('%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s\t%-20s \n'% (cont, self.catalog_1[names[1]][index], self.catalog_1[names[2]][index], self.catalog_1[names[3]][index], self.catalog_1[names[4]][index], self.catalog_1[names[5]][index], self.catalog_1[names[6]][index], self.catalog_1[names[7]][index], self.catalog_1[names[8]][index], self.catalog_1[names[9]][index], self.catalog_1[names[10]][index], self.catalog_1[names[11]][index], self.catalog_1[names[12]][index], self.catalog_1[names[13]][index], self.catalog_1[names[14]][index], self.catalog_1[names[15]][index], self.catalog_1[names[16]][index], self.catalog_1[names[17]][index], self.catalog_1[names[18]][index], self.catalog_1[names[19]][index], self.catalog_1[names[20]][index], self.catalog_1[names[21]][index], self.catalog_1[names[22]][index], self.catalog_1[names[23]][index], self.catalog_1[names[24]][index], self.catalog_1[names[25]][index], self.catalog_1[names[26]][index], self.catalog_1[names[27]][index], self.catalog_1[names[28]][index]))
                 
                     cont = cont + 1
                     self.cont1to2 = cont
@@ -159,7 +159,7 @@ class CrossMatching(object):
                     number_of_lost_1 = number_of_lost_1 + 1
     
             print '\nThe number of lost objects from matching of 1 with respect of 2 is {}\n'.format(number_of_lost_1)
-            print 'Length of the Picture 1 original catalog {}\n'.format(len(self.catalog_2[names[0]]))
+            print 'Length of the Picture 1 original catalog {}\n'.format(len(self.catalog_1[names[0]]))
             print 'Length of the Cross-Matching Catalog {}\n'.format(self.cont1to2)
 
 
