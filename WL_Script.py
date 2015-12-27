@@ -214,6 +214,7 @@ def main():
     P.hist(fcat_stars['class_star'], 50, normed=1, histtype='stepfilled', label ='stars')
     P.hist(fcat_galaxies['class_star'], 50, normed=1, histtype='stepfilled', label ='galaxies')
     P.hist(fcat['class_star'], 50, normed=1, histtype='stepfilled', label ='all')
+    P.legend(loc='upper right')
     P.show()
 
 
