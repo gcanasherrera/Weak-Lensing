@@ -38,8 +38,8 @@ sns.set(style="white", palette="muted", color_codes=True)
 plt.figure()
 plt.title('Number of lost Galaxies vs mag_input_max')
 plt.plot(mag_input, number_lost_objects, 'k-')
-plt.xlabel('Input Max Magnitude')
-plt.ylabel('Number Lost Objects')
+plt.xlabel('$m(max)_{input}$')
+plt.ylabel('$n_{lost}$')
 plt.show()
 
 
@@ -51,8 +51,8 @@ sns.set(style="white", palette="muted", color_codes=True)
 plt.figure()
 plt.title('flux_out_max vs flux_input (Linear Scale)')
 plt.errorbar(flux_input, flux_output_max, flux_output_max_error, 0, fmt='ko')
-plt.xlabel('flux_input_max')
-plt.ylabel('flux_output_max')
+plt.xlabel('$F(max)_{input}$')
+plt.ylabel('$F(max)_{input}$')
 plt.show()
 
 #PLOT 3: flux_out_iso vs flux_input_iso
@@ -71,8 +71,8 @@ sns.set(style="white", palette="muted", color_codes=True)
 plt.figure()
 plt.title('flux_out_iso vs flux_input_iso (Linear Scale)')
 plt.errorbar(flux_input_iso, flux_output, flux_output_error, 0, fmt='ko')
-plt.xlabel('flux_input_iso')
-plt.ylabel('flux_output_iso')
+plt.xlabel('$F(iso)_{input}$')
+plt.ylabel('$F(iso)_{output}$')
 plt.show()
 
 
@@ -87,8 +87,8 @@ sns.set(style="white", palette="muted", color_codes=True)
 plt.figure()
 plt.title('mag_out_iso vs mag_input_iso (Linear Scale)')
 plt.errorbar(mag_input_iso, mag_output_sex, mag_output_error_sex, 0, fmt='ko')
-plt.xlabel('mag_input_iso')
-plt.ylabel('mag_output_iso')
+plt.xlabel('$m(iso)_{input}$')
+plt.ylabel('$m(iso)_{output}$')
 plt.show()
 
 
