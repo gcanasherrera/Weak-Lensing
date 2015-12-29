@@ -15,9 +15,9 @@ PICTURE = 'lhn1n1_2010apr_r_stack_fc_fix'
 
 
 mag_input = np.genfromtxt(('{}_simulation_mag_input_{}.txt').format(PICTURE, FILTER))
-mag_output_sex = np.genfromtxt(('{}_mag_output_sex_{}.txt').format(PICTURE, FILTER))
+mag_output_sex = np.genfromtxt(('{}_simulation_mag_output_sex_{}.txt').format(PICTURE, FILTER))
 #mag_output_wayback = np.genfromtxt(('w2_53_stack_simulation_mag_output_wayback_{}.txt').format(FILTER))
-mag_output_error_sex = np.genfromtxt(('{}_mag_output_error_sex_{}.txt').format(PICTURE, FILTER))
+mag_output_error_sex = np.genfromtxt(('{}_simulation_mag_output_error_sex_{}.txt').format(PICTURE, FILTER))
 #mag_output_error_wayback = np.genfromtxt(('w2_53_stack_simulation_mag_output_error_wayback_{}.txt').format(FILTER))
 flux_input = np.genfromtxt(('{}_simulation_flux_input_{}.txt').format(PICTURE, FILTER))
 flux_output = np.genfromtxt(('{}_simulation_flux_output_{}.txt').format(PICTURE, FILTER))
