@@ -381,7 +381,7 @@ class ObjectCreator(object):
                     self.matrix_data[g,f]=self.picture_data[g,f]
 
         #write in a new picture the matrix_data
-        self.get_simulation_picture(mag_value, picture)
+        self.get_simulation_picture(mag_value, pic)
 
 
 
