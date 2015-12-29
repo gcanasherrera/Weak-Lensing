@@ -48,9 +48,12 @@ flux_output_max = []
 flux_output_max_error = []
 number_lost_objects = []
 
+#Call Source Extractor
+
+catalog_name = sex_caller('{}.fits'.format(PICTURE), '{}_{}.cat'.format(PICTURE, FILTER))
 
 #Read catalog
-catag = CatalogReader('{}_{}.fcat'.format(PICTURE, FILTER))
+catag = CatalogReader('{}_{}.cat'.format(PICTURE, FILTER))
 catag.read()
 
 #Create object for simulation
