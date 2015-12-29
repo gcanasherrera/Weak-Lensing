@@ -8,7 +8,7 @@ import seaborn as sns #Improvements for statistical-plots
 from operator import truediv
 import math
 
-FILTER = 'Mexican_hat'
+FILTER = 'MH'
 PICTURE = 'lhn1n1_2010apr_r_stack_fc_fix'
 
 #Read txt file ' w2_53_stack_simulation.txt'
