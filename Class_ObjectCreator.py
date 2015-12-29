@@ -316,7 +316,7 @@ class ObjectCreator(object):
         
     """
     
-    def objectcreator_magnitude(self, mag_value = 0.0, n = 5, PICTURE):
+    def objectcreator_magnitude(self, mag_value = 0.0, n = 5, picture = ''):
         print 'Show the relation between the intensity and the manitude \n'
         
         #self.plot_fitting_exp(self.fcat['mag_iso'], self.fcat['flux_iso'])
@@ -381,7 +381,7 @@ class ObjectCreator(object):
                     self.matrix_data[g,f]=self.picture_data[g,f]
 
         #write in a new picture the matrix_data
-        self.get_simulation_picture(mag_value, PICTURE)
+        self.get_simulation_picture(mag_value, picture)
 
 
 
