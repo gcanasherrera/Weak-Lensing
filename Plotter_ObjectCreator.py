@@ -36,7 +36,7 @@ mag_input_iso = []
 #PLOT 1: Number of lost Galaxies vs mag_input
 sns.set(style="white", palette="muted", color_codes=True)
 plt.figure()
-plt.title('Number of lost Galaxies vs mag_input_max')
+#plt.title('Number of lost Galaxies vs mag_input_max')
 plt.plot(mag_input, number_lost_objects, 'k-')
 plt.xlabel('$m(max)_{input}$')
 plt.ylabel('$n_{lost}$')
@@ -49,7 +49,7 @@ normalization_th = 2*math.pi*par["mean_a"]*par["mean_b"]
 
 sns.set(style="white", palette="muted", color_codes=True)
 plt.figure()
-plt.title('flux_out_max vs flux_input (Linear Scale)')
+#plt.title('flux_out_max vs flux_input (Linear Scale)')
 plt.errorbar(flux_input, flux_output_max, flux_output_max_error, 0, fmt='ko')
 plt.xlabel('$F(max)_{input}$')
 plt.ylabel('$F(max)_{input}$')
@@ -69,7 +69,7 @@ for i in range (0, len(ratio_flux)):
 
 sns.set(style="white", palette="muted", color_codes=True)
 plt.figure()
-plt.title('flux_out_iso vs flux_input_iso (Linear Scale)')
+#plt.title('flux_out_iso vs flux_input_iso (Linear Scale)')
 plt.errorbar(flux_input_iso, flux_output, flux_output_error, 0, fmt='ko')
 plt.xlabel('$F(iso)_{input}$')
 plt.ylabel('$F(iso)_{output}$')
@@ -85,7 +85,7 @@ for i in range (0, len(ratio_mag)):
 
 sns.set(style="white", palette="muted", color_codes=True)
 plt.figure()
-plt.title('mag_out_iso vs mag_input_iso (Linear Scale)')
+#plt.title('mag_out_iso vs mag_input_iso (Linear Scale)')
 plt.errorbar(mag_input_iso, mag_output_sex, mag_output_error_sex, 0, fmt='ko')
 plt.xlabel('$m(iso)_{input}$')
 plt.ylabel('$m(iso)_{output}$')
