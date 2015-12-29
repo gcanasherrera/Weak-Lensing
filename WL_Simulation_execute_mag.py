@@ -50,10 +50,10 @@ number_lost_objects = []
 
 #Call Source Extractor
 
-catalog_name = sex_caller('{}.fits'.format(PICTURE), '{}_{}.cat'.format(PICTURE, FILTER))
+catalog_name = sex_caller('{}.fits'.format(PICTURE), '{}_{}'.format(PICTURE, FILTER))
 
 #Read catalog
-catag = CatalogReader('{}_{}.cat'.format(PICTURE, FILTER))
+catag = CatalogReader(catalog_name)
 catag.read()
 
 #Create object for simulation
