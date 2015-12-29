@@ -1,12 +1,12 @@
 # Name: Class_ObjectCreator.py
 #
-# Bachelor Disertation Program VI
+# Weak-Lensing Validation Program I
 #
 # Type: python class
 #
-# Content: 2 Classes, 1 constructor,
+# Content: 2 Classes, 1 constructor, 16 methods
 #
-# Description: General Class destinated to produce a simulation over a .fits picture in order to determinate whether Source Extractor
+# Description: General Class destinated to produce a simulation over a .fits picture in order to determinate whether Source Extractor detects properly the celestial objects.
 #
 
 
@@ -26,7 +26,7 @@ import subprocess #calling to the terminal
 from astropy.modeling import models, fitting #Package for fitting functions with a astronomical character
 import warnings #Advices
 from astropy.io import fits #Open and Reading FITS Files usign astropy
-import random #pseudo-random generator
+import random #pseudo-random generatorCcCl
 import seaborn as sns #Improvements for statistical-plots
 from pymodelfit import FunctionModel1DAuto #Create own model of fitting
 from scipy import spatial #KDTREE altorithm
@@ -179,7 +179,7 @@ class ObjectCreator(object):
         plt.xlabel('Mag_iso')
         plt.ylabel('Flux_iso')
         
-        #plt.show()
+        plt.show()
         self.mean_intensity = model.f(m = self.mean_mag, a = af, b = bf)
         print 'The mean intensity is : {}\nThe mean isophotal magnitude is : {} '.format(self.mean_intensity, self.mean_mag)
         
@@ -306,7 +306,7 @@ class ObjectCreator(object):
         Method that writes and generates the new .fits picture that contains the new celestials objects using Astropy library at http://astropy.readthedocs.org/en/latest/io/fits/index.html?highlight=fits#module-astropy.io.fits
         
     """
-    def get_simulation_picture(self, ID_number):
+    def get_simulation_picture(self, ID_number, PICTURE):
         self.simulation_picture = '{}_simulation_{}.fits'.format('w2_53_stack', ID_number)
         fits.writeto(self.simulation_picture, self.matrix_data)
     
@@ -316,7 +316,7 @@ class ObjectCreator(object):
         
     """
     
-    def objectcreator_magnitude(self, mag_value = 0.0, n = 5):
+    def objectcreator_magnitude(self, mag_value = 0.0, n = 5, PICTURE):
         print 'Show the relation between the intensity and the manitude \n'
         
         #self.plot_fitting_exp(self.fcat['mag_iso'], self.fcat['flux_iso'])
@@ -381,7 +381,7 @@ class ObjectCreator(object):
                     self.matrix_data[g,f]=self.picture_data[g,f]
 
         #write in a new picture the matrix_data
-        self.get_simulation_picture(mag_value)
+        self.get_simulation_picture(mag_value, PICTURE)
 
 
 

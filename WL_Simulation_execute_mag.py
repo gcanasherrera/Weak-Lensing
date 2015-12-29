@@ -80,7 +80,7 @@ for mag in mag_input:
     
     print '\nSimulation\n'
     
-    simulation.objectcreator_magnitude(mag_value = mag, n = 5)
+    simulation.objectcreator_magnitude(mag_value = mag, n = 5, PICTURE)
     
     print '\nSextractor\n'
     sex_caller('{}_simulation_{}.fits'.format(PICTURE, mag), '{}_simulation_{}'.format(PICTURE, mag))
