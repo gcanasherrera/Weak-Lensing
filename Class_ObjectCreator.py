@@ -307,7 +307,7 @@ class ObjectCreator(object):
         
     """
     def get_simulation_picture(self, ID_number, PICTURE):
-        self.simulation_picture = '{}_simulation_{}.fits'.format('w2_53_stack', ID_number)
+        self.simulation_picture = '{}_simulation_{}.fits'.format(PICTURE, ID_number)
         fits.writeto(self.simulation_picture, self.matrix_data)
     
     
