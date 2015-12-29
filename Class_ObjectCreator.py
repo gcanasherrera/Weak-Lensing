@@ -179,7 +179,7 @@ class ObjectCreator(object):
         plt.xlabel('Mag_iso')
         plt.ylabel('Flux_iso')
         
-        plt.show()
+        #plt.show()
         self.mean_intensity = model.f(m = self.mean_mag, a = af, b = bf)
         print 'The mean intensity is : {}\nThe mean isophotal magnitude is : {} '.format(self.mean_intensity, self.mean_mag)
         
