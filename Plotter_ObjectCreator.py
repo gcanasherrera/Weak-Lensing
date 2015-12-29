@@ -9,25 +9,26 @@ from operator import truediv
 import math
 
 FILTER = 'Mexican_hat'
+PICTURE = 'lhn1n1_2010apr_r_stack_fc_fix'
 
 #Read txt file ' w2_53_stack_simulation.txt'
 
 
-mag_input = np.genfromtxt(('w2_53_stack_simulation_mag_input_{}.txt').format(FILTER))
-mag_output_sex = np.genfromtxt(('w2_53_stack_simulation_mag_output_sex_{}.txt').format(FILTER))
+mag_input = np.genfromtxt(('{}_simulation_mag_input_{}.txt').format(PICTURE, FILTER))
+mag_output_sex = np.genfromtxt(('{}_mag_output_sex_{}.txt').format(PICTURE, FILTER))
 #mag_output_wayback = np.genfromtxt(('w2_53_stack_simulation_mag_output_wayback_{}.txt').format(FILTER))
-mag_output_error_sex = np.genfromtxt(('w2_53_stack_simulation_mag_output_error_sex_{}.txt').format(FILTER))
+mag_output_error_sex = np.genfromtxt(('{}_mag_output_error_sex_{}.txt').format(PICTURE, FILTER))
 #mag_output_error_wayback = np.genfromtxt(('w2_53_stack_simulation_mag_output_error_wayback_{}.txt').format(FILTER))
-flux_input = np.genfromtxt(('w2_53_stack_simulation_flux_input_{}.txt').format(FILTER))
-flux_output = np.genfromtxt(('w2_53_stack_simulation_flux_output_{}.txt').format(FILTER))
-flux_output_error = np.genfromtxt(('w2_53_stack_simulation_flux_output_error_{}.txt').format(FILTER))
-flux_output_max = np.genfromtxt(('w2_53_stack_simulation_flux_output_max_{}.txt').format(FILTER))
-flux_output_max_error = np.genfromtxt(('w2_53_stack_simulation_flux_output_max_error_{}.txt').format(FILTER))
-number_lost_objects = np.genfromtxt(('w2_53_stack_simulation_number_lost_objects_{}.txt').format(FILTER))
+flux_input = np.genfromtxt(('{}_simulation_flux_input_{}.txt').format(PICTURE, FILTER))
+flux_output = np.genfromtxt(('{}_simulation_flux_output_{}.txt').format(PICTURE, FILTER))
+flux_output_error = np.genfromtxt(('{}_simulation_flux_output_error_{}.txt').format(PICTURE, FILTER))
+flux_output_max = np.genfromtxt(('{}_simulation_flux_output_max_{}.txt').format(PICTURE, FILTER))
+flux_output_max_error = np.genfromtxt(('{}_simulation_flux_output_max_error_{}.txt').format(PICTURE, FILTER))
+number_lost_objects = np.genfromtxt(('{}_simulation_number_lost_objects_{}.txt').format(PICTURE, FILTER))
 
 
 param = ["mean_a", "mean_b"]
-par = np.genfromtxt(('w2_53_stack_axis_param_{}.txt').format(FILTER), names=param)
+par = np.genfromtxt(('{}_axis_param_{}.txt').format(PICTURE, FILTER), names=param)
 
 flux_input_iso = []
 mag_input_iso = []
