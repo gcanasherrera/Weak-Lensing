@@ -38,8 +38,8 @@ sns.set(style="white", palette="muted", color_codes=True)
 plt.figure()
 #plt.title('Number of lost Galaxies vs mag_input_max')
 plt.plot(mag_input, number_lost_objects, 'k-')
-plt.xlabel('$m(max)_{input}$', fontsize=20)
-plt.ylabel('$n_{lost}$', fontsize=20)
+plt.xlabel('$m(max)_{input}$', fontsize=18)
+plt.ylabel('$n_{lost}$', fontsize=18)
 plt.show()
 
 
@@ -51,8 +51,8 @@ sns.set(style="white", palette="muted", color_codes=True)
 plt.figure()
 #plt.title('flux_out_max vs flux_input (Linear Scale)')
 plt.errorbar(flux_input, flux_output_max, flux_output_max_error, 0, fmt='ko')
-plt.xlabel('$F(max)_{input}$', fontsize=20)
-plt.ylabel('$F(max)_{input}$', fontsize=20)
+plt.xlabel('$F(max)_{input}$', fontsize=18)
+plt.ylabel('$F(max)_{output}$', fontsize=18)
 plt.show()
 
 #PLOT 3: flux_out_iso vs flux_input_iso
@@ -65,14 +65,15 @@ print '\nExperimental Normalization: {}'.format(ratio_flux)
 
 
 for i in range (0, len(ratio_flux)):
-    flux_input_iso.append(ratio_flux[i]*flux_input[i])
+#flux_input_iso.append(ratio_flux[i]*flux_input[i])
+    flux_input_iso.append(normalization_th*flux_input[i])
 
 sns.set(style="white", palette="muted", color_codes=True)
 plt.figure()
 #plt.title('flux_out_iso vs flux_input_iso (Linear Scale)')
 plt.errorbar(flux_input_iso, flux_output, flux_output_error, 0, fmt='ko')
-plt.xlabel('$F(iso)_{input}$', fontsize=20)
-plt.ylabel('$F(iso)_{output}$', fontsize=20)
+plt.xlabel('$F(iso)_{input}$', fontsize=18)
+plt.ylabel('$F(iso)_{output}$', fontsize=18)
 plt.show()
 
 
@@ -81,14 +82,15 @@ plt.show()
 ratio_mag=map(truediv, mag_output_sex, mag_input)
 
 for i in range (0, len(ratio_mag)):
-    mag_input_iso.append(ratio_mag[i]*mag_input[i])
+#   mag_input_iso.append(ratio_mag[i]*mag_input[i])
+    mag_input_iso.append(normalization_th*mag_input[i])
 
 sns.set(style="white", palette="muted", color_codes=True)
 plt.figure()
 #plt.title('mag_out_iso vs mag_input_iso (Linear Scale)')
 plt.errorbar(mag_input_iso, mag_output_sex, mag_output_error_sex, 0, fmt='ko')
-plt.xlabel('$m(iso)_{input}$', fontsize=20)
-plt.ylabel('$m(iso)_{output}$', fontsize=20)
+plt.xlabel('$m(iso)_{input}$', fontsize=18)
+plt.ylabel('$m(iso)_{output}$', fontsize=18)
 plt.show()
 
 
