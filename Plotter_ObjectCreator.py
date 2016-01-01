@@ -11,6 +11,12 @@ import math
 FILTER = 'MH'
 PICTURE = 'lhn1n1_2010apr_r_stack_fc_fix'
 
+
+def m(F, a, b):
+    return -2.5*(math.log(F, 10)-math.log(a, 10)-b)
+
+
+
 #Read txt file ' w2_53_stack_simulation.txt'
 
 
@@ -64,7 +70,7 @@ print '\nTheoretical Normalization: {}'.format(normalization_th)
 print '\nExperimental Normalization: {}'.format(ratio_flux)
 
 
-for i in range (0, len(ratio_flux)):
+for i in flux_output:
 #flux_input_iso.append(ratio_flux[i]*flux_input[i])
     flux_input_iso.append(normalization_th*flux_input[i])
 
@@ -81,9 +87,8 @@ plt.show()
 
 ratio_mag=map(truediv, mag_output_sex, mag_input)
 
-for i in range (0, len(ratio_mag)):
-#   mag_input_iso.append(ratio_mag[i]*mag_input[i])
-    mag_input_iso.append(normalization_th*mag_input[i])
+for i in flux_input_iso
+    mag_input_iso.append(m(flux_input_iso[i],100.228418351, 9.99901042564))
 
 sns.set(style="white", palette="muted", color_codes=True)
 plt.figure()
