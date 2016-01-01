@@ -87,7 +87,7 @@ plt.show()
 
 ratio_mag=map(truediv, mag_output_sex, mag_input)
 
-for i in flux_input_iso
+for i in flux_input_iso:
     mag_input_iso.append(m(flux_input_iso[i],100.228418351, 9.99901042564))
 
 sns.set(style="white", palette="muted", color_codes=True)
