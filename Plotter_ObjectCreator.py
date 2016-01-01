@@ -70,7 +70,7 @@ print '\nTheoretical Normalization: {}'.format(normalization_th)
 print '\nExperimental Normalization: {}'.format(ratio_flux)
 
 
-for i in flux_output:
+for i in flux_input:
 #flux_input_iso.append(ratio_flux[i]*flux_input[i])
     flux_input_iso.append(normalization_th*flux_input[i])
 
