@@ -58,7 +58,7 @@ catag.read()
 
 #Create object for simulation
 simulation = ObjectCreator(catag.fcat)
-
+simulation.general_histograms(catag.fcat)
 print '\nMasking . . . {}\n'
 
 
