@@ -336,6 +336,7 @@ class ObjectCreator(object):
         print 'Value parameter_b is {}'.format(self.parameter_b)
         print 'Value intensity is {}'.format(intensity_value)
         print 'mean_b is {}\nmean_a is {}'.format(self.mean_b, self.mean_a)
+        print 'error_mean_b is {}\n error_mean_a is {}'.format(self.error_mean_b, self.error_mean_a)
         
         y_pixel = int(round(n*self.mean_b))
         x_pixel = int(round(n*self.mean_a))
