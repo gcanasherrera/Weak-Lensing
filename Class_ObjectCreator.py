@@ -66,6 +66,11 @@ class ObjectCreator(object):
         self.mean_ec = np.sqrt(1-(1-self.mean_ellip)*(1-self.mean_ellip))
         self.mean_a = self.mean_b/math.sqrt(1-self.mean_ec*self.mean_ec)
         
+        self.error_mean_b = np.std(fcat['B'])/math.sqrt(len(fcat['B']))
+        self.error_mean_ec = 0.5*2*1/((1-self.mean_ec*self.mean_ec)*(1-self.mean_ec*self.mean_ec)*(1-self.mean_ec*self.mean_ec))*math.sqrt((1-self.mean_ec*self.mean_ec)*(1-self.mean_ec*self.mean_ec))
+                            
+        self.error_mean_a = self.mean_a*(self.error_mean_b/self.mean_b+self.mean_ec/self.error_mean_ec)
+        
         self.parameter_a = 0.0
         self.parameter_b = 0.0
 
