@@ -236,10 +236,13 @@ def main():
     plt.hist(fcat_stars['class_star'], weights = weights_stars, bins= 15, histtype='stepfilled', label ='stars')
     plt.hist(fcat_galaxies['class_star'], weights = weights_galaxies, bins= 15, histtype='stepfilled', label ='galaxies')
     plt.legend(loc='upper right')
-    plt.xlabel('$class_{star}$')
+    plt.xlabel('$class_{stars}$', labelpad=20, fontsize=20)
+    plt.ylabel('$Frequency$', fontsize=20)
     plt.show()
     plt.hist(fcat_good['class_star'], color= 'r', weights = weights_all, bins=50, histtype='stepfilled', label ='all')
     plt.legend(loc='upper right')
+    plt.xlabel('$class_{stars}$', labelpad=20, fontsize=20)
+    plt.ylabel('$Frequency$', fontsize=20)
 
     plt.show()
 
@@ -359,6 +362,11 @@ def main():
     catalog_name_shapes_galaxies_corrected='{}{}'.format(FILE_NAME_CORRECTED, type_shapes_galaxies)
     fiatfilter_errcode_galaxies_corrected='perl fiatfilter.pl -v "errcode<2" {}>{}'.format(catalog_name_ellipto_galaxies_corrected, catalog_name_shapes_galaxies_corrected)
     subprocess.call(fiatfilter_errcode_galaxies_corrected, shell=True)
+
+
+    catalog_name_shapes_stars_corrected='{}{}'.format(FILE_NAME_CORRECTED, type_shapes_star)
+    fiatfilter_errcode_stars_corrected='perl fiatfilter.pl -v "errcode<2" {}>{}'.format(catalog_name_ellipto_stars_corrected, catalog_name_shapes_stars_corrected)
+    subprocess.call(fiatfilter_errcode_stars_corrected, shell=True)
 
     #(21): Once you gave your final corrected good shape galaxies catalog --> Now we filter and create radonmized images (10000 images per cut)
 #   filter_mag(catalog_name_shapes_galaxies_corrected, 10000)
