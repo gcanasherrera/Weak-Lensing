@@ -121,8 +121,6 @@ def main():
     print("I'm ploting MAG_ISO vs. FWHM")
     magnitude1='mag_iso'
     magnitude2='FWHM'
-    plotter(fcat, magnitude1, magnitude2, 2, '$mag(iso)$', '$FWHM$')
-    plt.show(block=False)
     print("Do you want to fix axis limits? Please answer with y or n")
     answer=raw_input()
     if answer== "y":
@@ -161,6 +159,10 @@ def main():
     plt.show(block=False)
     ellipticity(fcat_good, 1)
     plt.show(block=False)
+    
+    plotter(fcat_good, magnitude1, magnitude2, 2, '$mag(iso)$', '$FWHM$')
+    plt.show(block=False)
+
 
     #(8.1.): Creating STARS CATALOG
     print("Let's obtain only a FIAT catalog that contains stars. We need to bound. Have a look to the FWHM vs Mag_ISO plot")
@@ -236,7 +238,7 @@ def main():
     plt.legend(loc='upper right')
     plt.xlabel('$class_{star}$')
     plt.show()
-    plt.hist(fcat_good['class_star'], 'r', weights = weights_all, bins=50, histtype='stepfilled', label ='all')
+    plt.hist(fcat_good['class_star'], color= 'r', weights = weights_all, bins=50, histtype='stepfilled', label ='all')
     plt.legend(loc='upper right')
 
     plt.show()
