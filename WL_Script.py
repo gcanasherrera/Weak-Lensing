@@ -111,14 +111,13 @@ def main():
     P.show()
     
     #Let's fix the ellipcity + and - for all celestial objects
-    ellipticity(fcat, 1)
-    plt.show(block=False)
+
     
     #(6): plot FWHM vs mag_iso
     print("I'm ploting MAG_ISO vs. FWHM")
     magnitude1='mag_iso'
     magnitude2='FWHM'
-    plotter(fcat, magnitude1, magnitude2, 2)
+    plotter(fcat, magnitude1, magnitude2, 2, '$mag(iso)$', '$FWHM$')
     plt.show(block=False)
     print("Do you want to fix axis limits? Please answer with y or n")
     answer=raw_input()
@@ -142,7 +141,7 @@ def main():
     print("")
     magnitude_x="x"
     magnitude_y="y"
-    plotter(fcat, magnitude_x, magnitude_y, 4)
+    plotter(fcat, magnitude_x, magnitude_y, 4, 'x', 'y')
     plt.show(block=False)
     print("Please, introduce the values you prefer to bound x and y")
     xmin_good=float(raw_input("X min: "))
@@ -154,7 +153,9 @@ def main():
     subprocess.call(terminal_good, shell=True)
     print("Wait a moment, I'm showing you the results in a sec")
     fcat_good = np.genfromtxt(catalog_name_good, names=names)
-    plotter(fcat_good, 'x', 'y', 5)
+    plotter(fcat_good, 'x', 'y', 5, 'x', 'y')
+    plt.show(block=False)
+    ellipticity(fcat_good, 1)
     plt.show(block=False)
 
     #(8.1.): Creating STARS CATALOG
@@ -202,6 +203,13 @@ def main():
     fcat_galaxies=np.genfromtxt(catalog_name_galaxies, names=names)
     #subprocess.call('./fiatreview {} {}'.format(fits, catalog_name_galaxies), shell=True)
 
+    magnitude1='mag_iso'
+    magnitude2='FWHM'
+    plotter(fcat, magnitude1, magnitude2, 2, '$mag(iso)$', '$FWHM$')
+
+    ellipticity(fcat_galaxies, 9)
+    plt.show()
+
     #(9.2.): Checking GALAXIES CATALOG with Source Extractor Neural Network Output
     P.figure()
     P.hist(fcat_galaxies['class_star'], 50, normed=1, histtype='stepfilled')
@@ -210,12 +218,21 @@ def main():
 
 
     # (***) CHECKING FOR STARS // GALAXIES DIVISION
-    P.figure()
-    P.hist(fcat_stars['class_star'], 50, normed=1, histtype='stepfilled', label ='stars')
-    P.hist(fcat_galaxies['class_star'], 50, normed=1, histtype='stepfilled', label ='galaxies')
-    P.hist(fcat['class_star'], 50, normed=1, histtype='stepfilled', label ='all')
-    P.legend(loc='upper right')
-    P.show()
+
+    weights_stars=np.ones_like(fcat_stars['class_star'])/len(fcat_stars['class_star'])
+    weights_galaxies=np.ones_like(fcat_galaxies['class_star'])/len(fcat_galaxies['class_star'])
+    weights_all = np.ones_like(fcat_good['class_star'])/len(fcat_good['class_star'])
+    
+    plt.figure()
+    plt.hist(fcat_stars['class_star'], weights = weights_stars, bins= 15, histtype='stepfilled', label ='stars')
+    plt.hist(fcat_galaxies['class_star'], weights = weights_galaxies, bins= 15, histtype='stepfilled', label ='galaxies')
+    plt.legend(loc='upper right')
+    plt.xlabel('$class_{star}$')
+    plt.show()
+    plt.hist(fcat_good['class_star'], weights = weights_all, bins=50, histtype='stepfilled', label ='all')
+    plt.legend(loc='upper right')
+
+    plt.show()
 
 
     
@@ -254,6 +271,10 @@ def main():
     names_ellipto = ["x", "y", "mag_iso", "median", "ixx", "iyy", "ixy", "a_input", "b_input", "theta", "ellipticity", "errcode", "sigsky", "size", "flux", "mean_rho_4th", "sigma_e", "wander"]
     fiat_shapes_stars= np.genfromtxt(catalog_name_shapes_stars, names=names_ellipto)
     ellipticity(fiat_shapes_stars, 15)
+    plt.show()
+
+    fiat_shapes_galaxies= np.genfromtxt(catalog_name_shapes_galaxies, names=names_ellipto)
+    ellipticity(fiat_shapes_galaxies, 15)
     plt.show(block=False)
     
     #(13): STARS--> you obtain two fitting both for ellip_1 and ellip_2
