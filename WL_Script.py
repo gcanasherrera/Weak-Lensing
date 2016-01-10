@@ -51,6 +51,7 @@ import matplotlib.pylab as P #histograms
 
 # (1): We define the ending of the input/output files
 
+type_fits = ".fits"
 type_cat = ".cat"
 type_fcat = ".fcat"
 type_good = "_good.fcat"
@@ -82,23 +83,26 @@ def main():
     #print FILE_NAME
     FILE_NAME_CORRECTED='{}_corrected'.format(FILE_NAME)
     
-    #(3) STEP: Call Source Extractor
     
-    print("Let me call Source Extractor (called sex by friends). It will obtain the celestial objects. When it finishes I will show you the trial image")
-    print("")
+    if fits.endswith(type_fits):
     
-    catalog_name = sex_caller(fits, FILE_NAME)
-    #Show results of trial.fits
-    #subprocess.call('./ds9 {}_trial.fits'.format(FILE_NAME), shell=True)
-    
-    
-    #(4): Transform Source Extractor catalog into FIAT FORMAT
-    print("I'm transforming the catalog into a FIAT 1.0 format")
-    print("")
-    
-    catalog_name_fiat= '{}.fcat'.format(FILE_NAME)
-    transform_into_fiat='perl sex2fiat.pl {}>{}'.format(catalog_name, catalog_name_fiat)
-    subprocess.call(transform_into_fiat, shell=True)
+        #(3) STEP: Call Source Extractor
+        
+        print("Let me call Source Extractor (called sex by friends). It will obtain the celestial objects. When it finishes I will show you the trial image")
+        print("")
+        
+        catalog_name = sex_caller(fits, FILE_NAME)
+        #Show results of trial.fits
+        #subprocess.call('./ds9 {}_trial.fits'.format(FILE_NAME), shell=True)
+        
+        
+        #(4): Transform Source Extractor catalog into FIAT FORMAT
+        print("I'm transforming the catalog into a FIAT 1.0 format")
+        print("")
+        
+        catalog_name_fiat= '{}.fcat'.format(FILE_NAME)
+        transform_into_fiat='perl sex2fiat.pl {}>{}'.format(catalog_name, catalog_name_fiat)
+        subprocess.call(transform_into_fiat, shell=True)
     
 
     
@@ -206,7 +210,10 @@ def main():
     magnitude1='mag_iso'
     magnitude2='FWHM'
     plotter(fcat, magnitude1, magnitude2, 2, '$mag(iso)$', '$FWHM$')
-
+    mag_th= np.linspace(1, 30, 1000)
+    p = np.poly1d(fit)
+    plt.plot(mag_th, p(mag_th), 'b-')
+    plt.show()
     ellipticity(fcat_galaxies, 9)
     plt.show()
 
@@ -229,7 +236,7 @@ def main():
     plt.legend(loc='upper right')
     plt.xlabel('$class_{star}$')
     plt.show()
-    plt.hist(fcat_good['class_star'], weights = weights_all, bins=50, histtype='stepfilled', label ='all')
+    plt.hist(fcat_good['class_star'], 'r', weights = weights_all, bins=50, histtype='stepfilled', label ='all')
     plt.legend(loc='upper right')
 
     plt.show()
@@ -326,7 +333,7 @@ def main():
     print("Let me show you again the FWHM vs MAG plot \n")
     print("")
     fcat_corrected=np.genfromtxt(catalog_name_corrected_good, names=names)
-    plotter(fcat_corrected, 'mag_iso', 'FWHM', 3)
+    plotter(fcat_corrected, 'mag_iso', 'FWHM', 3, '$mag(iso)$', '$FWHM$')
     plt.show(block=False)
     print("First stars...")
     print("")
