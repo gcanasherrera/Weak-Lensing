@@ -104,7 +104,8 @@ def main():
         transform_into_fiat='perl sex2fiat.pl {}>{}'.format(catalog_name, catalog_name_fiat)
         subprocess.call(transform_into_fiat, shell=True)
     
-
+    if fits.endswith(type_fcat):
+        catalog_name_fiat = fits
     
     #(5): Read the FIAT Catalog
     FWHM_max_stars=0
@@ -364,7 +365,7 @@ def main():
     subprocess.call(fiatfilter_errcode_galaxies_corrected, shell=True)
 
 
-    catalog_name_shapes_stars_corrected='{}{}'.format(FILE_NAME_CORRECTED, type_shapes_star)
+    catalog_name_shapes_stars_corrected='{}{}'.format(FILE_NAME_CORRECTED, type_shapes_stars)
     fiatfilter_errcode_stars_corrected='perl fiatfilter.pl -v "errcode<2" {}>{}'.format(catalog_name_ellipto_stars_corrected, catalog_name_shapes_stars_corrected)
     subprocess.call(fiatfilter_errcode_stars_corrected, shell=True)
 
