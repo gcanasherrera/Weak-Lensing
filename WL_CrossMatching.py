@@ -44,18 +44,18 @@ catag_z.read()
 #Create object for cross-matching
 
 crossmatching = CrossMatching(catag_r.fcat, catag_z.fcat)
-crossmatching.kdtree(n=7.2e-05)
+crossmatching.kdtree(n=3*1e-06)
 crossmatching.catalog_writter('lhn1n1_crossmatching_1to2', compare = '1to2')
 print '\n'
 crossmatching.catalog_writter('lhn1n1_crossmatching_2to1', compare = '2to1')
 
 if crossmatching.cont1to2<crossmatching.cont1to2:
-    catag_final_1 = CatalogReader('lhn1n1_crossmatching_1to2.fcat')
+    catag_final_1 = CatalogReader('lhn1n1_crossmatching_1to2.cat')
     catag_final_1.read()
-    catag_final_2 = CatalogReader('lhn1n1_crossmatching_2to1.fcat')
+    catag_final_2 = CatalogReader('lhn1n1_crossmatching_2to1.cat')
     catag_final_2.read()
     crossmatching_final = CrossMatching(catag_final_1.fcat, catag_final_2.fcat)
-    crossmatching_final.kdtree(n=7.2e-05)
+    crossmatching_final.kdtree(n=3*1e-06)
     crossmatching.catalog_writter('lhn1n1_crossmatching_final', compare = '1to2')
 
 elif crossmatching.cont2to1<crossmatching.cont1to2:
@@ -64,5 +64,5 @@ elif crossmatching.cont2to1<crossmatching.cont1to2:
     catag_final_2 = CatalogReader('lhn1n1_crossmatching_2to1.fcat')
     catag_final_2.read()
     crossmatching_final = CrossMatching(catag_final_1.fcat, catag_final_2.fcat)
-    crossmatching_final.kdtree(n=7.2e-05)
+    crossmatching_final.kdtree(n=3*1e-06)
     crossmatching.catalog_writter('lhn1n1_crossmatching_final', compare = '2to1')
