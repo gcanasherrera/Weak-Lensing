@@ -45,6 +45,7 @@ from WL_filter_mag_gal import filter_mag #Filtering final catalog of galaxies a 
 #from std import sigma_maker #statistical study
 import seaborn as sns
 import matplotlib.pylab as P #histograms
+from Class_CrossMatching import CrossMatching
 
 
 ###############################  BEGIN SCRIPT   ###############################
@@ -74,7 +75,10 @@ def main():
     print("")
     
     
-    fits= raw_input("Please, introduce the name of the fits image you want to read or directly the catalogue: ")
+    fits = raw_input("Please, introduce the name of the fits image you want to read or directly the catalogue: ")
+    fits_2 = raw_input("Please, introduce the name of the fits 2 image you want to read or directly the catalogue: ")
+    
+    
     
     #Save the name of the .fits and .cat in a string:
     
@@ -82,6 +86,9 @@ def main():
     FILE_NAME = fits[:BEFORE_NAME]
     #print FILE_NAME
     FILE_NAME_CORRECTED='{}_corrected'.format(FILE_NAME)
+    
+    
+    question = raw_input("Please, tell me how many pictures did the cross-matching: ")
     
     
     if fits.endswith(type_fits):
@@ -106,7 +113,7 @@ def main():
     
     if fits.endswith(type_fcat):
         catalog_name_fiat = fits
-    
+        fits = raw_input("Please, introduce the name of the fits image: ")
     #(5): Read the FIAT Catalog
     FWHM_max_stars=0
     names = ["number", "flux_iso", "fluxerr_iso", "mag_iso", "magger_iso", "mag_aper_1", "magerr_aper_1", "mag", "magger", "flux_max", "isoarea", "x", "y", "ra", "dec", "ixx", "iyy", "ixy", "ixxWIN", "iyyWIN", "ixyWIN", "A", "B", "theta", "enlogation", "ellipticity", "FWHM", "flags", "class_star"]
@@ -152,7 +159,7 @@ def main():
     ymin_good=float(raw_input("Y min: "))
     ymax_good=float(raw_input("Y max: "))
     catalog_name_good= '{}{}'.format(FILE_NAME, type_good)
-    terminal_good= 'perl fiatfilter.pl "x>{} && x<{} && y>{} && y<{}" {}>{}'.format(xmin_good, xmax_good, ymin_good, ymax_good, catalog_name_fiat, catalog_name_good)
+    terminal_good= 'perl fiatfilter.pl "x>{} && x<{} && y>{} && y<{} && FLUX_ISO<90000" {}>{}'.format(xmin_good, xmax_good, ymin_good, ymax_good, catalog_name_fiat, catalog_name_good)
     subprocess.call(terminal_good, shell=True)
     print("Wait a moment, I'm showing you the results in a sec")
     fcat_good = np.genfromtxt(catalog_name_good, names=names)
@@ -327,7 +334,12 @@ def main():
     transform_into_fiat_corrected='perl sex2fiat.pl {}>{}'.format(catalog_name_corrected, catalog_name_fiat_corrected)
     subprocess.call(transform_into_fiat_corrected, shell=True)
     print("")
-    
+
+    #Possible solutions to monsters' problem
+    #(A): New Cross-Matching
+    #(B): Look for galaxies catalogue directly in the new fits file with KDTree
+
+
     #(17): Transform again tshe corrected catalog into a GOOD catalog
     catalog_name_corrected_good= '{}{}'.format(FILE_NAME, type_good)
     terminal_corrected_good= 'perl fiatfilter.pl "x>{} && x<{} && y>{} && y<{}" {}>{}'.format(xmin_good, xmax_good, ymin_good, ymax_good, catalog_name_fiat_corrected, catalog_name_corrected_good)
