@@ -78,8 +78,13 @@ def main():
     array_file_name = []
     
     question = raw_input("Please, tell me how many pictures did the cross-matching: ")
+    cont = 0
+    BEFORE_NAME = ''
+    FILE_NAME = ''
+    #print FILE_NAME
+    FILE_NAME_CORRECTED= ''
     
-    while cont =! question:
+    while cont != question:
     
     
         fits = raw_input("Please, introduce the name of the fits image you want to read or directly the catalogue: ")
@@ -91,8 +96,6 @@ def main():
         FILE_NAME = fits[:BEFORE_NAME]
         #print FILE_NAME
         FILE_NAME_CORRECTED='{}_corrected'.format(FILE_NAME)
-        
-        
         
         
         if fits.endswith(type_fits):
@@ -118,6 +121,7 @@ def main():
         if fits.endswith(type_fcat):
             catalog_name_fiat = fits
             fits = raw_input("Please, introduce the name of the fits image: ")
+        
         #(5): Read the FIAT Catalog
         FWHM_max_stars=0
         names = ["number", "flux_iso", "fluxerr_iso", "mag_iso", "magger_iso", "mag_aper_1", "magerr_aper_1", "mag", "magger", "flux_max", "isoarea", "x", "y", "ra", "dec", "ixx", "iyy", "ixy", "ixxWIN", "iyyWIN", "ixyWIN", "A", "B", "theta", "enlogation", "ellipticity", "FWHM", "flags", "class_star"]
@@ -133,6 +137,8 @@ def main():
         print("I'm ploting MAG_ISO vs. FWHM")
         magnitude1='mag_iso'
         magnitude2='FWHM'
+        plotter(fcat, magnitude1, magnitude2, 2, '$mag(iso)$', '$FWHM/pixels$')
+        plt.show()
         print("Do you want to fix axis limits? Please answer with y or n")
         answer=raw_input()
         if answer== "y":
@@ -155,7 +161,7 @@ def main():
         print("")
         magnitude_x="x"
         magnitude_y="y"
-        plotter(fcat, magnitude_x, magnitude_y, 4, 'x', 'y')
+        plotter(fcat, magnitude_x, magnitude_y, 4, '$x/pixels$', '$y/pixels$')
         plt.show(block=False)
         print("Please, introduce the values you prefer to bound x and y")
         xmin_good=float(raw_input("X min: "))
@@ -163,16 +169,17 @@ def main():
         ymin_good=float(raw_input("Y min: "))
         ymax_good=float(raw_input("Y max: "))
         catalog_name_good= '{}{}'.format(FILE_NAME, type_good)
-        terminal_good= 'perl fiatfilter.pl "x>{} && x<{} && y>{} && y<{} && FLUX_ISO<90000" {}>{}'.format(xmin_good, xmax_good, ymin_good, ymax_good, catalog_name_fiat, catalog_name_good)
+        terminal_good= 'perl fiatfilter.pl "x>{} && x<{} && y>{} && y<{} && FLUX_ISO<5000000" {}>{}'.format(xmin_good, xmax_good, ymin_good, ymax_good, catalog_name_fiat, catalog_name_good)
         subprocess.call(terminal_good, shell=True)
         print("Wait a moment, I'm showing you the results in a sec")
         fcat_good = np.genfromtxt(catalog_name_good, names=names)
-        plotter(fcat_good, 'x', 'y', 5, 'x', 'y')
+        print np.amax(fcat_good['flux_iso'])
+        plotter(fcat_good, 'x', 'y', 5, '$x/pixels$', '$y/pixels$')
         plt.show(block=False)
         ellipticity(fcat_good, 1)
         plt.show(block=False)
         
-        plotter(fcat_good, magnitude1, magnitude2, 2, '$mag(iso)$', '$FWHM$')
+        plotter(fcat_good, magnitude1, magnitude2, 2, '$mag(iso)$', '$FWHM/pixels$')
         plt.show(block=False)
 
 
@@ -184,7 +191,7 @@ def main():
         FWHM_max_stars=float(raw_input("Enter the maximum value for FWHM: "))
         catalog_name_stars= '{}{}'.format(FILE_NAME, type_stars)
         #Creamos un string para que lo ponga en la terminal
-        terminal_stars= 'perl fiatfilter.pl "MAG_ISO>{} && MAG_ISO<{} && FWHM>{} && FWHM<{}" {}>{}'.format(mag_iso_min_stars, mag_iso_max_stars, FWHM_min_stars, FWHM_max_stars, catalog_name_good, catalog_name_stars)
+        terminal_stars= 'perl fiatfilter.pl "MAG_ISO>{} && MAG_ISO<{} && FWHM>{} && FWHM<{} && CLASS_STAR>0.8" {}>{}'.format(mag_iso_min_stars, mag_iso_max_stars, FWHM_min_stars, FWHM_max_stars, catalog_name_good, catalog_name_stars)
         subprocess.call(terminal_stars, shell=True)
         fcat_stars=np.genfromtxt(catalog_name_stars, names=names)
         ellipticity(fcat_stars, 6)
@@ -196,6 +203,7 @@ def main():
         P.figure()
         P.hist(fcat_stars['class_star'], 50, normed=1, histtype='stepfilled')
         P.show(block=False)
+
 
         
         #(9.1.): Creating GALAXIES CATALOG
@@ -216,14 +224,14 @@ def main():
         print 'The value of the y-intercep n={} and the value of the slope m={}'.format(n,m)
         # Once you have the values of the fitting we can obtain the catalog of galaxies
         catalog_name_galaxies= '{}{}'.format(FILE_NAME, type_galaxies)
-        terminal_galaxies= 'perl fiatfilter.pl -v "FWHM>{}*MAG_ISO+{} && FWHM>{}" {}>{}'.format(m, n, FWHM_max_stars, catalog_name_good, catalog_name_galaxies)
+        terminal_galaxies= 'perl fiatfilter.pl -v "FWHM>{}*MAG_ISO+{} && FWHM>{} && CLASS_STAR<0.5" {}>{}'.format(m, n, FWHM_max_stars, catalog_name_good, catalog_name_galaxies)
         subprocess.call(terminal_galaxies, shell=True)
         fcat_galaxies=np.genfromtxt(catalog_name_galaxies, names=names)
         #subprocess.call('./fiatreview {} {}'.format(fits, catalog_name_galaxies), shell=True)
 
         magnitude1='mag_iso'
         magnitude2='FWHM'
-        plotter(fcat, magnitude1, magnitude2, 2, '$mag(iso)$', '$FWHM$')
+        plotter(fcat_good, magnitude1, magnitude2, 2, '$mag(iso)$', '$FWHM/pixels$')
         mag_th= np.linspace(1, 30, 1000)
         p = np.poly1d(fit)
         plt.plot(mag_th, p(mag_th), 'b-')
@@ -245,15 +253,15 @@ def main():
         weights_all = np.ones_like(fcat_good['class_star'])/len(fcat_good['class_star'])
         
         plt.figure()
-        plt.hist(fcat_stars['class_star'], weights = weights_stars, bins= 15, histtype='stepfilled', label ='stars')
+        plt.hist(fcat_stars['class_star'], weights = weights_stars, bins= 10, histtype='stepfilled', label ='stars')
         plt.hist(fcat_galaxies['class_star'], weights = weights_galaxies, bins= 15, histtype='stepfilled', label ='galaxies')
         plt.legend(loc='upper right')
-        plt.xlabel('$class_{stars}$', labelpad=20, fontsize=20)
+        plt.xlabel('$class_{star}$', labelpad=20, fontsize=20)
         plt.ylabel('$Frequency$', fontsize=20)
         plt.show()
         plt.hist(fcat_good['class_star'], color= 'r', weights = weights_all, bins=50, histtype='stepfilled', label ='all')
         plt.legend(loc='upper right')
-        plt.xlabel('$class_{stars}$', labelpad=20, fontsize=20)
+        plt.xlabel('$class_{star}$', labelpad=20, fontsize=20)
         plt.ylabel('$Frequency$', fontsize=20)
 
         plt.show()
@@ -355,6 +363,7 @@ def main():
     print '\n'
     crossmatching.catalog_writter('{}_2CM{}'.format(array_file_name[1], type_fcat), compare = '2to1')
     
+    FILE_NAME_FINAL = raw_input("Please, tell me how many pictures did the cross-matching: ")
     
     if crossmatching.cont1to2<crossmatching.cont2to1:
         catag_final_1 = CatalogReader('{}_2CM{}'.format(array_file_name[0], type_fcat))
@@ -363,7 +372,7 @@ def main():
         catag_final_2.read()
         crossmatching_final = CrossMatching(catag_final_1.fcat, catag_final_2.fcat)
         crossmatching_final.kdtree(n=1*1e-06)
-        crossmatching.catalog_writter('lhn1n1_crossmatching_final', compare = '1to2')
+        crossmatching.catalog_writter('{}{}'.format(FILE_NAME_FINAL, type_fcat), compare = '1to2')
 
     if crossmatching.cont1to2>crossmatching.cont2to1:
         catag_final_1 = CatalogReader('{}_2CM{}'.format(array_file_name[0], type_fcat))
@@ -372,7 +381,7 @@ def main():
         catag_final_2.read()
         crossmatching_final = CrossMatching(catag_final_1.fcat, catag_final_2.fcat)
         crossmatching_final.kdtree(n=1*1e-06)
-        crossmatching.catalog_writter('lhn1n1_crossmatching_final', compare = '2to1')
+        crossmatching.catalog_writter('{}{}'.format(FILE_NAME_FINAL, type_fcat), compare = '2to1')
 
     if crossmatching.cont1to2==crossmatching.cont2to1:
         catag_final_1 = CatalogReader('{}_2CM{}'.format(array_file_name[0], type_fcat))
@@ -381,23 +390,17 @@ def main():
         catag_final_2.read()
         crossmatching_final = CrossMatching(catag_final_1.fcat, catag_final_2.fcat)
         crossmatching_final.kdtree(n=1*1e-06)
-        crossmatching.catalog_writter('lhn1n1_crossmatching_final', compare = '1to2')
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+        crossmatching.catalog_writter('{}{}'.format(FILE_NAME_FINAL, type_fcat), compare = '1to2')
+
+    catalog_name_fiat_corrected_final = '{}{}'.format(FILE_NAME_FINAL, type_fcat)
 
     #(17): Transform again tshe corrected catalog into a GOOD catalog
-    catalog_name_corrected_good= '{}{}'.format(FILE_NAME, type_good)
-    terminal_corrected_good= 'perl fiatfilter.pl "x>{} && x<{} && y>{} && y<{}" {}>{}'.format(xmin_good, xmax_good, ymin_good, ymax_good, catalog_name_fiat_corrected, catalog_name_corrected_good)
+    catalog_name_corrected_good= '{}{}'.format(FILE_NAME_FINAL, type_good)
+    terminal_corrected_good= 'perl fiatfilter.pl "x>{} && x<{} && y>{} && y<{} && FLUX_ISO<5000000" {}>{}'.format(xmin_good, xmax_good, ymin_good, ymax_good, catalog_name_fiat_corrected_final, catalog_name_corrected_good)
     subprocess.call(terminal_corrected_good, shell=True)
-    
+
+    FILE_NAME_CORRECTED='{}_corrected'.format(FILE_NAME_FINAL)
+
     #(18): STARS CATALOG again...
     print("Now we need to repeat the classification to obtain only galaxies and stars as we did before")
     print("")
