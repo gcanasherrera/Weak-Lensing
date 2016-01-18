@@ -72,7 +72,7 @@ def sigma_maker(data_image, cycles, local):
     P.hist(histogram_array_0, 50, normed=1, histtype='stepfilled')
     P.show()
     
-    #print matrix_sum
+    print matrix_sum
     #(4): Need to create a new matrix_P whose elements are just P=elements(matrix_sum)/b
     matrix_P=np.multiply(matrix_sum, inv_b)
 
@@ -80,7 +80,7 @@ def sigma_maker(data_image, cycles, local):
     sigma=erfcinv(2*matrix_P)
     print("")
     
-    #print sigma
+    print sigma
     
     #(6): Write back the data into a new .FITS image
     fits.writeto('WL_map_{}.fits'.format(local), sigma)

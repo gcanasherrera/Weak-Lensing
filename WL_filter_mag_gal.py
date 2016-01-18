@@ -76,7 +76,7 @@ def filter_mag(catalog, init, fin):
         subprocess.call(terminal_galaxies_mask_min, shell=True)
         
         #print catalog_name_mask_min
-        terminal_fiatmap_min='./fiatmap -b 100 -w /gpfs/csic_users/canasg/area  -r std_min_{:n}.fits {} 300 3000 g_min_{}_{:n}.fits'.format(i, catalog_name_mask_min, FILE_NAME, i)
+        terminal_fiatmap_min='./fiatmap -b 25 -w /gpfs/csic_users/canasg/area  -r std_min_{:n}.fits {} 300 3000 g_min_{}_{:n}.fits'.format(i, catalog_name_mask_min, FILE_NAME, i)
         subprocess.call(terminal_fiatmap_min, shell=True)
         # Last cut taking into account the maximum
         catalog_name_mask_max= 'g_max_{}.fcat'.format(FILE_NAME)
@@ -95,7 +95,7 @@ def filter_mag(catalog, init, fin):
                     catalog_name_mask='g_{}_{}.fcat'.format(a, FILE_NAME)
                     terminal_galaxies_mask= 'perl fiatfilter.pl -v "mag>{} && mag<{}" {}>{}'.format(cut_values[a], cut_values[a+1], catalog, catalog_name_mask)
                     subprocess.call(terminal_galaxies_mask, shell=True)
-                    terminal_fiatmap='./fiatmap -b 100  -w  /gpfs/csic_users/canasg/area -r std_{:n}_{:n}.fits {} 300 3000 g_{:n}_{}_{:n}.fits'.format(a, i, catalog_name_mask, a, FILE_NAME, i)
+                    terminal_fiatmap='./fiatmap -b 25  -w  /gpfs/csic_users/canasg/area -r std_{:n}_{:n}.fits {} 300 3000 g_{:n}_{}_{:n}.fits'.format(a, i, catalog_name_mask, a, FILE_NAME, i)
                     subprocess.call(terminal_fiatmap, shell=True)
                     #Read values of the new mask catalogs
                     fcat_mask = np.genfromtxt(catalog_name_mask, names=names_ellipto)
@@ -105,7 +105,7 @@ def filter_mag(catalog, init, fin):
 
         subprocess.call(terminal_galaxies_mask_max, shell=True)
         fcat_mask_max = np.genfromtxt(catalog_name_mask_max, names=names_ellipto)
-        terminal_fiatmap_max='./fiatmap -b 100 -w /gpfs/csic_users/canasg/area -r std_max_{:n}.fits {} 300 3000 g_max_{}_{:n}.fits'.format(i, catalog_name_mask_max, FILE_NAME, i)
+        terminal_fiatmap_max='./fiatmap -b 25 -w /gpfs/csic_users/canasg/area -r std_max_{:n}.fits {} 300 3000 g_max_{}_{:n}.fits'.format(i, catalog_name_mask_max, FILE_NAME, i)
         subprocess.call(terminal_fiatmap_max, shell=True)
         #ellipticity(fcat_mask_max,14)
         plt.show()
