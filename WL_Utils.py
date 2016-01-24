@@ -27,6 +27,7 @@ from astropy.modeling import models, fitting #Package for fitting Legendre Polyn
 import warnings #Advices
 from mpl_toolkits.mplot3d import Axes3D #Plotting in 3D
 import WL_ellip_fitter as ellip_fit #Ellipticity fitting
+import seaborn as sns
 
 
 type_cat = ".cat"
@@ -94,17 +95,19 @@ def ds9_caller(photo):
 #
 # Function: Plots whatever st. array is passed as attributes: plots whatever you want
 #
-def plotter(catalog, magnitude_1, magnitude_2, int):
+def plotter(catalog, magnitude_1, magnitude_2, int, legend_1, legend_2):
+    sns.set(style="ticks")
     plt.figure(int)
-    plt.plot(catalog[magnitude_1], catalog[magnitude_2], 'bo')
-    plt.xlabel(magnitude_1)
-    plt.ylabel(magnitude_2)
+    plt.plot(catalog[magnitude_1], catalog[magnitude_2], 'k.')
+    plt.xlabel(legend_1, labelpad=20, fontsize=20)
+    plt.ylabel(legend_2, fontsize=20)
     return
 
 #
 # Function: Define the ellipticity function that calculates the ellipticity. Calculate the ellipticity present in the catalog that is passed as attribute. Then, it plots.
 #
 def ellipticity(catalog, int):
+    sns.set(style="ticks")
     leng=len(catalog["theta"])
     ellip_minus=np.zeros(leng)
     ellip_plus=np.zeros(leng)
@@ -113,9 +116,9 @@ def ellipticity(catalog, int):
         ellip_plus[i]=catalog["ellipticity"][i]*math.sin(2*math.radians(catalog["theta"][i]))
     plt.figure(int)
     plt.plot(ellip_minus, ellip_plus, 'k*')
-    plt.xlabel('ellipticity_minus')
-    plt.ylabel('ellipticity_plus')
-    plt.title('ellipticity_minus Vs. ellipticity_plus for mag_iso={} and mag_iso={}'.format(np.amin(catalog['mag_iso']), np.amax(catalog['mag_iso'])))
+    plt.xlabel('$e_1$', labelpad=20, fontsize=20)
+    plt.ylabel('$e_2$', fontsize=20)
+    #plt.title('$ellipticity_{minus}$ ' 'Vs.' '$ellipticity_{plus}$' 'for $mag_{iso}$={} and $mag_{iso}$={}'.format(np.amin(catalog['mag_iso']), np.amax(catalog['mag_iso'])))
     plt.xlim(-1,1)
     plt.ylim(-1,1)
     return
@@ -130,13 +133,14 @@ def specfile(image, ellipfit, FILE_NAME):
         f_1.write('# DLSMAKE = {}\n'.format('CatalogPlotter makes it'))
         f_1.write('# CTYPE1 = {}\n'.format('RA---TAN'))
         f_1.write('# CTYPE2 = {}\n'.format('DEC--TAN'))
-        f_1.write('# CRVAL1 = 140.6545833333\n')
-        f_1.write('# CRVAL2 = 30.6666666667 \n')
-        f_1.write('# CRPIX1 = 0.0 \n')
-        f_1.write('# CRPIX2 = 0.0\n')
-        f_1.write('# CD1_2 = -7.13889e-05\n')
-        f_1.write('# CD2_1 = -7.13889e-05\n')
-        f_1.write('# CD2_2 = 0.0 \n')
+        f_1.write('# CRVAL1 = 163.3239204316\n')
+        f_1.write('# CRVAL2 = 57.7986803985 \n')
+        f_1.write('# CRPIX1 = 5633. \n')
+        f_1.write('# CRPIX2 = 4385.\n')
+        f_1.write('# CD1_1 = -5.61111E-05\n')
+        f_1.write('# CD1_2 = 0.\n')
+        f_1.write('# CD2_1 = 0.\n')
+        f_1.write('# CD2_2 = 5.61111E-05\n')
         #1.0 unidad 0.00 algo de xy y la ultima deberia ser 60 que es como el peso que se le da a cada cosa pero que para nosotros un numero positivo es suficiente.
         #Ponemos un guion porque queremos que aplique la unidad
         f_1.write('{}\t -\t {}\t 1.0\t 0.000\t 60.000\t'.format(image, ellipfit))
@@ -147,18 +151,69 @@ def specfile(image, ellipfit, FILE_NAME):
         f_1.write('# DLSMAKE = {}\n'.format('CatalogPlotter makes it'))
         f_1.write('# CTYPE1 = {}\n'.format('RA---TAN'))
         f_1.write('# CTYPE2 = {}\n'.format('DEC--TAN'))
-        f_1.write('# CRVAL1 = 140.6545833333\n')
-        f_1.write('# CRVAL2 = 30.6666666667 \n')
-        f_1.write('# CRPIX1 = 0.0 \n')
-        f_1.write('# CRPIX2 = 0.0\n')
-        f_1.write('# CD1_2 = -7.13889e-05\n')
-        f_1.write('# CD2_1 = -7.13889e-05\n')
-        f_1.write('# CD2_2 = 0.0 \n')
+        f_1.write('# CRVAL1 = 163.3239204316\n')
+        f_1.write('# CRVAL2 = 57.7986803985 \n')
+        f_1.write('# CRPIX1 = 5633. \n')
+        f_1.write('# CRPIX2 = 4385.\n')
+        f_1.write('# CD1_1 = -5.61111E-05\n')
+        f_1.write('# CD1_2 = 0.\n')
+        f_1.write('# CD2_1 = 0.\n')
+        f_1.write('# CD2_2 = 5.61111E-05\n')
         #1.0 unidad 0.00 algo de xy y la ultima deberia ser 60 que es como el peso que se le da a cada cosa pero que para nosotros un numero positivo es suficiente.
         #Ponemos un guion porque queremos que aplique la unidad
         f_1.write('{}\t -\t {}\t 1.0\t 0.000\t 60.000\t'.format(image, ellipfit))
         f_1.close()
     return specfile
+
+
+def specfile_r(image, ellipfit, FILE_NAME):
+    specfile='{}_specfile_leg.tmp'.format(FILE_NAME)
+    f_1=open(specfile, 'w')
+    f_1.write('# DLSMAKE = {}\n'.format('CatalogPlotter makes it'))
+    f_1.write('# CTYPE1 = {}\n'.format('RA---TAN'))
+    f_1.write('# CTYPE2 = {}\n'.format('DEC--TAN'))
+    f_1.write('# CRVAL1 = 163.3328929836\n')
+    f_1.write('# CRVAL2 = 57.7969314494\n')
+    f_1.write('# CRPIX1 = 5571. \n')
+    f_1.write('# CRPIX2 = 4388.\n')
+    f_1.write('# CD1_1 = -5.61111E-05\n')
+    f_1.write('# CD1_2 = 0.\n')
+    f_1.write('# CD2_1 = 0.\n')
+    f_1.write('# CD2_2 = 5.61111E-05\n')
+    #1.0 unidad 0.00 algo de xy y la ultima deberia ser 60 que es como el peso que se le da a cada cosa pero que para nosotros un numero positivo es suficiente.
+    #Ponemos un guion porque queremos que aplique la unidad
+    f_1.write('{}\t -\t {}\t 1.0\t 0.000\t 60.000\t'.format(image, ellipfit))
+    f_1.close()
+    return specfile
+
+
+def specfile_z(image, ellipfit, FILE_NAME):
+    specfile='{}_specfile_leg.tmp'.format(FILE_NAME)
+    f_1=open(specfile, 'w')
+    f_1.write('# DLSMAKE = {}\n'.format('CatalogPlotter makes it'))
+    f_1.write('# CTYPE1 = {}\n'.format('RA---TAN'))
+    f_1.write('# CTYPE2 = {}\n'.format('DEC--TAN'))
+    f_1.write('# CRVAL1 = 163.3239204316\n')
+    f_1.write('# CRVAL2 = 57.7986803985 \n')
+    f_1.write('# CRPIX1 = 5633. \n')
+    f_1.write('# CRPIX2 = 4385.\n')
+    f_1.write('# CD1_1 = -5.61111E-05\n')
+    f_1.write('# CD1_2 = 0.\n')
+    f_1.write('# CD2_1 = 0.\n')
+    f_1.write('# CD2_2 = 5.61111E-05\n')
+    #1.0 unidad 0.00 algo de xy y la ultima deberia ser 60 que es como el peso que se le da a cada cosa pero que para nosotros un numero positivo es suficiente.
+    #Ponemos un guion porque queremos que aplique la unidad
+    f_1.write('{}\t -\t {}\t 1.0\t 0.000\t 60.000\t'.format(image, ellipfit))
+    f_1.close()
+    return specfile
+
+
+
+
+
+
+
+
 
 #
 # Function: filter only stars
@@ -171,7 +226,7 @@ def stars_maker(catalog, file_name):
     FWHM_max_stars=float(raw_input("Enter the maximum value for FWHM: "))
     catalog_name_stars= '{}{}'.format(file_name, type_stars)
     #Creamos un string para que lo ponga en la terminal
-    terminal_stars= 'perl fiatfilter.pl "MAG_ISO>{} && MAG_ISO<{} && FWHM>{} && FWHM<{}" {}>{}'.format(mag_iso_min_stars, mag_iso_max_stars, FWHM_min_stars, FWHM_max_stars, catalog, catalog_name_stars)
+    terminal_stars= 'perl fiatfilter.pl "MAG_ISO>{} && MAG_ISO<{} && FWHM>{} && FWHM<{} && CLASS_STAR>0.9 && FLUX_ISO<3000000" {}>{}'.format(mag_iso_min_stars, mag_iso_max_stars, FWHM_min_stars, FWHM_max_stars, catalog, catalog_name_stars)
     subprocess.call(terminal_stars, shell=True)
     return catalog_name_stars, FWHM_max_stars
 
@@ -197,6 +252,6 @@ def galaxies_maker(catalog, file_name, FWHM_max_stars):
     print 'The value of the y-intercep n={} and the value of the slope m={}'.format(n,m)
     # Once you have the values of the fitting we can obtain the catalog of galaxies
     catalog_name_galaxies= '{}{}'.format(file_name, type_galaxies)
-    terminal_galaxies= 'perl fiatfilter.pl -v "FWHM>{}*MAG_ISO+{} && FWHM>{}" {}>{}'.format(m, n, FWHM_max_stars, catalog, catalog_name_galaxies)
+    terminal_galaxies= 'perl fiatfilter.pl -v "FWHM>{}*MAG_ISO+{} && FWHM>{} && CLASS_STAR<0.1 && FLUX_ISO<3000000" {}>{}'.format(m, n, FWHM_max_stars, catalog, catalog_name_galaxies)
     subprocess.call(terminal_galaxies, shell=True)
     return catalog_name_galaxies

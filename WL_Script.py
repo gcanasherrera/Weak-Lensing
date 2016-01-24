@@ -40,7 +40,7 @@ from astropy.modeling import models, fitting #Package for fitting Legendre Polyn
 import warnings #Advices
 from mpl_toolkits.mplot3d import Axes3D #Plotting in 3D
 import WL_ellip_fitter as ellip_fit #Ellipticity fitting
-from WL_Utils import sex_caller, sex_caller_corrected, ellipto_caller, dlscombine_pol_caller, dlscombine_leg_caller, ds9_caller, plotter, ellipticity, specfile, stars_maker, galaxies_maker
+from WL_Utils import sex_caller, sex_caller_corrected, ellipto_caller, dlscombine_pol_caller, dlscombine_leg_caller, ds9_caller, plotter, ellipticity, specfile, stars_maker, galaxies_maker, specfile_r, specfile_z
 from WL_filter_mag_gal import filter_mag #Filtering final catalog of galaxies a function of magnitudes and call fiatmap
 #from std import sigma_maker #statistical study
 import seaborn as sns
@@ -77,16 +77,16 @@ def main():
     
     array_file_name = []
     
-    question = raw_input("Please, tell me how many pictures did the cross-matching: ")
+    question = int(raw_input("Please, tell me how many pictures did the cross-matching: "))
     cont = 0
     BEFORE_NAME = ''
     FILE_NAME = ''
     #print FILE_NAME
     FILE_NAME_CORRECTED= ''
     
-    while cont != question:
+    while cont < question:
     
-    
+        filter =raw_input("Introduce the name of the filter")
         fits = raw_input("Please, introduce the name of the fits image you want to read or directly the catalogue: ")
         
 
@@ -169,7 +169,7 @@ def main():
         ymin_good=float(raw_input("Y min: "))
         ymax_good=float(raw_input("Y max: "))
         catalog_name_good= '{}{}'.format(FILE_NAME, type_good)
-        terminal_good= 'perl fiatfilter.pl "x>{} && x<{} && y>{} && y<{} && FLUX_ISO<5000000" {}>{}'.format(xmin_good, xmax_good, ymin_good, ymax_good, catalog_name_fiat, catalog_name_good)
+        terminal_good= 'perl fiatfilter.pl "x>{} && x<{} && y>{} && y<{} " {}>{}'.format(xmin_good, xmax_good, ymin_good, ymax_good, catalog_name_fiat, catalog_name_good)
         subprocess.call(terminal_good, shell=True)
         print("Wait a moment, I'm showing you the results in a sec")
         fcat_good = np.genfromtxt(catalog_name_good, names=names)
@@ -191,7 +191,7 @@ def main():
         FWHM_max_stars=float(raw_input("Enter the maximum value for FWHM: "))
         catalog_name_stars= '{}{}'.format(FILE_NAME, type_stars)
         #Creamos un string para que lo ponga en la terminal
-        terminal_stars= 'perl fiatfilter.pl "MAG_ISO>{} && MAG_ISO<{} && FWHM>{} && FWHM<{} && CLASS_STAR>0.8" {}>{}'.format(mag_iso_min_stars, mag_iso_max_stars, FWHM_min_stars, FWHM_max_stars, catalog_name_good, catalog_name_stars)
+        terminal_stars= 'perl fiatfilter.pl "MAG_ISO>{} && MAG_ISO<{} && FWHM>{} && FWHM<{} && CLASS_STAR>0.9 &&FLUX_ISO<3000000" {}>{}'.format(mag_iso_min_stars, mag_iso_max_stars, FWHM_min_stars, FWHM_max_stars, catalog_name_good, catalog_name_stars)
         subprocess.call(terminal_stars, shell=True)
         fcat_stars=np.genfromtxt(catalog_name_stars, names=names)
         ellipticity(fcat_stars, 6)
@@ -205,7 +205,7 @@ def main():
         P.show(block=False)
 
 
-        
+
         #(9.1.): Creating GALAXIES CATALOG
         print("Let's obtain only a FIAT catalog that contains galaxies. We need to bound. Have a look to the FWHM vs Mag_ISO plot")
         print("")
@@ -224,7 +224,7 @@ def main():
         print 'The value of the y-intercep n={} and the value of the slope m={}'.format(n,m)
         # Once you have the values of the fitting we can obtain the catalog of galaxies
         catalog_name_galaxies= '{}{}'.format(FILE_NAME, type_galaxies)
-        terminal_galaxies= 'perl fiatfilter.pl -v "FWHM>{}*MAG_ISO+{} && FWHM>{} && CLASS_STAR<0.5" {}>{}'.format(m, n, FWHM_max_stars, catalog_name_good, catalog_name_galaxies)
+        terminal_galaxies= 'perl fiatfilter.pl -v "FWHM>{}*MAG_ISO+{} && FWHM>{} && CLASS_STAR<0.3 && FLUX_ISO<3000000" {}>{}'.format(m, n, FWHM_max_stars, catalog_name_good, catalog_name_galaxies)
         subprocess.call(terminal_galaxies, shell=True)
         fcat_galaxies=np.genfromtxt(catalog_name_galaxies, names=names)
         #subprocess.call('./fiatreview {} {}'.format(fits, catalog_name_galaxies), shell=True)
@@ -253,7 +253,7 @@ def main():
         weights_all = np.ones_like(fcat_good['class_star'])/len(fcat_good['class_star'])
         
         plt.figure()
-        plt.hist(fcat_stars['class_star'], weights = weights_stars, bins= 10, histtype='stepfilled', label ='stars')
+        plt.hist(fcat_stars['class_star'], weights = weights_stars, bins= 3, histtype='stepfilled', label ='stars')
         plt.hist(fcat_galaxies['class_star'], weights = weights_galaxies, bins= 15, histtype='stepfilled', label ='galaxies')
         plt.legend(loc='upper right')
         plt.xlabel('$class_{star}$', labelpad=20, fontsize=20)
@@ -304,6 +304,12 @@ def main():
         fiat_shapes_stars= np.genfromtxt(catalog_name_shapes_stars, names=names_ellipto)
         ellipticity(fiat_shapes_stars, 15)
         plt.show()
+        
+        print "Show ellipticy as a function of x and y"
+        plotter(fiat_shapes_stars, 'x', 'ellipticity', 2, '$x/pixels$', '$\epsilon$')
+        plt.show()
+        plotter(fiat_shapes_stars, 'y', 'ellipticity', 2, '$y/pixels$', '$\epsilon$')
+        plt.show()
 
         fiat_shapes_galaxies= np.genfromtxt(catalog_name_shapes_galaxies, names=names_ellipto)
         ellipticity(fiat_shapes_galaxies, 15)
@@ -323,7 +329,12 @@ def main():
         #Let's call the function fit_Legendre from ellip_fitting3.py
         fitting_file_ellip_leg=ellip_fit.fit_Legendre(FILE_NAME, fiat_shapes_stars)
         #Create file read by dlscombine
-        dlscombine_file_leg=specfile(fits, fitting_file_ellip_leg, FILE_NAME)
+        
+        if filter=='r':
+            dlscombine_file_leg=specfile_r(fits, fitting_file_ellip_leg, FILE_NAME)
+        
+        if filter=='z':
+            dlscombine_file_leg=specfile_z(fits, fitting_file_ellip_leg, FILE_NAME)
         
         #(14): Let's call DLSCOMBINE to correct PSF anisotropies
         print("I'm correcting PSF annisotropies using dlscombine: BOTH FOR POL AND LEG FITTING")
@@ -350,8 +361,12 @@ def main():
         array_file_name.append(catalog_name_fiat_corrected)
         cont = cont + 1
 
-
-
+    NAME_1= array_file_name[0]
+    NAME_2= array_file_name[1]
+    BEFORE_NAME_1 = NAME_1.find('.')
+    FILE_NAME_1 = NAME_1[:BEFORE_NAME]
+    BEFORE_NAME_2 = NAME_2.find('.')
+    FILE_NAME_2 = NAME_2[:BEFORE_NAME]
     #CROSS-MATCHING
     catag_r = CatalogReader(array_file_name[0])
     catag_r.read()
@@ -359,34 +374,34 @@ def main():
     catag_z.read()
     crossmatching = CrossMatching(catag_r.fcat, catag_z.fcat)
     crossmatching.kdtree(n=1*1e-06)
-    crossmatching.catalog_writter('{}_2CM{}'.format(array_file_name[0], type_fcat), compare = '1to2')
+    crossmatching.catalog_writter('2CM_{}'.format(FILE_NAME_1), compare = '1to2')
     print '\n'
-    crossmatching.catalog_writter('{}_2CM{}'.format(array_file_name[1], type_fcat), compare = '2to1')
+    crossmatching.catalog_writter('2CM_{}'.format(FILE_NAME_2), compare = '2to1')
     
-    FILE_NAME_FINAL = raw_input("Please, tell me how many pictures did the cross-matching: ")
+    FILE_NAME_FINAL = raw_input("Please, tell me the FINAL name: ")
     
     if crossmatching.cont1to2<crossmatching.cont2to1:
-        catag_final_1 = CatalogReader('{}_2CM{}'.format(array_file_name[0], type_fcat))
+        catag_final_1 = CatalogReader('2CM_{}{}'.format(FILE_NAME_1, type_fcat))
         catag_final_1.read()
-        catag_final_2 = CatalogReader('{}_2CM{}'.format(array_file_name[1], type_fcat))
+        catag_final_2 = CatalogReader('2CM_{}{}'.format(FILE_NAME_2, type_fcat))
         catag_final_2.read()
         crossmatching_final = CrossMatching(catag_final_1.fcat, catag_final_2.fcat)
         crossmatching_final.kdtree(n=1*1e-06)
-        crossmatching.catalog_writter('{}{}'.format(FILE_NAME_FINAL, type_fcat), compare = '1to2')
+        crossmatching.catalog_writter('{}'.format(FILE_NAME_FINAL), compare = '1to2')
 
     if crossmatching.cont1to2>crossmatching.cont2to1:
-        catag_final_1 = CatalogReader('{}_2CM{}'.format(array_file_name[0], type_fcat))
+        catag_final_1 = CatalogReader('2CM_{}{}'.format(FILE_NAME_1, type_fcat))
         catag_final_1.read()
-        catag_final_2 = CatalogReader('{}_2CM{}'.format(array_file_name[1], type_fcat))
+        catag_final_2 = CatalogReader('2CM_{}{}'.format(FILE_NAME_2, type_fcat))
         catag_final_2.read()
         crossmatching_final = CrossMatching(catag_final_1.fcat, catag_final_2.fcat)
         crossmatching_final.kdtree(n=1*1e-06)
-        crossmatching.catalog_writter('{}{}'.format(FILE_NAME_FINAL, type_fcat), compare = '2to1')
+        crossmatching.catalog_writter('{}'.format(FILE_NAME_FINAL), compare = '2to1')
 
     if crossmatching.cont1to2==crossmatching.cont2to1:
-        catag_final_1 = CatalogReader('{}_2CM{}'.format(array_file_name[0], type_fcat))
+        catag_final_1 = CatalogReader('2CM_{}{}'.format(FILE_NAME_1, type_fcat))
         catag_final_1.read()
-        catag_final_2 = CatalogReader('{}_2CM{}'.format(array_file_name[1], type_fcat))
+        catag_final_2 = CatalogReader('2CM_{}{}'.format(FILE_NAME_2, type_fcat))
         catag_final_2.read()
         crossmatching_final = CrossMatching(catag_final_1.fcat, catag_final_2.fcat)
         crossmatching_final.kdtree(n=1*1e-06)
@@ -396,7 +411,7 @@ def main():
 
     #(17): Transform again tshe corrected catalog into a GOOD catalog
     catalog_name_corrected_good= '{}{}'.format(FILE_NAME_FINAL, type_good)
-    terminal_corrected_good= 'perl fiatfilter.pl "x>{} && x<{} && y>{} && y<{} && FLUX_ISO<5000000" {}>{}'.format(xmin_good, xmax_good, ymin_good, ymax_good, catalog_name_fiat_corrected_final, catalog_name_corrected_good)
+    terminal_corrected_good= 'perl fiatfilter.pl "x>{} && x<{} && y>{} && y<{}" {}>{}'.format(xmin_good, xmax_good, ymin_good, ymax_good, catalog_name_fiat_corrected_final, catalog_name_corrected_good)
     subprocess.call(terminal_corrected_good, shell=True)
 
     FILE_NAME_CORRECTED='{}_corrected'.format(FILE_NAME_FINAL)
@@ -422,7 +437,29 @@ def main():
     print("Second galaxies...")
     print("")
     catalog_name_fiat_corrected_galaxies=galaxies_maker(catalog_name_corrected_good, FILE_NAME_CORRECTED, FWHM_max_stars)
-    
+    fcat_galaxies_corrected=np.genfromtxt(catalog_name_fiat_corrected_galaxies, names=names)
+
+
+    # (***) CHECKING FOR STARS // GALAXIES DIVISION
+
+    weights_stars=np.ones_like(fcat_stars_corrected['class_star'])/len(fcat_stars_corrected['class_star'])
+    weights_galaxies=np.ones_like(fcat_galaxies_corrected['class_star'])/len(fcat_galaxies_corrected['class_star'])
+    weights_all = np.ones_like(fcat_corrected['class_star'])/len(fcat_corrected['class_star'])
+        
+    plt.figure()
+    plt.hist(fcat_stars_corrected['class_star'], weights = weights_stars, bins= 10, histtype='stepfilled', label ='stars')
+    plt.hist(fcat_galaxies_corrected['class_star'], weights = weights_galaxies, bins= 15, histtype='stepfilled', label ='galaxies')
+    plt.legend(loc='upper right')
+    plt.xlabel('$class_{star}$', labelpad=20, fontsize=20)
+    plt.ylabel('$Frequency$', fontsize=20)
+    plt.show()
+    plt.hist(fcat_corrected['class_star'], color= 'r', weights = weights_all, bins=50, histtype='stepfilled', label ='all')
+    plt.legend(loc='upper right')
+    plt.xlabel('$class_{star}$', labelpad=20, fontsize=20)
+    plt.ylabel('$Frequency$', fontsize=20)
+    plt.show()
+
+
     #(20): ELLIPTO CATALOG and SHAPES CATALOG (only galaxies) again...
     catalog_name_ellipto_stars_corrected='{}{}'.format(FILE_NAME_CORRECTED, type_ellipto_stars)
     ellipto_caller(catalog_name_fiat_corrected_stars, fits, catalog_name_ellipto_stars_corrected)
