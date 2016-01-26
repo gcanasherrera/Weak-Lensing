@@ -1,6 +1,6 @@
 # Name: WL_MonteCarlo.py
 #
-# TFG Program V
+# TFG Program VII
 #
 # Description: Prototype of the script requires to deal with the noise
 #
@@ -87,14 +87,15 @@ def sigma_maker(data_image, cycles, local):
     
     #(7): we need to force our sigma matrix to be the size (306, 348) (this values are just set by hand)
     #rescale_sigma=np.zeros(shape=(306, 348))
-    rescale_sigma=sigma[9:88, 11:106]
+    #rescale_sigma=sigma[9:88, 11:106]
     #print rescale_sigma.shape
  
     #(8): We need to analyze the matrix SIGMA in order to find the pixel whose values are > 4
-    four_sigma=np.zeros(shape=(79, 95))
+    four_sigma=np.zeros(shape=(y_data_image, x_data_image))
     #print four_sigma.shape
     
-    four_sigma[rescale_sigma > 4.0] = rescale_sigma[rescale_sigma > 4.0]
+    #four_sigma[rescale_sigma > 4.0] = rescale_sigma[rescale_sigma > 4.0]
+    four_sigma[sigma > 4.0] = sigma[sigma > 4.0]
     
     #(9): We plot this information in the new file
     fits.writeto('WL_map4sigma_{}.fits'.format(local), four_sigma)
