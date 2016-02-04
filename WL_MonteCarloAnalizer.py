@@ -80,6 +80,7 @@ def sigma_maker(data_image, cycles, local):
     S_N = np.divide(sci_data_image_st, matrix)
   
     S_N[S_N > 4.0] = S_N[S_N > 4.0]
+    S_N[S_N < 4.0] = 0
     
     #(9): We plot this information in the new file
     fits.writeto('WL_map4sigma_{}.fits'.format(local), S_N)
