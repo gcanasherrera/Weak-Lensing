@@ -1,18 +1,18 @@
 # Name: Class_CrossMatching.py
 #
-# Bachelor Disertation Program X
+# Bachelor Disertation Program I
 #
 # Type: python class
 #
-# Content: 1 Class, 1 constructor,
+# Content: 1 Class, 1 constructor, 5 methods
 #
-# Description: General Class destinated to get a cross matching between two catalogs from different filtered pics
+# Description: General Class destinated to get a cross-matching process between two catalogs from different filtered images
 
 
 __author__ = "Guadalupe Canas Herrera"
 __copyright__ = "Copyright (C) 2015 G. Canas Herrera"
 __license__ = "Public Domain GNU"
-__version__ = "1.0.0"
+__version__ = "2.0.0"
 __maintainer__ = "Guadalupe Canas Herrera"
 __email__ = "gch24@alumnos.unican.es"
 
@@ -24,14 +24,14 @@ import math #mathematical functions
 import subprocess #calling to the terminal
 from astropy.io import fits #Open and Reading FITS Files usign astropy
 import random #pseudo-random generator
-import seaborn as sns #Improvements for statistical-plots
-from pymodelfit import FunctionModel1DAuto #Create own model of fitting
+#import seaborn as sns #Improvements for statistical-plots
+#from pymodelfit import FunctionModel1DAuto #Create own model of fitting
 from scipy import spatial #KDTREE altorithm
 
 
 
 """
-    General Class that contents several simulation methods destinated to get a cross-matching between two catalogs
+    General Class that contents several methods destinated to get a cross-matching between two catalogs
     
 """
 class CrossMatching(object):
@@ -45,9 +45,9 @@ class CrossMatching(object):
         # catalog_2 and catalog_2 are objects from Class_CatalogReader.py
         self.catalog_1 = catalog_1
         self.catalog_2 = catalog_2
-        self.x_1 = catalog_2['x']
+        self.x_1 = catalog_1['x']
         self.x_2 = catalog_2['x']
-        self.y_1 = catalog_2['y']
+        self.y_1 = catalog_1['y']
         self.y_2 = catalog_2['y']
         
         
@@ -59,10 +59,12 @@ class CrossMatching(object):
         self.yt_2 = []
         self.zt_2 = []
         
-        self.ra_1 = catalog_2['ra']
+        self.ra_1 = catalog_1['ra']
         self.ra_2 = catalog_2['ra']
-        self.de_1 = catalog_2['dec']
+        self.de_1 = catalog_1['dec']
         self.de_2 = catalog_2['dec']
+        self.tree_1 = 0
+        self.tree_2 = 0
         
         self.positions_cat_1 = []
         self.positions_cat_2 = []
@@ -76,31 +78,55 @@ class CrossMatching(object):
         self.cont1to2 = 0
         self.cont2to1 = 0
 
+    """
+        Method that defines spherical coordinates from Cartesian Cardinates
+    """
 
     def spheric_coordinates(self, re, de):
         x = np.sin(np.radians(de)) * np.cos(np.radians(re))
         y = np.sin(np.radians(de)) * np.sin(np.radians(re))
         z = np.cos(np.radians(de))
         return x, y, z
+    
+    """
+        Method that defines an array containing 3 columns (x, y, z) in spherical coordinates
+    """
 
     def trivector_creator(self):
         self.xt_1, self.yt_1, self.zt_1 = self.spheric_coordinates(self.catalog_1['ra'], self.catalog_1['dec'])
         self.xt_2, self.yt_2, self.zt_2 = self.spheric_coordinates(self.catalog_2['ra'], self.catalog_2['dec'])
-        self.positions_cat_1 = zip(self.xt_1.ravel(), self.yt_1.ravel(), self.zt_2.ravel())
+        self.positions_cat_1 = zip(self.xt_1.ravel(), self.yt_1.ravel(), self.zt_1.ravel())
         self.positions_cat_2 = zip(self.xt_2.ravel(), self.yt_2.ravel(), self.zt_2.ravel())
+
+    """
+        Method that defines the array trivector properly for KDTree algorithm
+    """
+
 
 
     def positions_array_creator(self):
         self.positions_cat_1 = zip(self.x_1.ravel(), self.y_1.ravel())
         self.positions_cat_2 = zip(self.x_2.ravel(), self.y_2.ravel())
 
+    """
+        Method that call KDTree algorithm from scipy library, returning the index at which objects are cross-matched regarding spherical coordinates
+    """
+
+
     def kdtree(self, n=1):
         self.trivector_creator()
-        tree_1 = spatial.KDTree(self.positions_cat_1)
-        self.posible_obj_distances_1, self.posible_obj_index_1 = tree_1.query(self.positions_cat_2, distance_upper_bound = n)
+        self.tree_1 = spatial.KDTree(self.positions_cat_1)
+        self.posible_obj_distances_1, self.posible_obj_index_1 = self.tree_1.query(self.positions_cat_2, distance_upper_bound = n)
 
-        tree_2 = spatial.KDTree(self.positions_cat_2)
-        self.posible_obj_distances_2, self.posible_obj_index_2 = tree_2.query(self.positions_cat_1, distance_upper_bound = n)
+        self.tree_2 = spatial.KDTree(self.positions_cat_2)
+        self.posible_obj_distances_2, self.posible_obj_index_2 = self.tree_2.query(self.positions_cat_1, distance_upper_bound = n)
+    
+    
+    """
+        Method that loops over the returned array-index from the KDtree and writes new algorithm
+    """
+    
+    
 
     def catalog_writter(self, FILE_NAME, compare = ''):
         catalog_def= '{}.fcat'.format(FILE_NAME)
