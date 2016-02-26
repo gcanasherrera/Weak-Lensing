@@ -1,8 +1,8 @@
 # Name: Class_ObjectCreator.py
 #
-# Weak-Lensing Validation Program I
+# Weak-Lensing Validation Program III
 #
-# Type: python class
+# Type: Python class
 #
 # Content: 2 Classes, 1 constructor, 16 methods
 #
@@ -30,7 +30,7 @@ import random #pseudo-random generatorCcCl
 import seaborn as sns #Improvements for statistical-plots
 from pymodelfit import FunctionModel1DAuto #Create own model of fitting
 from scipy import spatial #KDTREE altorithm
-
+import matplotlib.pylab as P #histograms
 
 
 """
@@ -60,6 +60,7 @@ class ObjectCreator(object):
         self.simulation_picture = ''
     
         self.mean_mag = np.mean(fcat['mag_iso'])
+        self.error_mean_mag =np.std(fcat['mag_iso'])/math.sqrt(len(fcat['mag_iso']))
         self.mean_intensity = 0.0
         self.mean_ellip = np.mean(fcat['ellipticity'])
         self.mean_b = np.mean(fcat['B'])
@@ -67,9 +68,9 @@ class ObjectCreator(object):
         self.mean_a = self.mean_b/math.sqrt(1-self.mean_ec*self.mean_ec)
         
         self.error_mean_b = np.std(fcat['B'])/math.sqrt(len(fcat['B']))
-        self.error_mean_ec = 0.5*2*1/((1-self.mean_ec*self.mean_ec)*(1-self.mean_ec*self.mean_ec)*(1-self.mean_ec*self.mean_ec))*math.sqrt((1-self.mean_ec*self.mean_ec)*(1-self.mean_ec*self.mean_ec))
+        self.error_mean_ec = self.mean_ec*0.5*2*1/((1-self.mean_ec*self.mean_ec)*(1-self.mean_ec*self.mean_ec)*(1-self.mean_ec*self.mean_ec))*math.sqrt((1-self.mean_ec*self.mean_ec)*(1-self.mean_ec*self.mean_ec))
                             
-        self.error_mean_a = self.mean_a*(self.error_mean_b/self.mean_b+self.mean_ec/self.error_mean_ec)
+        self.error_mean_a = self.mean_a*math.sqrt((self.error_mean_b/self.mean_b)*(self.error_mean_b/self.mean_b)+(self.mean_ec/self.error_mean_ec)*(self.mean_ec/self.error_mean_ec))
         
         self.parameter_a = 0.0
         self.parameter_b = 0.0
@@ -151,13 +152,13 @@ class ObjectCreator(object):
         plt.figure()
         
         plt.loglog(x, y, 'ko', label='Source Extractor')
-        
-        #plt.errorbar(x, y, self.fcat['fluxerr_iso'], self.fcat['magger_iso'], fmt='ko', label='Source Extractor')
+    
+        plt.errorbar(x, y, self.fcat['fluxerr_iso'], self.fcat['magger_iso'], fmt='ko', label='Source Extractor')
         #plt.plot(x, y, 'ko', label='Source Extractor')
         xp= np.linspace(8.2, 25, len(x))
         plt.loglog(xp, t(xp), 'r--', label='Exponential Fitting')
-        plt.xlabel('Mag_iso')
-        plt.ylabel('Flux_iso')
+        plt.xlabel('mag(iso)')
+        plt.ylabel('flux(iso)')
         plt.legend()
         plt.title('Mag_iso Vs. Flux_iso')
         plt.show()
@@ -177,16 +178,18 @@ class ObjectCreator(object):
         sns.set(style="white", palette="muted", color_codes=True)
         model = MagnitudeExponential()
         af,bf = model.fitData(x,y)
-        model.plot( logplot='xy')
-        plt.text(0,11,'My Model:',fontsize=16)
-        for i,k in enumerate(model.pardict):
-            plt.text(0,10-i,'%s = %f'%(k,model.pardict[k]),fontsize=16)
-        plt.xlabel('Mag_iso')
-        plt.ylabel('Flux_iso')
+        model.plot()
+        #plt.errorbar(x, y, self.fcat['magger_iso'], self.fcat['fluxerr_iso'], fmt='r.')
+
+        plt.xlabel('$m(iso)$')
+        plt.yscale('log')
+        plt.xscale('log')
+        plt.ylabel('$F(iso)$')
         
-        #plt.show()
+        plt.show()
         self.mean_intensity = model.f(m = self.mean_mag, a = af, b = bf)
         print 'The mean intensity is : {}\nThe mean isophotal magnitude is : {} '.format(self.mean_intensity, self.mean_mag)
+        print 'The error in mean intensity is : {}\nThe error in mean isophotal magnitude is : {} '.format(self.error_mean_mag, self.error_mean_mag)
         
         
         return model, af, bf
@@ -201,26 +204,45 @@ class ObjectCreator(object):
 
     def general_histograms(self, fcat):
         sns.set(style="white", palette="muted", color_codes=True)
-        rs = np.random.RandomState(10)
         
-        sns.distplot(fcat['flux_iso'], color="b", axlabel = 'flux_iso', hist=True)
-        plt.axvline(fcat['flux_iso'].mean(), color='k', linestyle='dashed', linewidth=2)
-        plt.show()
+        weights_mag_iso = np.ones_like(fcat['mag_iso'])/len(fcat['mag_iso'])
+        weights_ellip = np.ones_like(fcat['ellipticity'])/len(fcat['ellipticity'])
+        weights_a = np.ones_like(fcat['A'])/len(fcat['A'])
+        weights_b = np.ones_like(fcat['B'])/len(fcat['B'])
+        weights_flux_iso = np.ones_like(fcat['flux_iso'])/len(fcat['flux_iso'])
         
-        sns.distplot(fcat['mag_iso'], axlabel = 'mag_iso', hist=True)
+        sns.distplot(fcat['mag_iso'], axlabel = 'mag_iso', hist=True, hist_kws={'weights': weights_mag_iso})
         plt.axvline(fcat['mag_iso'].mean(), color='k', linestyle='dashed', linewidth=2)
+        plt.xlabel('$m(iso)$')
+        plt.ylabel('$Frecuency$')
+        plt.xlim(10, 30)
         plt.show()
         
-        sns.distplot(fcat['ellipticity'], color="r", axlabel = 'ellipticity', hist=True)
+        sns.distplot(fcat['ellipticity'], color="r", axlabel = 'ellipticity', hist=True, hist_kws={'weights': weights_ellip})
         plt.axvline(fcat['ellipticity'].mean(), color='k', linestyle='dashed', linewidth=2)
+        plt.xlabel('$ellipticity$')
+        plt.ylabel('$Frecuency$')
         plt.show()
         
-        sns.distplot(fcat['A'], color="y", axlabel = 'a', hist=True)
+        sns.distplot(fcat['A'], color="y", bins = 20, axlabel = 'a', hist=True, hist_kws={'weights': weights_a})
         plt.axvline(fcat['A'].mean(), color='k', linestyle='dashed', linewidth=2)
+        plt.xlabel('$<A>$')
+        plt.xlim(0, 50)
+        plt.ylabel('$Frecuency$')
         plt.show()
         
-        sns.distplot(fcat['B'], color="m", axlabel = 'b', hist=True)
+        sns.distplot(fcat['B'], color="m", bins = 20,  axlabel = 'b', hist=True, hist_kws={'weights': weights_b})
         plt.axvline(fcat['B'].mean(), color='k', linestyle='dashed', linewidth=2)
+        plt.xlabel('$<B>$')
+        plt.xlim(0, 10)
+        plt.ylabel('$Frecuency$')
+        plt.show()
+    
+    
+        sns.distplot(fcat['flux_iso'], color="b", axlabel = 'flux_iso', hist=True, hist_kws={'weights': weights_flux_iso})
+        plt.axvline(fcat['flux_iso'].mean(), color='k', linestyle='dashed', linewidth=2)
+        plt.xlabel('$F(iso)$')
+        plt.ylabel('$Frecuency$')
         plt.show()
 
 
