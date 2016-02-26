@@ -1,6 +1,6 @@
 # Name: WL_ObjectCreator_execute_mag.py
 #
-# Bachelor Disertation Program VI
+# Bachelor Disertation Program IV
 #
 # Type: Script
 #
