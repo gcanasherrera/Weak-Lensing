@@ -1,6 +1,6 @@
-# Name: Class_CrossMatching.py
+# Name: WL_CrossMatching.py
 #
-# Bachelor Disertation Program X
+# Bachelor Disertation Program II
 #
 # Type: python script
 #
@@ -41,11 +41,11 @@ catag_r.read()
 catag_z = CatalogReader('lhn1n1_2010dec_z_stack_fc_fix.cat')
 catag_z.read()
 
-#Create object for cross-matching
+#Give value to the cross-matching radius
 
 r=3
 
-
+#Create object for cross-matching
 crossmatching = CrossMatching(catag_r.fcat, catag_z.fcat)
 crossmatching.kdtree(n=r*1e-06)
 crossmatching.catalog_writter('lhn1n1_crossmatching_1to2', compare = '1to2')
