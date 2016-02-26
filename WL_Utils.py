@@ -1,10 +1,10 @@
 # Name: WL_utils.py
 #
-# Bachelor Disertation Program II
+# Bachelor Disertation Program A.II
 #
 # Description: Python File that contains all basic functions required by WL_script.py.
 #
-# For further information about the functions here defined the users are kindly referred to the DOCUMENTATION file attached in this package.
+# For further information about the functions here defined the users are kindly referred to the DOCUMENTATION file attached in this package and also to the coments of each method
 #
 
 
@@ -42,7 +42,7 @@ type_shapes_stars = "_shapes_stars.fcat"
 
 
 #
-# Function: works to call Source Extractor to obtain celestial objects. You pass the name of the image and the name of the file
+# Function: works to call Source Extractor to obtain celestial objects. You pass the name of the image and the name of the file (catalogue name without ending)
 #
 def sex_caller(fits, FILE_NAME):
     catalog_name = '{}.cat'.format(FILE_NAME)
@@ -51,7 +51,7 @@ def sex_caller(fits, FILE_NAME):
     return catalog_name
 
 #
-# Function: works to call Source Extractor to obtain celestial objects. You pass the name of the image_corrected and the name of the file
+# Function: works to call Source Extractor to obtain celestial objects. You pass the name of the image_corrected and the name of the file (catalogue name without ending)
 #
 def sex_caller_corrected(fits, FILE_NAME):
     catalog_name = '{}_corrected.cat'.format(FILE_NAME)
@@ -61,7 +61,7 @@ def sex_caller_corrected(fits, FILE_NAME):
 
 
 #
-# Function: works to call ellipto to re-obtain the sizes of celestial objects. You pass the first catalog name and the out catalog name
+# Function: works to call ellipto to re-obtain the sizes of celestial objects. You pass the in - catalog name and the out catalog name
 #
 def ellipto_caller(catalog_object, fits, catalog_ellipto):
     ellipto= './ellipto -m 512 {} {}>{}'.format(catalog_object, fits, catalog_ellipto)
@@ -85,7 +85,7 @@ def dlscombine_leg_caller(specfile, fits_corrected): #Call ellipto when you pass
     return corrected_photo
 
 #
-# Function: works to call Source Extractor to obtain celestial objects. You pass the name of the image
+# Function: works to call ds9 to open FITS files. You pass the name of the image
 #
 def ds9_caller(photo):
     ds9= './ds9 {}'.format(photo)
@@ -93,7 +93,7 @@ def ds9_caller(photo):
     return
 
 #
-# Function: Plots whatever st. array is passed as attributes: plots whatever you want
+# Function: Plots whatever st. array is passed as attributes (whatever you want)
 #
 def plotter(catalog, magnitude_1, magnitude_2, int, legend_1, legend_2):
     sns.set(style="ticks")
@@ -104,7 +104,7 @@ def plotter(catalog, magnitude_1, magnitude_2, int, legend_1, legend_2):
     return
 
 #
-# Function: Define the ellipticity function that calculates the ellipticity. Calculate the ellipticity present in the catalog that is passed as attribute. Then, it plots.
+# Function: Calculate the ellipticity vector components present in the catalog that is passed as attribute. Then, it plots.
 #
 def ellipticity(catalog, int):
     sns.set(style="ticks")
@@ -116,15 +116,17 @@ def ellipticity(catalog, int):
         ellip_plus[i]=catalog["ellipticity"][i]*math.sin(2*math.radians(catalog["theta"][i]))
     plt.figure(int)
     plt.plot(ellip_minus, ellip_plus, 'k*')
-    plt.xlabel('$e_1$', labelpad=20, fontsize=20)
-    plt.ylabel('$e_2$', fontsize=20)
+    plt.xlabel('$e_1$', labelpad=20, fontsize=44)
+    plt.ylabel('$e_2$', fontsize=44)
     #plt.title('$ellipticity_{minus}$ ' 'Vs.' '$ellipticity_{plus}$' 'for $mag_{iso}$={} and $mag_{iso}$={}'.format(np.amin(catalog['mag_iso']), np.amax(catalog['mag_iso'])))
     plt.xlim(-1,1)
     plt.ylim(-1,1)
+    plt.xticks(color='k', size=30)
+    plt.yticks(color='k', size=30)
     return
 
 #
-# Function: creates a file able to be understood by dlscombine
+# Function: creates a file able to be understood by DLSCombine for the application of the Kernel
 #
 def specfile(image, ellipfit, FILE_NAME):
     if ellipfit.endswith('_leg.fcat'):
@@ -166,6 +168,10 @@ def specfile(image, ellipfit, FILE_NAME):
     return specfile
 
 
+#
+# Function: creates a file able to be understood by DLSCombine for the application of the Kernel. Defined for the central pixel (RA and DEC) of the R-band
+#
+
 def specfile_r(image, ellipfit, FILE_NAME):
     specfile='{}_specfile_leg.tmp'.format(FILE_NAME)
     f_1=open(specfile, 'w')
@@ -186,6 +192,9 @@ def specfile_r(image, ellipfit, FILE_NAME):
     f_1.close()
     return specfile
 
+#
+# Function: creates a file able to be understood by DLSCombine for the application of the Kernel. Defined for the central pixel (RA and DEC) of the Z-band
+#
 
 def specfile_z(image, ellipfit, FILE_NAME):
     specfile='{}_specfile_leg.tmp'.format(FILE_NAME)
@@ -209,14 +218,8 @@ def specfile_z(image, ellipfit, FILE_NAME):
 
 
 
-
-
-
-
-
-
 #
-# Function: filter only stars
+# Function: filter only stars (two criteria at the same time)
 #
 def stars_maker(catalog, file_name):
     print("Let's obtain only a FIAT catalog that contains stars. We need to bound. Have a look to the FWHM vs Mag_ISO plot")
@@ -231,7 +234,7 @@ def stars_maker(catalog, file_name):
     return catalog_name_stars, FWHM_max_stars
 
 #
-# Function: filter only galaxies performing a linear fit
+# Function: filter only galaxies performing a linear fit (two criteria at the same time)
 #
 def galaxies_maker(catalog, file_name, FWHM_max_stars):
     print("Let's obtain only a FIAT catalog that contains galaxies. We need to bound. Have a look to the FWHM vs Mag_ISO plot")
