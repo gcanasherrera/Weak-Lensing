@@ -1,8 +1,10 @@
 # Name: WL_Script.py
 #
-# Weak-Lensing Program I
+# Weak-Lensing "Study of Systematics and Classification of Compact Objects" Program I
 #
-# Description: Central script that develops the whole process of reading images, filtering into galaxies and stars, correcting sizes and shapes, correcting PSF annisotropies, performing magnitude cuts in the final galaxies catalogs, statistic study in function of sigma.
+# Type: python script
+#
+# Description: Central script that develops the whole process of reading images, filtering into galaxies and stars, correcting sizes and shapes, correcting PSF annisotropies, and re-classify compact objects into galaxies to obtain a final catalogue
 #
 # Returns: FITS image - mass-density map
 #          Catalogs
@@ -18,9 +20,9 @@ __maintainer__ = "Guadalupe Canas"
 __email__ = "gch24@alumnos.unican.es"
 
 
-# Improvements: more automatic ---> only needs the name of the picture you want to analize
+# Improvements: more automatic ---> only needs the name of the picture, the catalogue (in case you have it) and the BAND you want to analize
 # Old CatalogPlotter3.py has been splitted in two: WL_Script.py and WL_Utils.py
-# Also call: WL_utils.py, filter_mag_gal.py - ellip_fitter.py - std.py (written by Guadalupe Canas Herrera)
+# Also call: WL_utils.py, WL_filter_mag_gal.py - WL_ellip_fitter.py (written by Guadalupe Canas Herrera)
 # Also call 2: Source Extractor (by Emmanuel Bertin V2.3.2), sex2fiat (by DAVID WITTMAN v1.2), fiatfilter (by DAVID WITTMAN v1.2), ellipto (by DAVID WITTMAN v1.2), dlscombine (by DAVID WITTMAN v1.2 and modified by GUADALUPE CANAS)
 
 #
@@ -42,7 +44,6 @@ from mpl_toolkits.mplot3d import Axes3D #Plotting in 3D
 import WL_ellip_fitter as ellip_fit #Ellipticity fitting
 from WL_Utils import sex_caller, sex_caller_corrected, ellipto_caller, dlscombine_pol_caller, dlscombine_leg_caller, ds9_caller, plotter, ellipticity, specfile, stars_maker, galaxies_maker, specfile_r, specfile_z
 from WL_filter_mag_gal import filter_mag #Filtering final catalog of galaxies a function of magnitudes and call fiatmap
-#from std import sigma_maker #statistical study
 import seaborn as sns
 import matplotlib.pylab as P #histograms
 from Class_CrossMatching import CrossMatching
@@ -71,11 +72,12 @@ def main():
     
     sns.set(style="white", palette="muted", color_codes=True)
     
-    # (2): We need to read the image. We ask in screen the image of the region of the sky.
-    print("Welcome to the Weak-Lensing Script, here to help you analizing Subaru images")
+    print("Welcome to the Weak-Lensing Script, here to help you analizing Subaru images  in search of galaxy clusters")
     print("")
     
     array_file_name = []
+    
+    # (1): Ask the number of image that did the cross-matching process.
     
     question = int(raw_input("Please, tell me how many pictures did the cross-matching: "))
     cont = 0
@@ -85,8 +87,10 @@ def main():
     FILE_NAME_CORRECTED= ''
     
     while cont < question:
+        
+        # (2): We need to read the image and band. We ask in screen the image of the region of the sky.
     
-        filter =raw_input("Introduce the name of the filter")
+        filter =raw_input("Introduce the name of the filter: ")
         fits = raw_input("Please, introduce the name of the fits image you want to read or directly the catalogue: ")
         
 
@@ -156,7 +160,7 @@ def main():
         else:
             plt.show(block=False)
 
-        # (7): Obtaining a GOOD CATALOG without blank spaces
+        # (7): Obtaining a GOOD CATALOG without blank spaces and filter saturate objects
         print("This catalog is not the good one. I'll show you why")
         print("")
         magnitude_x="x"
@@ -169,7 +173,7 @@ def main():
         ymin_good=float(raw_input("Y min: "))
         ymax_good=float(raw_input("Y max: "))
         catalog_name_good= '{}{}'.format(FILE_NAME, type_good)
-        terminal_good= 'perl fiatfilter.pl "x>{} && x<{} && y>{} && y<{} " {}>{}'.format(xmin_good, xmax_good, ymin_good, ymax_good, catalog_name_fiat, catalog_name_good)
+        terminal_good= 'perl fiatfilter.pl "x>{} && x<{} && y>{} && y<{} && FLUX_ISO<3000000" {}>{}'.format(xmin_good, xmax_good, ymin_good, ymax_good, catalog_name_fiat, catalog_name_good)
         subprocess.call(terminal_good, shell=True)
         print("Wait a moment, I'm showing you the results in a sec")
         fcat_good = np.genfromtxt(catalog_name_good, names=names)
@@ -191,13 +195,11 @@ def main():
         FWHM_max_stars=float(raw_input("Enter the maximum value for FWHM: "))
         catalog_name_stars= '{}{}'.format(FILE_NAME, type_stars)
         #Creamos un string para que lo ponga en la terminal
-        terminal_stars= 'perl fiatfilter.pl "MAG_ISO>{} && MAG_ISO<{} && FWHM>{} && FWHM<{} && CLASS_STAR>0.9 &&FLUX_ISO<3000000" {}>{}'.format(mag_iso_min_stars, mag_iso_max_stars, FWHM_min_stars, FWHM_max_stars, catalog_name_good, catalog_name_stars)
+        terminal_stars= 'perl fiatfilter.pl "MAG_ISO>{} && MAG_ISO<{} && FWHM>{} && FWHM<{} && CLASS_STAR>0.9 && FLUX_ISO<3000000" {}>{}'.format(mag_iso_min_stars, mag_iso_max_stars, FWHM_min_stars, FWHM_max_stars, catalog_name_good, catalog_name_stars)
         subprocess.call(terminal_stars, shell=True)
         fcat_stars=np.genfromtxt(catalog_name_stars, names=names)
         ellipticity(fcat_stars, 6)
         plt.show(block=False)
-        # Comment: it is necessary to plot this catalog on the .fits image to verify that only stars are selected
-        #subprocess.call('./fiatreview {} {}'.format(fits, catalog_name_stars), shell=True)
 
         #(8.2.): Checking STARS CATALOG with Source Extractor Neural Network Output
         P.figure()
@@ -224,7 +226,8 @@ def main():
         print 'The value of the y-intercep n={} and the value of the slope m={}'.format(n,m)
         # Once you have the values of the fitting we can obtain the catalog of galaxies
         catalog_name_galaxies= '{}{}'.format(FILE_NAME, type_galaxies)
-        terminal_galaxies= 'perl fiatfilter.pl -v "FWHM>{}*MAG_ISO+{} && FWHM>{} && CLASS_STAR<0.3 && FLUX_ISO<3000000" {}>{}'.format(m, n, FWHM_max_stars, catalog_name_good, catalog_name_galaxies)
+        #terminal_galaxies= 'perl fiatfilter.pl -v "FWHM>{}*MAG_ISO+{} && FWHM>{} && CLASS_STAR<0.1 && FLUX_ISO<3000000" {}>{}'.format(m, n, FWHM_max_stars, catalog_name_good, catalog_name_galaxies)
+        terminal_galaxies= 'perl fiatfilter.pl -v "FWHM>{}*MAG_ISO+{} && FWHM>{} && FLUX_ISO<3000000" {}>{}'.format(m, n, FWHM_max_stars, catalog_name_good, catalog_name_galaxies)
         subprocess.call(terminal_galaxies, shell=True)
         fcat_galaxies=np.genfromtxt(catalog_name_galaxies, names=names)
         #subprocess.call('./fiatreview {} {}'.format(fits, catalog_name_galaxies), shell=True)
@@ -253,16 +256,19 @@ def main():
         weights_all = np.ones_like(fcat_good['class_star'])/len(fcat_good['class_star'])
         
         plt.figure()
-        plt.hist(fcat_stars['class_star'], weights = weights_stars, bins= 3, histtype='stepfilled', label ='stars')
-        plt.hist(fcat_galaxies['class_star'], weights = weights_galaxies, bins= 15, histtype='stepfilled', label ='galaxies')
+        plt.hist(fcat_stars['class_star'], weights = weights_stars, bins= 5, histtype='stepfilled', label ='stars')
+        plt.hist(fcat_galaxies['class_star'], weights = weights_galaxies, bins= 5, histtype='stepfilled', label ='galaxies')
         plt.legend(loc='upper right')
         plt.xlabel('$class_{star}$', labelpad=20, fontsize=20)
         plt.ylabel('$Frequency$', fontsize=20)
+        plt.ylim(0,0.6)
         plt.show()
         plt.hist(fcat_good['class_star'], color= 'r', weights = weights_all, bins=50, histtype='stepfilled', label ='all')
         plt.legend(loc='upper right')
         plt.xlabel('$class_{star}$', labelpad=20, fontsize=20)
         plt.ylabel('$Frequency$', fontsize=20)
+        plt.ylim(0,0.6)
+        plt.show()
 
         plt.show()
 
@@ -337,7 +343,7 @@ def main():
             dlscombine_file_leg=specfile_z(fits, fitting_file_ellip_leg, FILE_NAME)
         
         #(14): Let's call DLSCOMBINE to correct PSF anisotropies
-        print("I'm correcting PSF annisotropies using dlscombine: BOTH FOR POL AND LEG FITTING")
+        print("I'm correcting PSF anisotropies using dlscombine: BOTH FOR POL AND LEG FITTING")
         print("")
         fits_pol='{}_corrected_pol.fits'.format(FILE_NAME, FILE_NAME)
         dlscombine_call_pol='./dlscombine_pol {} {}'.format(dlscombine_file_pol, fits_pol)
@@ -405,9 +411,9 @@ def main():
         catag_final_2.read()
         crossmatching_final = CrossMatching(catag_final_1.fcat, catag_final_2.fcat)
         crossmatching_final.kdtree(n=1*1e-06)
-        crossmatching.catalog_writter('{}{}'.format(FILE_NAME_FINAL, type_fcat), compare = '1to2')
+        crossmatching.catalog_writter('{}'.format(FILE_NAME_FINAL), compare = '1to2')
 
-    catalog_name_fiat_corrected_final = '{}{}'.format(FILE_NAME_FINAL, type_fcat)
+    catalog_name_fiat_corrected_final = '{}{}'.format(FILE_NAME_FINAL, fcat)
 
     #(17): Transform again tshe corrected catalog into a GOOD catalog
     catalog_name_corrected_good= '{}{}'.format(FILE_NAME_FINAL, type_good)
@@ -474,13 +480,6 @@ def main():
     fiatfilter_errcode_stars_corrected='perl fiatfilter.pl -v "errcode<2" {}>{}'.format(catalog_name_ellipto_stars_corrected, catalog_name_shapes_stars_corrected)
     subprocess.call(fiatfilter_errcode_stars_corrected, shell=True)
 
-    #(21): Once you gave your final corrected good shape galaxies catalog --> Now we filter and create radonmized images (10000 images per cut)
-#   filter_mag(catalog_name_shapes_galaxies_corrected, 10000)
-
-    #(22): Perform the statistical method --> call sigma maker
-#   sigma_maker('g_min_{}_0.fits'.format(FILE_NAME), 10000, 'min')
-#   sigma_maker('g_max_{}_0.fits'.format(FILE_NAME), 10000, 'max')
-#   sigma_maker('g_0_{}_0.fits'.format(FILE_NAME), 10000, 0)
 
 if __name__ == "__main__":
     main()
