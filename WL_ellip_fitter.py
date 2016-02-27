@@ -1,10 +1,12 @@
-# Name: ellip_fitter.py
+# Name: WL_ellip_fitter.py
 #
-# TFG Program III
+# Weak-Lensing "Study of Systematics and Classification of Compact Objects" Program II
+#
+# Type: python software
 #
 # Description: From the data obtained thanks to ellipto (which provides a good fitting of stars/galaxies sizes), ellip_fitting.py calculates again the values of ellip_1 and ellip_2, calculates a fitting of those magnitudes f(ellip_) in terms of Legendre Polynomials L(x)L(y) --> f(ellip_)=Pn_m=Cn_m Ln(x)Lm(y) or a normal fitting f(ellip_)=Pn_m=Cn_m x^ny^m, where n=m=4, and plots the results. Then, in makes a iterative fitting rejecting those celestial objects whose residuals with respect to the fitting are bigger than 3*std_deviation(residual).
 #
-# Returns: FIAT File containing the values of Cn_m in a format understable by dlscombine
+# Returns: FIAT File containing the values of Cn_m in a format suitable to be understood by dlscombine
 #
 
 
@@ -15,7 +17,7 @@ __version__ = "3.0.0"
 __maintainer__ = "Guadalupe Canas Herrera"
 __email__ = "gch24@alumnos.unican.es"
 
-# Modifications: introduce the possibility of choosing between a normal polinomial fitting or Legendre fitting
+# Modifications: introduce the possibility of choosing between a normal Polinomial fitting or Legendre fitting
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -26,29 +28,81 @@ import subprocess
 from astropy.modeling import models, fitting #Package for fitting Legeandre Polynomials
 import warnings
 from mpl_toolkits.mplot3d import Axes3D #Plotting in 3D
+import seaborn as sns
+from matplotlib.colors import BoundaryNorm
+from matplotlib.ticker import MaxNLocator
 
 
 # 3D Plot function of fitting + experimental data
 def ellip_fitting_plt(cont, ellipticity_1, ellipticity_2, fitting_1, fitting_2, x_fit_1, y_fit_1, x_fit_2, y_fit_2):
+    sns.set(style="ticks")
     fig = plt.figure(cont)
     ax_1 = fig.add_subplot(211, projection='3d')
-    ax_1.scatter(x_fit_1, y_fit_1, ellipticity_1)
-    ax_1.set_xlabel('X ')
-    ax_1.set_ylabel('Y')
-    ax_1.set_zlabel('Ellipticity 1')
-    ax_1.plot(x_fit_1, y_fit_1, fitting_1(x_fit_1,y_fit_1), label='Legendre fitting')
+    ax_1.plot(x_fit_1, y_fit_1, ellipticity_1, 'k*')
+    ax_1.set_xlabel('X ', fontsize=20)
+    ax_1.set_ylabel('Y', fontsize=20)
+    ax_1.set_zlabel('$e_1$', fontsize=20)
+    x_th = np.linspace(0, 12000, 10000)
+    y_th = np.linspace(0, 10000, 10000)
+    ax_1.plot(x_fit_1, y_fit_1, fitting_1(x_fit_1, y_fit_1), 'b-', label='Legendre fitting')
     ax_2 = fig.add_subplot(212, projection='3d')
-    ax_2.scatter(x_fit_2, y_fit_2, ellipticity_2)
-    ax_2.set_xlabel('X')
-    ax_2.set_ylabel('Y')
-    ax_2.set_zlabel('Ellipticity 2')
-    ax_2.plot(x_fit_2, y_fit_2, fitting_2(x_fit_2,y_fit_2), label='Legendre fitting')
+    ax_2.plot(x_fit_2, y_fit_2, ellipticity_2, 'k*')
+    ax_2.set_xlabel('X', fontsize=20)
+    ax_2.set_ylabel('Y', fontsize=20)
+    ax_2.set_zlabel('$e_2$', fontsize=20)
+    ax_2.plot(x_fit_2, y_fit_2, fitting_2(x_fit_2, y_fit_2), 'b-', label='Legendre fitting')
     return
+
+
+
+def ellip_fitting_plt_color(cont, ellipticity_1, ellipticity_2, fitting_1, fitting_2, x_fit_1, y_fit_1, x_fit_2, y_fit_2):
+
+
+    xv_1, yv_1 = np.meshgrid(x_fit_1,y_fit_1)
+    xv_2, yv_2 = np.meshgrid(x_fit_2,y_fit_2)
+    levels = MaxNLocator(nbins=15).tick_values(ellipticity_1.min(), ellipticity_1.max())
+
+    # pick the desired colormap, sensible levels, and define a normalization
+    # instance which takes data values and translates those into levels.
+    cmap = plt.get_cmap('PiYG')
+    norm = BoundaryNorm(levels, ncolors=cmap.N, clip=True)
+
+    fig, (ax0, ax1) = plt.subplots(nrows=2)
+
+    im = ax0.pcolor(xv_1, yv_1, fitting_1(xv_1,yv_1), cmap='RdBu', norm=norm)
+    cbar=fig.colorbar(im, ax=ax0)
+    cbar.ax.tick_params(labelsize=30)
+    ax0.set_title('$\mathrm{e_1}$ (top) and $\mathrm{e_2}$ (bottom)', fontsize=30)
+    ax0.set_xlabel('$x_1/pixels$', fontsize=30, labelpad=10)
+    ax0.set_ylabel('$y_1/pixels$', fontsize=30)
+
+    #plt.xticks(color='k', size=30)
+    #plt.yticks(color='k', size=30)
+    
+    
+    for tick in ax0.xaxis.get_major_ticks():
+        tick.label.set_fontsize(20)
+    for tick in ax0.yaxis.get_major_ticks():
+        tick.label.set_fontsize(20)
+
+
+    im = ax1.pcolormesh(xv_2, yv_2, fitting_2(xv_2, yv_2), cmap='RdBu', norm=norm)
+    cbar=fig.colorbar(im, ax=ax1)
+    cbar.ax.tick_params(labelsize=30)
+    #ax1.set_title('$e_2$', fontsize=20)
+    ax1.set_xlabel('$x_2/pixels$', fontsize=30, labelpad=20)
+    ax1.set_ylabel('$y_2/pixels$', fontsize=30)
+
+    for tick in ax1.xaxis.get_major_ticks():
+        tick.label.set_fontsize(20)
+    for tick in ax1.yaxis.get_major_ticks():
+        tick.label.set_fontsize(20)
+
 
 def fit_Legendre(FILE_NAME, catalog):
     
     # Define the Legendre Model in 2D dimensions trough the library ASTROPY
-    # The fitting is in the way of Pn_m=Cn_m Ln(x)Lm(y) where the maximum degree is 4, meaning x(degree)*y(degree)<=4.
+    # The fitting is in the form of Pn_m=Cn_m Ln(x)Lm(y) where the maximum degree is 4, meaning x(degree)*y(degree)<=4.
     # Number of coefficients npar=15
     # Coefficient Matrix:
     # c0_0     c0_1    c0_2     c0_3    c0_4
@@ -93,22 +147,34 @@ def fit_Legendre(FILE_NAME, catalog):
     longitud=len(catalog["theta"])
     ellip_1=np.zeros(longitud)
     ellip_2=np.zeros(longitud)
+    ellip_error_1=np.zeros(longitud)
+    ellip_error_2=np.zeros(longitud)
     for i in range(0, longitud): #multiply array
         ellip_1[i]=catalog["ellipticity"][i]*math.cos(2*math.radians(catalog["theta"][i]))
+        ellip_error_1[i]=ellip_1[i]*(catalog['sigma_e'][i]/catalog["ellipticity"][i])
+        #ellip_error_1[i] = catalog['sigma_e'][i]*math.cos(2*math.radians(catalog["theta"][i]))
         ellip_2[i]=catalog["ellipticity"][i]*math.sin(2*math.radians(catalog["theta"][i]))
+        ellip_error_2[i]=ellip_2[i]*(catalog['sigma_e'][i]/catalog["ellipticity"][i])
+        #ellip_error_2[i] = catalog['sigma_e'][i]*math.sin(2*math.radians(catalog["theta"][i]))
 
     #Read variables x and y from catalog
     x=catalog["x"]
     y=catalog["y"]
 
     #Define fitting using ASTROPY library: Simplex algorithm and least squares statistic
-    fit=fitting.SimplexLSQFitter()
+    #fit=fitting.SimplexLSQFitter()
+    fit=fitting.LevMarLSQFitter()
+    #fit=fitting.SLSQPLSQFitter()
+
+
+
+
     with warnings.catch_warnings():
         # Ignore model linearity warning from the fitter
         warnings.simplefilter('ignore')
         #Fit
-        fit_1 = fit(legendre_1, x, y, ellip_1)
-        fit_2 = fit(legendre_2, x, y, ellip_2)
+        fit_1 = fit(legendre_1, x, y, ellip_1, weights=catalog['sigma_e'])
+        fit_2 = fit(legendre_2, x, y, ellip_2, weights=catalog['sigma_e'])
     #FIT ELLIP_1
     print 'Values of ellip_1 Legendre fitting: {}'.format(fit_1)
     #FIT ELLIP_2
@@ -118,6 +184,8 @@ def fit_Legendre(FILE_NAME, catalog):
     cont=16
     ellip_fitting_plt(cont, ellip_1, ellip_2, fit_1, fit_2, x, y, x, y)
     plt.show(block=False)
+    ellip_fitting_plt_color(cont, ellip_1, ellip_2, fit_1, fit_2, x, y, x, y)
+    plt.show()
     
     #Second fitting based of boundin residuals values. First define residuals
     residual_1=np.zeros(longitud)
@@ -141,9 +209,11 @@ def fit_Legendre(FILE_NAME, catalog):
     x_int_1= x[mask_1]
     y_int_1= y[mask_1]
     ellip_1_int= ellip_1[mask_1]
+    ellip_error_1_int=catalog['sigma_e'][mask_1]
     x_int_2= x[mask_2]
     y_int_2= y[mask_2]
     ellip_2_int= ellip_2[mask_2]
+    ellip_error_2_int=catalog['sigma_e'][mask_2]
     
     #We can re-calculate the fitting
     legendre_1_int=models.Legendre2D(4,4)
@@ -168,16 +238,28 @@ def fit_Legendre(FILE_NAME, catalog):
     legendre_2_int.c2_4.fixed = True
     legendre_2_int.c3_4.fixed = True
     legendre_2_int.c4_4.fixed = True
-    fit_int=fitting.SimplexLSQFitter()
-    fit_1_int = fit_int(legendre_1_int, x_int_1, y_int_1, ellip_1_int)
-    fit_2_int = fit_int(legendre_2_int, x_int_2, y_int_2, ellip_2_int)
+    #fit_int=fitting.SimplexLSQFitter()
+    fit_int=fitting.LevMarLSQFitter()
+    #fit_int=fitting.SLSQPLSQFitter()
+    fit_1_int = fit_int(legendre_1_int, x_int_1, y_int_1, ellip_1_int, weights=ellip_error_1_int)
+    fit_2_int = fit_int(legendre_2_int, x_int_2, y_int_2, ellip_2_int, weights=ellip_error_2_int)
+
     
     print 'Values of ellip_1_int: {}'.format(fit_1_int)
+    print '\n'
+    print '\n'
+    #print fit_1_int.fit_info
+    print '\n'
+    print '\n'
     print 'Values of ellip_2_int: {}'.format(fit_2_int)
+    print '\n'
+    print '\n'
     
     #Plot iterative fit
     cont=cont+1
     ellip_fitting_plt(cont, ellip_1_int, ellip_2_int, fit_1_int, fit_2_int, x_int_1, y_int_1, x_int_2, y_int_2)
+    plt.show()
+    ellip_fitting_plt_color(cont, ellip_1_int, ellip_2_int, fit_1_int, fit_2_int, x_int_1, y_int_1, x_int_2, y_int_2)
     plt.show()
     
     #Now we want to write the information into a file that is able to be understood by fiat.c and dlscombine.c.
@@ -230,6 +312,7 @@ def fit_Legendre(FILE_NAME, catalog):
     f_1.write('%-20s\t%-20s\t%-20s\t%-20s\t%-20s \n'% (fit_2_int.c3_0.value, fit_2_int.c3_1.value, fit_2_int.c3_2.value, fit_2_int.c3_3.value, fit_2_int.c3_4.value))
     f_1.write('%-20s\t%-20s\t%-20s\t%-20s\t%-20s \n'% (fit_2_int.c4_0.value, fit_2_int.c4_1.value, fit_2_int.c4_2.value, fit_2_int.c4_3.value, fit_2_int.c4_4.value))
     f_1.close()
+
     return fitting_file_ellip
 
 def fit_Polynomial(FILE_NAME, catalog):
@@ -320,6 +403,10 @@ def fit_Polynomial(FILE_NAME, catalog):
     cont=cont+1
     ellip_fitting_plt(cont, ellip_1_int, ellip_2_int, fit_1_int, fit_2_int, x_int_1, y_int_1, x_int_2, y_int_2)
     plt.show()
+    
+    #ellip_fitting_plt_color(cont, ellip_1_int, ellip_2_int, fit_1_int, fit_2_int, x_int_1, y_int_1, x_int_2, y_int_2)
+    #plt.show()
+
     
     #Now we want to write the information into a file that is able to be understood by fiat.c and dlscombine.c.
     
