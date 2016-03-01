@@ -1,10 +1,10 @@
 # Name: WL_MonteCarlo.py
 #
-# TFG Program VII
+# TFG Program Estimation of DM Halos II
 #
-# Description: Prototype of the script requires to deal with the noise
+# Description: Script requires to deal with the noise of convergence maps
 #
-# Returns: fits image corresponding to the final mass-density map
+# Returns: FITS image corresponding to the final signal-to-noise mass-density map
 
 __author__ = "Guadalupe Canas Herrera"
 __copyright__ = "Copyright (C) 2015 G. Canas Herrera"
