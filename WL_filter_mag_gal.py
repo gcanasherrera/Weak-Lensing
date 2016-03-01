@@ -1,10 +1,9 @@
 # Name: filter_mag_gal.py
 #
-# Bachelor Disertation Program IV
+# TFG Program Estimation of DM Halos I
 #
 # Description: Python File containing a function that splits the catalog of galaxies (already corrected) in different catalog cuts, creating a mass-density map FITS file (data_image and random_image) given a number of files.
 #
-# For further information about the functions here defined the users are kindly referred to the DOCUMENTATION file attached in this package.
 #
 
 
