@@ -6,7 +6,7 @@ Weak Lensing is a repository that contains a set of programs required to detect 
 
 Further Information
 ====================
-For any detail regarding this software, the user is kindly refer to the PDF documentation "documentation.pdf"
+For any detail regarding this software, the user is kindly referred to the PDF documentation file "documentation.pdf"
 
 
 
